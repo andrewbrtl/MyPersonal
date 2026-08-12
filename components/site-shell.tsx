@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { LogIn, MapPin, UserPlus } from "lucide-react";
+import { LogIn, LogOut, MapPin, UserPlus } from "lucide-react";
+
+import { signOutAction } from "@/app/login/actions";
 
 export function BrandPlaceholder({ inverted = false }: { inverted?: boolean }) {
   return (
@@ -19,7 +21,7 @@ export function BrandPlaceholder({ inverted = false }: { inverted?: boolean }) {
   );
 }
 
-export function SiteHeader({ compact = false }: { compact?: boolean }) {
+export function SiteHeader({ compact = false, authenticated = false }: { compact?: boolean; authenticated?: boolean }) {
   return (
     <header className="border-b border-forest/15 bg-cream">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8 lg:px-10">
@@ -27,8 +29,16 @@ export function SiteHeader({ compact = false }: { compact?: boolean }) {
         <nav aria-label="Navegação principal" className="flex items-center gap-2 sm:gap-6">
           <Link href="/buscar" className="nav-link hidden md:inline-flex">Encontrar profissionais</Link>
           {!compact && <Link href="/#como-funciona" className="nav-link hidden lg:inline-flex">Como funciona</Link>}
-          <Link href="/painel" className="nav-link hidden gap-2 sm:inline-flex"><LogIn size={16} /> Entrar</Link>
-          <Link href="/cadastro" className="button-accent min-h-11 px-4 text-sm sm:px-5"><UserPlus size={17} /> Criar perfil</Link>
+          {authenticated ? (
+            <form action={signOutAction}>
+              <button type="submit" className="nav-link inline-flex gap-2"><LogOut size={16} /> <span className="hidden sm:inline">Sair</span></button>
+            </form>
+          ) : (
+            <Link href="/login" className="nav-link hidden gap-2 sm:inline-flex"><LogIn size={16} /> Entrar</Link>
+          )}
+          <Link href={authenticated ? "/favoritos" : "/login?modo=criar&tipo=personal&next=%2Fcadastro"} className="button-accent min-h-11 px-4 text-sm sm:px-5">
+            {authenticated ? "Meus salvos" : <><UserPlus size={17} /> Criar perfil</>}
+          </Link>
         </nav>
       </div>
     </header>

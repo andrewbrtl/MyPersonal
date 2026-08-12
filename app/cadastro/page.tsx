@@ -1,17 +1,20 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { ArrowRight, LogOut, Save } from "lucide-react";
 
 import { BrandPlaceholder } from "@/components/site-shell";
+import { signOutAction } from "@/app/login/actions";
+import { requireRole } from "@/lib/auth";
 import { modalities } from "@/lib/demo-data";
 
 export const metadata: Metadata = { title: "Criar perfil profissional" };
 
-export default function RegistrationPage() {
+export default async function RegistrationPage() {
+  await requireRole("personal", "/cadastro");
+
   return (
     <main className="min-h-screen bg-sand">
       <header className="border-b border-forest/15 bg-cream">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8"><BrandPlaceholder /><Link href="/" className="text-link"><LogOut size={16} /> Sair</Link></div>
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8"><BrandPlaceholder /><form action={signOutAction}><button type="submit" className="text-link"><LogOut size={16} /> Sair</button></form></div>
       </header>
       <div className="mx-auto grid max-w-6xl gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[280px_1fr] lg:py-14">
         <aside>
