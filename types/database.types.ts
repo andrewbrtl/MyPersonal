@@ -238,9 +238,12 @@ export type Database = {
           anos_experiencia: number | null
           atendimento: Database["public"]["Enums"]["modalidade_local"]
           atualizado_em: string
+          bairro: string | null
           bio: string | null
+          cref: string | null
           criado_em: string
           formacao: string | null
+          horarios: string[]
           id: string
           localizacao: unknown
           nota_media: number
@@ -254,9 +257,12 @@ export type Database = {
           anos_experiencia?: number | null
           atendimento?: Database["public"]["Enums"]["modalidade_local"]
           atualizado_em?: string
+          bairro?: string | null
           bio?: string | null
+          cref?: string | null
           criado_em?: string
           formacao?: string | null
+          horarios?: string[]
           id: string
           localizacao?: unknown
           nota_media?: number
@@ -270,9 +276,12 @@ export type Database = {
           anos_experiencia?: number | null
           atendimento?: Database["public"]["Enums"]["modalidade_local"]
           atualizado_em?: string
+          bairro?: string | null
           bio?: string | null
+          cref?: string | null
           criado_em?: string
           formacao?: string | null
+          horarios?: string[]
           id?: string
           localizacao?: unknown
           nota_media?: number

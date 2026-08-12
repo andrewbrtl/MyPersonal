@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState, useLayoutEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
 import {
   ArrowRight,
+  Check,
   CheckCircle2,
   Eye,
   EyeOff,
+  IdCard,
   LockKeyhole,
   Mail,
   UserRound,
@@ -32,7 +35,30 @@ export function AuthForm({ mode, next, role, switchHref, callbackError }: AuthFo
   const action = mode === "signup" ? signUpAction : loginAction;
   const [state, formAction, pending] = useActionState(action, initialState);
   const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const [selectedRole, setSelectedRole] = useState(role);
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const professionalFieldsRef = useRef<HTMLDivElement>(null);
   const isSignup = mode === "signup";
+
+  const passwordRules = [
+    ["10+ caracteres", password.length >= 10],
+    ["Letra maiúscula", /[A-Z]/.test(password)],
+    ["Letra minúscula", /[a-z]/.test(password)],
+    ["Número", /[0-9]/.test(password)],
+    ["Caractere especial", /[^A-Za-z0-9]/.test(password)],
+  ] as const;
+
+  useLayoutEffect(() => {
+    if (!professionalFieldsRef.current || selectedRole !== "personal") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    gsap.fromTo(
+      professionalFieldsRef.current,
+      { autoAlpha: 0, height: 0, y: -8 },
+      { autoAlpha: 1, height: "auto", y: 0, duration: 0.42, ease: "power2.out", clearProps: "height,opacity,visibility,transform" },
+    );
+  }, [selectedRole]);
 
   return (
     <div>
@@ -100,8 +126,10 @@ export function AuthForm({ mode, next, role, switchHref, callbackError }: AuthFo
               className="field px-12"
               type={showPassword ? "text" : "password"}
               name="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
               autoComplete={isSignup ? "new-password" : "current-password"}
-              placeholder={isSignup ? "Mínimo de 8 caracteres" : "Digite sua senha"}
+              placeholder={isSignup ? "Crie uma senha forte" : "Digite sua senha"}
               aria-invalid={Boolean(state.errors?.password)}
               required
             />
@@ -114,11 +142,55 @@ export function AuthForm({ mode, next, role, switchHref, callbackError }: AuthFo
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </span>
-          {isSignup && !state.errors?.password && (
-            <span className="mt-2 block text-xs text-forest/45">Use 8 ou mais caracteres, com pelo menos uma letra e um número.</span>
+          {isSignup && (
+            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3" aria-label="Requisitos da senha">
+              {passwordRules.map(([label, valid]) => (
+                <span key={label} className={`flex items-center gap-1.5 text-[0.68rem] font-medium transition ${valid ? "text-forest" : "text-forest/38"}`}>
+                  <span className={`grid size-4 place-items-center rounded-full transition ${valid ? "bg-forest text-white" : "border border-forest/20"}`}>
+                    {valid && <Check size={10} strokeWidth={3} />}
+                  </span>
+                  {label}
+                </span>
+              ))}
+            </div>
           )}
           <FieldError messages={state.errors?.password} />
         </label>
+
+        {isSignup && (
+          <label>
+            <span className="field-label">Confirme a senha</span>
+            <span className="relative block">
+              <LockKeyhole className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-forest/40" size={18} />
+              <input
+                className="field px-12"
+                type={showPasswordConfirm ? "text" : "password"}
+                name="passwordConfirm"
+                value={passwordConfirm}
+                onChange={(event) => setPasswordConfirm(event.target.value)}
+                autoComplete="new-password"
+                placeholder="Digite a mesma senha novamente"
+                aria-invalid={Boolean(state.errors?.passwordConfirm)}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPasswordConfirm((current) => !current)}
+                className="absolute right-2 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-lg text-forest/45 transition hover:bg-forest/5 hover:text-forest focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange"
+                aria-label={showPasswordConfirm ? "Ocultar confirmação de senha" : "Mostrar confirmação de senha"}
+              >
+                {showPasswordConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </span>
+            {passwordConfirm && !state.errors?.passwordConfirm && (
+              <span className={`mt-2 flex items-center gap-1.5 text-xs font-medium ${password === passwordConfirm ? "text-forest" : "text-orange-dark"}`}>
+                {password === passwordConfirm && <CheckCircle2 size={14} />}
+                {password === passwordConfirm ? "As senhas coincidem." : "As senhas ainda não coincidem."}
+              </span>
+            )}
+            <FieldError messages={state.errors?.passwordConfirm} />
+          </label>
+        )}
 
         {isSignup && (
           <fieldset>
@@ -129,16 +201,40 @@ export function AuthForm({ mode, next, role, switchHref, callbackError }: AuthFo
                 title="Quero treinar"
                 description="Buscar e salvar profissionais"
                 defaultChecked={role === "aluno"}
+                onSelect={setSelectedRole}
               />
               <RoleOption
                 value="personal"
                 title="Sou profissional"
                 description="Criar e divulgar meu perfil"
                 defaultChecked={role === "personal"}
+                onSelect={setSelectedRole}
               />
             </div>
             <FieldError messages={state.errors?.role} />
           </fieldset>
+        )}
+
+        {isSignup && selectedRole === "personal" && (
+          <div ref={professionalFieldsRef} className="rounded-xl border border-orange/25 bg-orange/6 p-4 sm:p-5">
+            <label>
+              <span className="field-label text-orange-dark">CREF obrigatório</span>
+              <span className="relative block">
+                <IdCard className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-orange-dark/55" size={18} />
+                <input
+                  className="field bg-white pl-12 uppercase"
+                  name="cref"
+                  autoComplete="off"
+                  placeholder="012345-G/PR"
+                  pattern="[0-9]{4,8}-[A-Za-z]/[A-Za-z]{2}"
+                  aria-invalid={Boolean(state.errors?.cref)}
+                  required
+                />
+              </span>
+              <span className="mt-2 block text-xs leading-5 text-forest/50">O número será exibido no perfil profissional e poderá ser verificado antes da publicação.</span>
+              <FieldError messages={state.errors?.cref} />
+            </label>
+          </div>
         )}
 
         {(state.message || callbackError) && (
@@ -172,15 +268,17 @@ function RoleOption({
   title,
   description,
   defaultChecked,
+  onSelect,
 }: {
   value: "aluno" | "personal";
   title: string;
   description: string;
   defaultChecked: boolean;
+  onSelect: (role: "aluno" | "personal") => void;
 }) {
   return (
     <label className="relative cursor-pointer">
-      <input className="peer sr-only" type="radio" name="role" value={value} defaultChecked={defaultChecked} />
+      <input className="peer sr-only" type="radio" name="role" value={value} defaultChecked={defaultChecked} onChange={() => onSelect(value)} />
       <span className="block min-h-24 rounded-xl border border-forest/20 bg-cream p-4 transition peer-checked:border-forest peer-checked:bg-forest peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-orange peer-focus-visible:ring-offset-2">
         <span className="block text-sm font-semibold">{title}</span>
         <span className="mt-1 block text-xs leading-5 opacity-60">{description}</span>

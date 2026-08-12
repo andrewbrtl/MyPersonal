@@ -16,7 +16,7 @@ export const getCurrentProfile = cache(async () => {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id, nome, role, avatar_url")
+    .select("id, nome, role, avatar_url, telefone")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -26,6 +26,7 @@ export const getCurrentProfile = cache(async () => {
     nome: profile?.nome ?? user.user_metadata.nome ?? user.email?.split("@")[0] ?? "Usuário",
     role: profile?.role ?? (user.user_metadata.role === "personal" ? "personal" : "aluno"),
     avatarUrl: profile?.avatar_url ?? null,
+    telefone: profile?.telefone ?? "",
   };
 });
 

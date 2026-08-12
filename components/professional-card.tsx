@@ -1,13 +1,18 @@
 import Link from "next/link";
 import { ArrowRight, BadgeCheck, Heart, MapPin, Star } from "lucide-react";
 
-import type { Professional } from "@/lib/demo-data";
+import type { Professional } from "@/lib/professionals";
 
 export function ProfessionalCard({ professional }: { professional: Professional }) {
   return (
     <article className="group grid overflow-hidden border border-forest/15 bg-cream transition hover:border-forest/35 md:grid-cols-[180px_1fr]">
-      <div className={`relative grid min-h-48 place-items-center ${professional.cor} text-cream md:min-h-full`}>
-        <span className="font-display text-5xl font-medium">{professional.iniciais}</span>
+      <div
+        className="relative grid min-h-48 place-items-center bg-forest text-cream md:min-h-full"
+        style={professional.avatarUrl ? { backgroundImage: `linear-gradient(to top, rgb(24 52 44 / .72), transparent 65%), url(${professional.avatarUrl})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
+        role={professional.avatarUrl ? "img" : undefined}
+        aria-label={professional.avatarUrl ? `Foto de ${professional.nome}` : undefined}
+      >
+        {!professional.avatarUrl && <span className="font-display text-5xl font-medium">{professional.iniciais}</span>}
         <span className="absolute bottom-3 left-3 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-white/70">
           {professional.bairro}
         </span>

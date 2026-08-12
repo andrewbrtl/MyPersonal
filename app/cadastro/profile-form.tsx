@@ -1,0 +1,104 @@
+"use client";
+
+import { useActionState, useEffect, useState } from "react";
+import { ArrowRight, Camera, CheckCircle2, Save, UploadCloud } from "lucide-react";
+
+import { saveProfessionalProfile, type ProfileState } from "@/app/cadastro/actions";
+
+type Modality = { id: string; nome: string };
+type InitialProfile = {
+  nome: string;
+  telefone: string;
+  avatarUrl: string | null;
+  cref: string;
+  bairro: string;
+  bio: string;
+  formacao: string;
+  anosExperiencia: number | null;
+  preco: number | null;
+  atendimento: "presencial" | "online" | "ambos";
+  horarios: string[];
+  modalidades: string[];
+};
+
+const initialState: ProfileState = {};
+
+export function ProfileForm({ modalities, initialProfile }: { modalities: Modality[]; initialProfile: InitialProfile }) {
+  const [state, action, pending] = useActionState(saveProfessionalProfile, initialState);
+  const [preview, setPreview] = useState<string | null>(initialProfile.avatarUrl);
+
+  useEffect(() => () => {
+    if (preview?.startsWith("blob:")) URL.revokeObjectURL(preview);
+  }, [preview]);
+
+  return (
+    <form action={action} className="grid gap-8">
+      <section className="border border-forest/15 bg-cream p-5 sm:p-8 lg:p-10">
+        <div className="border-b border-forest/15 pb-6">
+          <p className="eyebrow">01 · Identidade</p>
+          <h2 className="font-display mt-2 text-3xl font-medium">Como as pessoas verão você</h2>
+        </div>
+
+        <div className="mt-7 grid gap-7 md:grid-cols-[180px_1fr]">
+          <label className="group cursor-pointer">
+            <span className="field-label">Foto profissional</span>
+            <span
+              className="relative grid aspect-square place-items-center overflow-hidden rounded-2xl border border-dashed border-forest/30 bg-sand text-center transition group-hover:border-orange"
+              style={preview ? { backgroundImage: `url(${preview})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
+            >
+              {!preview && <span className="grid justify-items-center gap-2 px-4 text-xs text-forest/50"><Camera size={28} /><strong className="text-forest">Escolher foto</strong>JPG, PNG ou WebP</span>}
+              {preview && <span className="absolute inset-x-3 bottom-3 flex items-center justify-center gap-2 rounded-lg bg-forest/85 px-3 py-2 text-xs font-semibold text-white"><UploadCloud size={14} /> Trocar foto</span>}
+            </span>
+            <input
+              className="sr-only"
+              type="file"
+              name="avatar"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (file) setPreview(URL.createObjectURL(file));
+              }}
+            />
+            <FieldError messages={state.errors?.avatar} />
+          </label>
+
+          <div data-motion-list className="grid gap-5 sm:grid-cols-2">
+            <Field label="Nome profissional" name="nome" defaultValue={initialProfile.nome} error={state.errors?.nome} className="sm:col-span-2" required />
+            <Field label="Telefone/WhatsApp" name="telefone" type="tel" defaultValue={initialProfile.telefone} placeholder="(42) 99999-9999" error={state.errors?.telefone} required />
+            <Field label="CREF" name="cref" defaultValue={initialProfile.cref} placeholder="012345-G/PR" error={state.errors?.cref} className="uppercase" required />
+            <Field label="Bairro principal" name="bairro" defaultValue={initialProfile.bairro} placeholder="Ex.: Centro" error={state.errors?.bairro} required />
+            <label><span className="field-label">Atendimento</span><select className="field" name="atendimento" defaultValue={initialProfile.atendimento}><option value="presencial">Presencial</option><option value="online">Online</option><option value="ambos">Presencial e online</option></select></label>
+          </div>
+        </div>
+      </section>
+
+      <section className="border border-forest/15 bg-cream p-5 sm:p-8 lg:p-10">
+        <div className="border-b border-forest/15 pb-6"><p className="eyebrow">02 · Seu trabalho</p><h2 className="font-display mt-2 text-3xl font-medium">Dê contexto antes do primeiro contato</h2></div>
+        <div data-motion-list className="mt-7 grid gap-6 sm:grid-cols-2">
+          <label className="sm:col-span-2"><span className="field-label">Apresentação</span><textarea className="field min-h-36 py-3" name="bio" defaultValue={initialProfile.bio} placeholder="Conte com quem você trabalha, como funciona seu acompanhamento e o que torna seu método especial." required /><FieldError messages={state.errors?.bio} /></label>
+          <label className="sm:col-span-2"><span className="field-label">Formação e certificações</span><textarea className="field min-h-24 py-3" name="formacao" defaultValue={initialProfile.formacao} placeholder="Educação Física, especializações e certificações relevantes." required /><FieldError messages={state.errors?.formacao} /></label>
+          <Field label="Anos de experiência" name="anosExperiencia" type="number" min="0" max="80" defaultValue={initialProfile.anosExperiencia ?? 0} error={state.errors?.anosExperiencia} required />
+          <Field label="Valor mensal a partir de" name="preco" type="number" min="0" step="0.01" defaultValue={initialProfile.preco ?? 0} error={state.errors?.preco} required />
+          <fieldset className="sm:col-span-2"><legend className="field-label">Modalidades</legend><div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">{modalities.map((item) => <label key={item.id} className="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border border-forest/15 px-4 text-sm transition has-checked:border-forest has-checked:bg-forest has-checked:text-white"><input type="checkbox" name="modalidades" value={item.id} defaultChecked={initialProfile.modalidades.includes(item.id)} />{item.nome}</label>)}</div><FieldError messages={state.errors?.modalidades} /></fieldset>
+          <label className="sm:col-span-2"><span className="field-label">Horários disponíveis</span><textarea className="field min-h-28 py-3" name="horarios" defaultValue={initialProfile.horarios.join("\n")} placeholder={"Segunda e quarta · 06h às 11h\nTerça e quinta · 18h às 21h"} /><span className="mt-2 block text-xs text-forest/45">Use uma linha para cada período disponível.</span><FieldError messages={state.errors?.horarios} /></label>
+        </div>
+      </section>
+
+      {(state.message || state.success) && <div role="status" aria-live="polite" className={`flex items-center gap-3 border p-4 text-sm ${state.success ? "border-forest/20 bg-forest/5" : "border-orange/30 bg-orange/8 text-orange-dark"}`}>{state.success && <CheckCircle2 size={19} />}{state.message}</div>}
+
+      <div className="sticky bottom-4 z-10 flex flex-col gap-3 rounded-2xl border border-forest/15 bg-cream/95 p-4 shadow-xl backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+        <span className="text-xs leading-5 text-forest/50">Você poderá editar essas informações quando quiser.</span>
+        <button type="submit" disabled={pending} className="button-accent min-h-12 disabled:cursor-not-allowed disabled:opacity-55"><Save size={17} /> {pending ? "Salvando..." : "Salvar e publicar"} {!pending && <ArrowRight size={17} />}</button>
+      </div>
+    </form>
+  );
+}
+
+function Field({ label, error, className = "", ...props }: React.InputHTMLAttributes<HTMLInputElement> & { label: string; error?: string[] }) {
+  return <label className={className}><span className="field-label">{label}</span><input className="field" {...props} /><FieldError messages={error} /></label>;
+}
+
+function FieldError({ messages }: { messages?: string[] }) {
+  if (!messages?.length) return null;
+  return <span className="mt-2 block text-xs font-medium text-orange-dark">{messages[0]}</span>;
+}

@@ -3,7 +3,8 @@ import { ArrowRight } from "lucide-react";
 
 import { ProfessionalCard } from "@/components/professional-card";
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
-import { modalities, professionals } from "@/lib/demo-data";
+import { modalities } from "@/lib/demo-data";
+import { getPublicProfessionals } from "@/lib/professionals";
 
 const steps = [
   ["01", "Busque", "Filtre por modalidade, bairro, formato de atendimento e valor."],
@@ -11,7 +12,8 @@ const steps = [
   ["03", "Converse", "Tire suas dúvidas diretamente antes de combinar o primeiro treino."],
 ] as const;
 
-export default function Home() {
+export default async function Home() {
+  const professionals = await getPublicProfessionals();
   return (
     <main>
       <SiteHeader />
@@ -86,13 +88,13 @@ export default function Home() {
           </div>
           <p className="max-w-sm text-sm leading-6 text-forest/55">Perfis locais para você comparar especialidades, valores e formas de atendimento.</p>
         </div>
-        <div data-motion-list className="mt-10 grid gap-5 xl:grid-cols-3">
+        {professionals.length ? <div data-motion-list className="mt-10 grid gap-5 xl:grid-cols-3">
           {professionals.slice(0, 3).map((professional) => (
             <div key={professional.id} className="xl:[&>article]:block xl:[&>article>div:first-child]:min-h-56">
               <ProfessionalCard professional={professional} />
             </div>
           ))}
-        </div>
+        </div> : <EmptyProfessionals />}
       </section>
 
       <section id="como-funciona" className="bg-forest text-cream">
@@ -126,4 +128,8 @@ export default function Home() {
       <SiteFooter />
     </main>
   );
+}
+
+function EmptyProfessionals() {
+  return <div className="mt-10 border border-forest/15 bg-sand p-8 sm:p-10"><p className="eyebrow">Começando por Guarapuava</p><h3 className="font-display mt-3 text-3xl font-medium">Os primeiros perfis estão sendo preparados.</h3><p className="mt-3 max-w-xl text-sm leading-6 text-forest/55">Profissionais reais aparecerão aqui assim que concluírem e publicarem seus cadastros.</p><Link href="/login?modo=criar&tipo=personal&next=%2Fcadastro" className="text-link mt-5">Criar o primeiro perfil <ArrowRight size={16} /></Link></div>;
 }

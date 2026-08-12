@@ -3,12 +3,14 @@ import { ArrowRight, Search, SlidersHorizontal, X } from "lucide-react";
 
 import { ProfessionalCard } from "@/components/professional-card";
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
-import { modalities, professionals } from "@/lib/demo-data";
+import { modalities } from "@/lib/demo-data";
+import { getPublicProfessionals } from "@/lib/professionals";
 
 export const metadata: Metadata = { title: "Encontrar profissionais" };
 
 export default async function SearchPage({ searchParams }: PageProps<"/buscar">) {
   const params = await searchParams;
+  const professionals = await getPublicProfessionals();
   const term = typeof params.q === "string" ? params.q.toLowerCase() : "";
   const modality = typeof params.modalidade === "string" ? params.modalidade.toLowerCase() : "";
   const filtered = professionals.filter((item) => {
