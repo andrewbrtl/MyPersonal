@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowLeft, Check, MapPin, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Check, LogOut, MapPin, ShieldCheck, UserRound } from "lucide-react";
 
+import { signOutAndCreateAccountAction } from "@/app/login/actions";
 import { AuthForm } from "@/app/login/auth-form";
 import { BrandPlaceholder } from "@/components/site-shell";
 import { getCurrentProfile } from "@/lib/auth";
@@ -30,6 +31,32 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const role = first(query.tipo) === "personal" ? "personal" : "aluno";
   const next = safeNext(first(query.next));
   const profile = await getCurrentProfile();
+
+  if (profile && mode === "signup") {
+    return (
+      <main className="grid min-h-screen place-items-center bg-sand px-5 py-12">
+        <div className="w-full max-w-lg border border-forest/15 bg-cream p-6 shadow-[0_24px_80px_rgba(24,52,44,0.12)] sm:p-10">
+          <BrandPlaceholder />
+          <div className="mt-10 grid size-12 place-items-center rounded-xl bg-forest text-white"><UserRound size={21} /></div>
+          <p className="eyebrow mt-7">Sessão ativa</p>
+          <h1 className="font-display mt-3 text-4xl font-medium tracking-[-0.035em] sm:text-5xl">Você já está conectado.</h1>
+          <p className="mt-4 text-sm leading-6 text-forest/55">
+            A conta de <strong className="text-forest">{profile.nome}</strong> está ativa neste navegador. Para criar outra conta sem misturar as sessões, saia desta primeiro.
+          </p>
+          <div className="mt-7 rounded-xl border border-forest/15 bg-sand p-4">
+            <p className="text-sm font-semibold">{profile.nome}</p>
+            <p className="mt-1 text-xs text-forest/45">{profile.email} · {profile.role === "personal" ? "Profissional" : "Aluno"}</p>
+          </div>
+          <form action={signOutAndCreateAccountAction}>
+            <input type="hidden" name="tipo" value={role} />
+            <input type="hidden" name="next" value={next} />
+            <button type="submit" className="button-accent mt-7 min-h-13 w-full"><LogOut size={17} /> Sair e criar outra conta</button>
+          </form>
+          <Link href={profile.role === "personal" ? "/painel" : "/buscar"} className="button-quiet mt-2 w-full">Continuar com esta conta <ArrowLeft className="rotate-180" size={16} /></Link>
+        </div>
+      </main>
+    );
+  }
 
   if (profile) redirect(next || (profile.role === "personal" ? "/painel" : "/buscar"));
 

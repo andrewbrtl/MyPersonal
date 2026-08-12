@@ -121,7 +121,7 @@ export default async function Home() {
             <p className="eyebrow text-orange-dark">04 · Para profissionais</p>
             <h2 className="font-display mt-5 max-w-3xl text-5xl font-medium leading-tight sm:text-6xl">Mostre seu trabalho para pessoas da sua região.</h2>
           </div>
-          <Link href="/cadastro" className="button-accent min-h-13">Criar perfil profissional <ArrowRight size={18} /></Link>
+          <Link href="/login?modo=criar&tipo=personal&next=%2Fcadastro" className="button-accent min-h-13">Criar perfil profissional <ArrowRight size={18} /></Link>
         </div>
       </section>
 

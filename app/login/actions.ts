@@ -132,3 +132,12 @@ export async function signOutAction() {
   await supabase.auth.signOut();
   redirect("/");
 }
+
+export async function signOutAndCreateAccountAction(formData: FormData) {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  const role = formData.get("tipo") === "personal" ? "personal" : "aluno";
+  const next = typeof formData.get("next") === "string" ? String(formData.get("next")) : "";
+  const safeDestination = next.startsWith("/") && !next.startsWith("//") ? `&next=${encodeURIComponent(next)}` : "";
+  redirect(`/login?modo=criar&tipo=${role}${safeDestination}`);
+}
