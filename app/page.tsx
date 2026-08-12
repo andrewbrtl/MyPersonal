@@ -35,7 +35,7 @@ export default function Home() {
           </div>
 
           <div className="relative bg-forest px-5 py-10 text-cream sm:px-8 lg:px-10 lg:py-16">
-            <div className="absolute right-0 top-0 h-28 w-28 bg-orange sm:h-40 sm:w-40" aria-hidden="true" />
+            <div className="absolute right-8 top-0 h-2 w-24 bg-orange sm:right-12 sm:w-32" aria-hidden="true" />
             <div className="relative max-w-xl">
               <p className="eyebrow text-orange-light">Comece pela modalidade</p>
               <h2 className="font-display mt-4 max-w-md text-4xl font-medium leading-tight sm:text-5xl">
@@ -113,13 +113,13 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-orange text-white">
+      <section className="border-t border-forest/15 bg-sand text-forest">
         <div className="section-shell grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
-            <p className="eyebrow text-white/70">Para profissionais</p>
+            <p className="eyebrow text-orange-dark">04 · Para profissionais</p>
             <h2 className="font-display mt-5 max-w-3xl text-5xl font-medium leading-tight sm:text-6xl">Mostre seu trabalho para pessoas da sua região.</h2>
           </div>
-          <Link href="/cadastro" className="button-light">Criar perfil profissional <ArrowRight size={18} /></Link>
+          <Link href="/cadastro" className="button-accent min-h-13">Criar perfil profissional <ArrowRight size={18} /></Link>
         </div>
       </section>
 
