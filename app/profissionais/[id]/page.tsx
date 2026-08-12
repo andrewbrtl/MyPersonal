@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowLeft, Bookmark, MapPin, MessageCircle, Star } from "lucide-react";
 import { notFound } from "next/navigation";
 
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
@@ -16,7 +17,7 @@ export default async function ProfessionalPage({ params }: PageProps<"/profissio
       <SiteHeader compact />
       <section className="bg-sand">
         <div className="mx-auto max-w-7xl px-5 py-6 sm:px-8 lg:px-10">
-          <Link href="/buscar" className="text-link">← Voltar para a busca</Link>
+          <Link href="/buscar" className="text-link"><ArrowLeft size={16} /> Voltar para a busca</Link>
         </div>
       </section>
       <section className="border-b border-forest/15 bg-cream">
@@ -28,7 +29,7 @@ export default async function ProfessionalPage({ params }: PageProps<"/profissio
             <p className="mt-3 text-lg font-semibold text-orange-dark">{professional.especialidade}</p>
             <p className="mt-5 max-w-2xl text-base leading-7 text-forest/62">{professional.destaque}</p>
             <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-forest/55">
-              <span>{professional.bairro}</span><span>{professional.atendimento}</span><span>★ {professional.nota.toFixed(1)} · {professional.avaliacoes} avaliações</span>
+              <span className="inline-flex items-center gap-1.5"><MapPin size={15} />{professional.bairro}</span><span>{professional.atendimento}</span><span className="inline-flex items-center gap-1.5"><Star size={15} className="fill-orange text-orange" />{professional.nota.toFixed(1)} · {professional.avaliacoes} avaliações</span>
             </div>
           </div>
         </div>
@@ -42,12 +43,12 @@ export default async function ProfessionalPage({ params }: PageProps<"/profissio
           <ProfileSection number="04" title="Horários"><ul className="grid gap-3">{professional.horarios.map((item) => <li className="flex gap-3 border-b border-forest/10 pb-3" key={item}><span className="text-orange">—</span>{item}</li>)}</ul></ProfileSection>
           <ProfileSection number="05" title="Avaliações"><blockquote className="border-l-2 border-orange pl-5"><p>“Atendimento cuidadoso e treino bem explicado. Consegui manter a rotina sem exageros.”</p><footer className="mt-3 text-sm text-forest/50">Cliente verificado · Guarapuava</footer></blockquote></ProfileSection>
         </div>
-        <aside className="h-fit border border-forest/15 bg-sand p-6 lg:sticky lg:top-5">
+        <aside id="contato" className="h-fit border border-forest/15 bg-sand p-6 lg:sticky lg:top-5">
           <p className="eyebrow">Valores</p>
           <p className="mt-4 text-sm text-forest/50">A partir de</p>
           <p className="mt-1 text-3xl font-semibold">R$ {professional.preco} <span className="text-sm font-normal text-forest/50">{professional.unidade}</span></p>
-          <a href="#contato" className="button-primary mt-7 w-full">Conversar com o profissional <span>→</span></a>
-          <button className="button-secondary mt-3 min-h-12 w-full">Salvar perfil</button>
+          <a href="#contato" className="button-accent mt-7 min-h-13 w-full"><MessageCircle size={18} /> Conversar com o profissional</a>
+          <button className="button-secondary mt-3 min-h-12 w-full"><Bookmark size={18} /> Salvar perfil</button>
           <p className="mt-5 text-xs leading-5 text-forest/50">Confirme valores, horários e disponibilidade diretamente antes de marcar.</p>
         </aside>
       </section>

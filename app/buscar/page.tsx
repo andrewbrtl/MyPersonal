@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ArrowRight, Search, SlidersHorizontal, X } from "lucide-react";
 
 import { ProfessionalCard } from "@/components/professional-card";
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
@@ -26,7 +27,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
           <form className="mt-8 flex max-w-3xl flex-col gap-3 sm:flex-row" action="/buscar">
             <label className="sr-only" htmlFor="search">Especialidade ou nome</label>
             <input id="search" name="q" defaultValue={term} className="field flex-1 bg-cream" placeholder="Musculação, corrida, yoga ou nome" />
-            <button className="button-primary min-h-12 sm:min-w-36" type="submit">Buscar <span aria-hidden="true">→</span></button>
+            <button className="button-accent min-h-12 sm:min-w-36" type="submit"><Search size={18} /> Buscar <ArrowRight size={17} /></button>
           </form>
         </div>
       </section>
@@ -35,7 +36,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
         <aside className="h-fit border border-forest/15 bg-cream p-5 lg:sticky lg:top-5">
           <div className="flex items-center justify-between border-b border-forest/15 pb-4">
             <h2 className="font-semibold">Filtros</h2>
-            <a href="/buscar" className="text-xs underline underline-offset-4">Limpar</a>
+            <a href="/buscar" className="inline-flex items-center gap-1 text-xs underline underline-offset-4"><X size={13} /> Limpar</a>
           </div>
           <form action="/buscar" className="mt-5 grid gap-6">
             <fieldset>
@@ -62,7 +63,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
                 <option value="">Presencial ou online</option><option>Presencial</option><option>Online</option>
               </select>
             </label>
-            <button className="button-secondary min-h-12 px-4" type="submit">Aplicar filtros</button>
+            <button className="button-secondary min-h-12 px-4" type="submit"><SlidersHorizontal size={17} /> Aplicar filtros</button>
           </form>
         </aside>
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight, BadgeCheck, Heart, MapPin, Star } from "lucide-react";
 
 import type { Professional } from "@/lib/demo-data";
 
@@ -16,17 +17,17 @@ export function ProfessionalCard({ professional }: { professional: Professional 
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-xl font-semibold tracking-[-0.025em]">{professional.nome}</h2>
-              {professional.verificado && <span className="status-badge">Verificado</span>}
+              {professional.verificado && <span className="status-badge"><BadgeCheck size={13} /> Verificado</span>}
             </div>
             <p className="mt-1 text-sm font-medium text-orange-dark">{professional.especialidade}</p>
           </div>
-          <button aria-label={`Salvar perfil de ${professional.nome}`} className="save-button">♡</button>
+          <button aria-label={`Salvar perfil de ${professional.nome}`} className="save-button"><Heart size={19} /></button>
         </div>
         <p className="mt-4 max-w-xl text-sm leading-6 text-forest/65">{professional.destaque}</p>
         <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-xs text-forest/55">
-          <span>{professional.bairro}</span>
+          <span className="inline-flex items-center gap-1.5"><MapPin size={14} />{professional.bairro}</span>
           <span>{professional.atendimento}</span>
-          <span>★ {professional.nota.toFixed(1)} ({professional.avaliacoes})</span>
+          <span className="inline-flex items-center gap-1.5"><Star size={14} className="fill-orange text-orange" />{professional.nota.toFixed(1)} ({professional.avaliacoes})</span>
         </div>
         <div className="mt-6 flex items-end justify-between gap-4 border-t border-forest/10 pt-4">
           <p>
@@ -34,7 +35,7 @@ export function ProfessionalCard({ professional }: { professional: Professional 
             <strong className="text-lg">R$ {professional.preco}</strong>{" "}
             <span className="text-xs text-forest/55">{professional.unidade}</span>
           </p>
-          <Link href={`/profissionais/${professional.id}`} className="text-link">Ver perfil <span aria-hidden="true">→</span></Link>
+          <Link href={`/profissionais/${professional.id}`} className="text-link">Ver perfil <ArrowRight size={16} /></Link>
         </div>
       </div>
     </article>

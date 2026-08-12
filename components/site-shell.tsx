@@ -1,17 +1,18 @@
 import Link from "next/link";
+import { LogIn, MapPin, UserPlus } from "lucide-react";
 
-export function BrandPlaceholder() {
+export function BrandPlaceholder({ inverted = false }: { inverted?: boolean }) {
   return (
     <Link
       href="/"
       aria-label="Página inicial"
-      className="inline-flex items-center gap-3 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-orange-600 focus-visible:ring-offset-4"
+      className={`inline-flex items-center gap-3 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-4 ${inverted ? "focus-visible:ring-offset-forest" : "focus-visible:ring-offset-cream"}`}
     >
-      <span className="relative block size-9" aria-hidden="true">
-        <span className="absolute left-0 top-0 size-6 bg-forest" />
-        <span className="absolute bottom-0 right-0 size-4 bg-orange" />
+      <span className={`relative grid size-10 place-items-center rounded-xl border ${inverted ? "border-cream/30 bg-cream text-forest" : "border-forest bg-forest text-cream"}`} aria-hidden="true">
+        <MapPin size={19} strokeWidth={2.3} />
+        <span className="absolute -bottom-1 -right-1 size-3 rounded-full border-2 border-current bg-orange" />
       </span>
-      <span className="hidden text-xs font-semibold uppercase tracking-[0.16em] text-forest/60 sm:block">
+      <span className={`hidden text-xs font-semibold uppercase tracking-[0.16em] sm:block ${inverted ? "text-cream/70" : "text-forest/60"}`}>
         Guarapuava, PR
       </span>
     </Link>
@@ -26,8 +27,8 @@ export function SiteHeader({ compact = false }: { compact?: boolean }) {
         <nav aria-label="Navegação principal" className="flex items-center gap-2 sm:gap-6">
           <Link href="/buscar" className="nav-link hidden md:inline-flex">Encontrar profissionais</Link>
           {!compact && <Link href="/#como-funciona" className="nav-link hidden lg:inline-flex">Como funciona</Link>}
-          <Link href="/painel" className="nav-link hidden sm:inline-flex">Entrar</Link>
-          <Link href="/cadastro" className="button-secondary min-h-11 px-4 text-sm sm:px-5">Criar perfil</Link>
+          <Link href="/painel" className="nav-link hidden gap-2 sm:inline-flex"><LogIn size={16} /> Entrar</Link>
+          <Link href="/cadastro" className="button-accent min-h-11 px-4 text-sm sm:px-5"><UserPlus size={17} /> Criar perfil</Link>
         </nav>
       </div>
     </header>
@@ -39,7 +40,7 @@ export function SiteFooter() {
     <footer className="border-t border-cream/20 bg-forest text-cream">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:px-8 md:grid-cols-[1.3fr_1fr_1fr] lg:px-10">
         <div>
-          <BrandPlaceholder />
+          <BrandPlaceholder inverted />
           <p className="mt-5 max-w-sm text-sm leading-6 text-cream/60">
             Profissionais do esporte e pessoas que querem se movimentar, mais perto umas das outras.
           </p>

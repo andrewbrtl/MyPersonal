@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 import { ProfessionalCard } from "@/components/professional-card";
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
@@ -27,7 +28,7 @@ export default function Home() {
             </p>
             <div className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-center">
               <Link href="/buscar" className="button-primary sm:min-w-64">
-                Encontrar profissionais <span aria-hidden="true">→</span>
+                Encontrar profissionais <ArrowRight size={18} />
               </Link>
               <span className="text-sm text-forest/50">Gratuito para quem busca</span>
             </div>
@@ -49,7 +50,7 @@ export default function Home() {
                   >
                     <span className="text-xs tabular-nums text-orange-light">0{index + 1}</span>
                     <span className="flex-1 text-lg font-semibold">{name}</span>
-                    <span className="transition group-hover:translate-x-1" aria-hidden="true">→</span>
+                    <ArrowRight size={18} className="transition group-hover:translate-x-1" />
                   </Link>
                 ))}
               </div>
@@ -64,7 +65,7 @@ export default function Home() {
             <p className="eyebrow">01 · Modalidades</p>
             <h2 className="font-display section-title">O que você quer praticar?</h2>
           </div>
-          <Link href="/buscar" className="text-link">Ver todas <span aria-hidden="true">→</span></Link>
+          <Link href="/buscar" className="text-link">Ver todas <ArrowRight size={16} /></Link>
         </div>
         <div className="mt-10 grid border-l border-t border-forest/15 sm:grid-cols-2 lg:grid-cols-4">
           {modalities.map(([name, detail], index) => (
@@ -118,7 +119,7 @@ export default function Home() {
             <p className="eyebrow text-white/70">Para profissionais</p>
             <h2 className="font-display mt-5 max-w-3xl text-5xl font-medium leading-tight sm:text-6xl">Mostre seu trabalho para pessoas da sua região.</h2>
           </div>
-          <Link href="/cadastro" className="button-light">Criar perfil profissional <span aria-hidden="true">→</span></Link>
+          <Link href="/cadastro" className="button-light">Criar perfil profissional <ArrowRight size={18} /></Link>
         </div>
       </section>
 

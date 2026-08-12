@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ArrowRight, LogOut, Save } from "lucide-react";
 
 import { BrandPlaceholder } from "@/components/site-shell";
 import { modalities } from "@/lib/demo-data";
@@ -10,7 +11,7 @@ export default function RegistrationPage() {
   return (
     <main className="min-h-screen bg-sand">
       <header className="border-b border-forest/15 bg-cream">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8"><BrandPlaceholder /><Link href="/" className="text-link">Sair</Link></div>
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8"><BrandPlaceholder /><Link href="/" className="text-link"><LogOut size={16} /> Sair</Link></div>
       </header>
       <div className="mx-auto grid max-w-6xl gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[280px_1fr] lg:py-14">
         <aside>
@@ -33,7 +34,7 @@ export default function RegistrationPage() {
             <label><span className="field-label">Formato de atendimento</span><select className="field" defaultValue="ambos"><option value="presencial">Presencial</option><option value="online">Online</option><option value="ambos">Presencial e online</option></select></label>
             <fieldset className="sm:col-span-2"><legend className="field-label">Principais modalidades</legend><div className="grid gap-2 sm:grid-cols-2">{modalities.slice(0, 6).map(([name]) => <label key={name} className="flex min-h-11 items-center gap-3 border border-forest/15 px-3 text-sm"><input type="checkbox" />{name}</label>)}</div></fieldset>
             <label className="sm:col-span-2"><span className="field-label">Apresentação</span><textarea className="field min-h-32 py-3" placeholder="Conte de forma simples com quem você trabalha e como são seus atendimentos." /><span className="mt-2 block text-xs text-forest/45">Evite promessas. Explique seu método, experiência e público.</span></label>
-            <div className="flex flex-col-reverse gap-3 border-t border-forest/15 pt-6 sm:col-span-2 sm:flex-row sm:justify-between"><button type="button" className="min-h-12 px-4 text-sm font-semibold">Salvar e continuar depois</button><button type="button" className="button-primary min-h-12">Salvar e continuar <span>→</span></button></div>
+            <div className="flex flex-col-reverse gap-3 border-t border-forest/15 pt-6 sm:col-span-2 sm:flex-row sm:justify-between"><button type="button" className="button-quiet"><Save size={17} /> Salvar e continuar depois</button><button type="button" className="button-accent min-h-12">Salvar e continuar <ArrowRight size={17} /></button></div>
           </form>
         </section>
       </div>
