@@ -1,35 +1,44 @@
 @import "tailwindcss";
 
-* {
-  box-sizing: border-box;
+@theme inline {
+  --color-cream: #f2efe6;
+  --color-sand: #e7e1d5;
+  --color-forest: #18342c;
+  --color-orange: #d95f32;
+  --color-orange-dark: #b84927;
+  --color-orange-light: #f2a77e;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body {
   margin: 0;
+  background: #f2efe6;
+  color: #18342c;
   font-family: "Figtree Variable", "Segoe UI", sans-serif;
   text-rendering: optimizeLegibility;
 }
+a { color: inherit; text-decoration: none; }
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+button, input, select, textarea { font: inherit; }
+.font-display { font-family: "Newsreader Variable", Georgia, serif; font-optical-sizing: auto; }
+::selection { background: #d95f32; color: white; }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button,
-a {
-  -webkit-tap-highlight-color: transparent;
-}
-
-.font-display {
-  font-family: "Newsreader Variable", Georgia, serif;
-  font-optical-sizing: auto;
-}
-
-::selection {
-  background: #d8663f;
-  color: #ffffff;
+@layer components {
+  .section-shell { @apply mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20 lg:px-10 lg:py-24; }
+  .section-heading { @apply flex flex-col gap-6 md:flex-row md:items-end md:justify-between; }
+  .section-title { @apply mt-4 text-4xl font-medium leading-tight tracking-[-0.035em] sm:text-5xl; }
+  .text-hero { @apply text-[3.5rem] leading-[0.95] tracking-[-0.048em] sm:text-[4.8rem] lg:text-[5.75rem]; }
+  .eyebrow { @apply flex items-center gap-3 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-forest/55; }
+  .eyebrow-line { @apply block h-px w-8 bg-orange; }
+  .nav-link { @apply min-h-11 items-center text-sm font-medium text-forest/65 transition hover:text-forest focus-visible:outline-none focus-visible:underline; }
+  .button-primary { @apply inline-flex min-h-13 items-center justify-between gap-8 rounded-xl bg-forest px-6 font-semibold text-white transition hover:bg-[#245043] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2; }
+  .button-secondary { @apply inline-flex items-center justify-center rounded-xl border border-forest/25 font-semibold transition hover:border-forest hover:bg-forest hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2; }
+  .button-light { @apply inline-flex min-h-13 items-center justify-between gap-10 rounded-xl bg-cream px-6 font-semibold text-forest transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-orange; }
+  .text-link { @apply inline-flex min-h-11 items-center gap-2 text-sm font-semibold underline decoration-forest/25 underline-offset-4 transition hover:decoration-forest focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange; }
+  .modality-cell { @apply min-h-44 border-b border-r border-forest/15 p-5 transition hover:bg-cream focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange sm:p-6; }
+  .status-badge { @apply inline-flex min-h-6 items-center rounded-md border border-forest/15 bg-sand px-2 text-[0.62rem] font-semibold uppercase tracking-[0.08em]; }
+  .save-button { @apply grid size-11 shrink-0 place-items-center rounded-xl border border-forest/15 bg-transparent text-xl transition hover:border-orange hover:text-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange; }
+  .field { @apply min-h-12 w-full rounded-xl border border-forest/20 bg-cream px-4 text-sm outline-none transition placeholder:text-forest/35 focus:border-forest focus:ring-2 focus:ring-orange/25; }
+  .field-label { @apply mb-2 block text-xs font-semibold uppercase tracking-[0.1em] text-forest/60; }
 }

@@ -1,160 +1,128 @@
 import Link from "next/link";
 
-const modalidades = [
-  { nome: "Musculação", detalhe: "Força e hipertrofia" },
-  { nome: "Corrida", detalhe: "Rua e performance" },
-  { nome: "Lutas", detalhe: "Boxe, muay thai e jiu-jitsu" },
-  { nome: "Funcional", detalhe: "Mobilidade e condicionamento" },
-  { nome: "Pilates", detalhe: "Controle e postura" },
-  { nome: "Natação", detalhe: "Técnica e resistência" },
-];
+import { ProfessionalCard } from "@/components/professional-card";
+import { SiteFooter, SiteHeader } from "@/components/site-shell";
+import { modalities, professionals } from "@/lib/demo-data";
 
-const criterios = [
-  {
-    numero: "01",
-    titulo: "Perto de você",
-    texto: "Filtre por distância e encontre profissionais que atendem na sua região.",
-  },
-  {
-    numero: "02",
-    titulo: "Dentro do orçamento",
-    texto: "Compare valores antes de conversar e escolha com mais segurança.",
-  },
-  {
-    numero: "03",
-    titulo: "Do seu jeito",
-    texto: "Presencial ou online, individual ou em grupo, para o objetivo que você tem.",
-  },
-];
+const steps = [
+  ["01", "Busque", "Filtre por modalidade, bairro, formato de atendimento e valor."],
+  ["02", "Compare", "Conheça o trabalho, a experiência e os valores de cada profissional."],
+  ["03", "Converse", "Tire suas dúvidas diretamente antes de combinar o primeiro treino."],
+] as const;
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#f2efe6] text-[#18342c]">
-      <header className="border-b border-[#18342c]/15">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
-          <Link
-            href="/"
-            className="group inline-flex items-center gap-3 text-lg font-semibold tracking-[-0.035em] outline-none focus-visible:ring-2 focus-visible:ring-[#d9653b] focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2efe6]"
-          >
-            <span
-              aria-hidden="true"
-              className="grid size-8 place-items-center rounded-[0.45rem] bg-[#18342c] text-xs font-bold text-[#f2efe6] transition-transform group-hover:-rotate-3"
-            >
-              tp
-            </span>
-            <span>
-              treino<span className="text-[#bb4d2d]">.perto</span>
-            </span>
-          </Link>
+    <main>
+      <SiteHeader />
 
-          <nav aria-label="Navegação principal" className="flex items-center gap-3 sm:gap-6">
-            <Link
-              href="/planos"
-              className="hidden text-sm font-medium text-[#18342c]/70 underline-offset-4 transition hover:text-[#18342c] hover:underline sm:block"
-            >
-              Ver planos
-            </Link>
-            <Link
-              href="/cadastro"
-              className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[#18342c]/30 bg-transparent px-4 text-sm font-semibold transition hover:border-[#18342c] hover:bg-[#18342c] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d9653b] focus-visible:ring-offset-2"
-            >
-              Sou profissional
-            </Link>
-          </nav>
-        </div>
-      </header>
-
-      <section className="mx-auto grid max-w-7xl gap-12 px-5 pb-16 pt-12 sm:px-8 sm:pt-16 lg:grid-cols-[minmax(0,1fr)_minmax(380px,0.82fr)] lg:items-center lg:gap-20 lg:px-10 lg:pb-24 lg:pt-24">
-        <div>
-          <div className="mb-7 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.14em] text-[#18342c]/65">
-            <span className="h-px w-8 bg-[#bb4d2d]" aria-hidden="true" />
-            Feito para Guarapuava
-          </div>
-
-          <h1 className="font-display max-w-3xl text-[3.35rem] font-medium leading-[0.96] tracking-[-0.045em] text-[#18342c] sm:text-[4.8rem] lg:text-[5.65rem]">
-            Seu treino começa com a pessoa certa.
-          </h1>
-
-          <p className="mt-7 max-w-xl text-lg leading-8 text-[#18342c]/70 sm:text-xl">
-            Encontre profissionais de esporte por modalidade, localização e preço. Sem enrolação: você escolhe e conversa direto.
-          </p>
-
-          <div className="mt-9 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
-            <Link
-              href="/buscar"
-              className="group inline-flex min-h-13 items-center justify-between gap-8 rounded-xl bg-[#18342c] px-6 font-semibold text-white transition hover:bg-[#245043] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d9653b] focus-visible:ring-offset-2 sm:min-w-64"
-            >
-              Buscar profissionais
-              <span aria-hidden="true" className="text-xl transition-transform group-hover:translate-x-1">
-                →
-              </span>
-            </Link>
-            <span className="text-center text-sm text-[#18342c]/55 sm:max-w-36 sm:text-left">
-              Gratuito para quem busca
-            </span>
-          </div>
-        </div>
-
-        <aside className="overflow-hidden rounded-2xl bg-[#18342c] text-[#f7f4ec] shadow-[0_24px_70px_rgba(24,52,44,0.18)]">
-          <div className="flex items-start justify-between border-b border-white/15 px-6 py-6 sm:px-8">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#efac79]">
-                Comece por aqui
-              </p>
-              <h2 className="font-display mt-2 text-3xl font-medium tracking-[-0.03em]">
-                O que você quer treinar?
-              </h2>
-            </div>
-            <span className="hidden rounded-md border border-white/20 px-2.5 py-1 text-xs text-white/65 sm:block">
-              13 modalidades
-            </span>
-          </div>
-
-          <div className="grid sm:grid-cols-2">
-            {modalidades.map((modalidade, index) => (
-              <Link
-                key={modalidade.nome}
-                href={`/buscar?modalidade=${encodeURIComponent(modalidade.nome)}`}
-                className="group flex min-h-24 gap-4 border-b border-white/10 px-6 py-5 transition hover:bg-white/[0.07] focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#efac79] sm:px-8 sm:odd:border-r"
-              >
-                <span className="pt-0.5 text-xs tabular-nums text-[#efac79]">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span>
-                  <span className="block font-semibold text-white transition group-hover:text-[#efac79]">
-                    {modalidade.nome}
-                  </span>
-                  <span className="mt-1 block text-sm leading-5 text-white/50">
-                    {modalidade.detalhe}
-                  </span>
-                </span>
+      <section className="overflow-hidden bg-cream">
+        <div className="mx-auto grid max-w-7xl lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="px-5 pb-16 pt-14 sm:px-8 sm:py-20 lg:px-10 lg:py-28">
+            <p className="eyebrow"><span className="eyebrow-line" /> Guia local de esporte</p>
+            <h1 className="font-display mt-8 max-w-3xl text-hero font-medium text-forest">
+              Seu treino começa com a pessoa certa.
+            </h1>
+            <p className="mt-7 max-w-xl text-lg leading-8 text-forest/68">
+              Encontre profissionais de esporte em Guarapuava por modalidade, bairro e faixa de preço.
+            </p>
+            <div className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-center">
+              <Link href="/buscar" className="button-primary sm:min-w-64">
+                Encontrar profissionais <span aria-hidden="true">→</span>
               </Link>
-            ))}
+              <span className="text-sm text-forest/50">Gratuito para quem busca</span>
+            </div>
           </div>
 
-          <Link
-            href="/buscar"
-            className="group flex min-h-14 items-center justify-between bg-[#d8663f] px-6 font-semibold text-white transition hover:bg-[#c45632] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white sm:px-8"
-          >
-            Ver todas as modalidades
-            <span aria-hidden="true" className="text-xl transition-transform group-hover:translate-x-1">
-              →
-            </span>
-          </Link>
-        </aside>
+          <div className="relative bg-forest px-5 py-10 text-cream sm:px-8 lg:px-10 lg:py-16">
+            <div className="absolute right-0 top-0 h-28 w-28 bg-orange sm:h-40 sm:w-40" aria-hidden="true" />
+            <div className="relative max-w-xl">
+              <p className="eyebrow text-orange-light">Comece pela modalidade</p>
+              <h2 className="font-display mt-4 max-w-md text-4xl font-medium leading-tight sm:text-5xl">
+                Encontre alguém que combine com seu ritmo.
+              </h2>
+              <div className="mt-10 border-t border-cream/20">
+                {modalities.slice(0, 4).map(([name], index) => (
+                  <Link
+                    key={name}
+                    href={`/buscar?modalidade=${encodeURIComponent(name)}`}
+                    className="group flex items-center gap-5 border-b border-cream/15 py-4 outline-none hover:text-orange-light focus-visible:text-orange-light"
+                  >
+                    <span className="text-xs tabular-nums text-orange-light">0{index + 1}</span>
+                    <span className="flex-1 text-lg font-semibold">{name}</span>
+                    <span className="transition group-hover:translate-x-1" aria-hidden="true">→</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section className="border-y border-[#18342c]/15 bg-[#e8e3d7]">
-        <div className="mx-auto grid max-w-7xl divide-y divide-[#18342c]/15 px-5 sm:px-8 md:grid-cols-3 md:divide-x md:divide-y-0 lg:px-10">
-          {criterios.map((criterio) => (
-            <article key={criterio.numero} className="py-8 md:px-8 md:first:pl-0 md:last:pr-0 lg:py-10">
-              <p className="text-xs font-semibold tabular-nums text-[#bb4d2d]">{criterio.numero}</p>
-              <h2 className="mt-4 text-lg font-semibold tracking-[-0.02em]">{criterio.titulo}</h2>
-              <p className="mt-2 max-w-sm text-sm leading-6 text-[#18342c]/65">{criterio.texto}</p>
-            </article>
+      <section id="modalidades" className="section-shell bg-sand">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">01 · Modalidades</p>
+            <h2 className="font-display section-title">O que você quer praticar?</h2>
+          </div>
+          <Link href="/buscar" className="text-link">Ver todas <span aria-hidden="true">→</span></Link>
+        </div>
+        <div className="mt-10 grid border-l border-t border-forest/15 sm:grid-cols-2 lg:grid-cols-4">
+          {modalities.map(([name, detail], index) => (
+            <Link key={name} href={`/buscar?modalidade=${encodeURIComponent(name)}`} className="modality-cell">
+              <span className="text-xs text-orange-dark">{String(index + 1).padStart(2, "0")}</span>
+              <h3 className="mt-8 text-lg font-semibold">{name}</h3>
+              <p className="mt-1 text-sm text-forest/55">{detail}</p>
+            </Link>
           ))}
         </div>
       </section>
+
+      <section className="section-shell bg-cream">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">02 · Perto de você</p>
+            <h2 className="font-display section-title">Profissionais em destaque</h2>
+          </div>
+          <p className="max-w-sm text-sm leading-6 text-forest/55">Perfis locais para você comparar especialidades, valores e formas de atendimento.</p>
+        </div>
+        <div className="mt-10 grid gap-5 xl:grid-cols-3">
+          {professionals.slice(0, 3).map((professional) => (
+            <div key={professional.id} className="xl:[&>article]:block xl:[&>article>div:first-child]:min-h-56">
+              <ProfessionalCard professional={professional} />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section id="como-funciona" className="bg-forest text-cream">
+        <div className="section-shell">
+          <p className="eyebrow text-orange-light">03 · Como funciona</p>
+          <div className="mt-7 grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
+            <h2 className="font-display text-5xl font-medium leading-[1.02] sm:text-6xl">Simples para quem busca. Direto para quem trabalha.</h2>
+            <div className="border-t border-cream/20">
+              {steps.map(([number, title, text]) => (
+                <article key={number} className="grid gap-4 border-b border-cream/15 py-6 sm:grid-cols-[48px_150px_1fr] sm:items-start">
+                  <span className="text-xs text-orange-light">{number}</span>
+                  <h3 className="text-lg font-semibold">{title}</h3>
+                  <p className="text-sm leading-6 text-cream/60">{text}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-orange text-white">
+        <div className="section-shell grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div>
+            <p className="eyebrow text-white/70">Para profissionais</p>
+            <h2 className="font-display mt-5 max-w-3xl text-5xl font-medium leading-tight sm:text-6xl">Mostre seu trabalho para pessoas da sua região.</h2>
+          </div>
+          <Link href="/cadastro" className="button-light">Criar perfil profissional <span aria-hidden="true">→</span></Link>
+        </div>
+      </section>
+
+      <SiteFooter />
     </main>
   );
 }
