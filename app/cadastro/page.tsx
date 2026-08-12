@@ -5,6 +5,7 @@ import { signOutAction } from "@/app/login/actions";
 import { ProfileForm } from "@/app/cadastro/profile-form";
 import { BrandPlaceholder } from "@/components/site-shell";
 import { requireRole } from "@/lib/auth";
+import { formatPhone } from "@/lib/contact";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Perfil profissional" };
@@ -13,7 +14,7 @@ export default async function RegistrationPage() {
   const profile = await requireRole("personal", "/cadastro");
   const supabase = await createClient();
   const [{ data: professional }, { data: modalities }, { data: selectedModalities }] = await Promise.all([
-    supabase.from("personais").select("cref,bairro,bio,formacao,anos_experiencia,preco_mensal_base,atendimento,horarios").eq("id", profile.id).single(),
+    supabase.from("personais").select("cref,bairro,bio,formacao,anos_experiencia,preco_mensal_base,atendimento,horarios,whatsapp,instagram_url,facebook_url,tiktok_url,youtube_url,website_url").eq("id", profile.id).single(),
     supabase.from("modalidades").select("id,nome").eq("ativo", true).order("nome"),
     supabase.from("personal_modalidades").select("modalidade_id").eq("personal_id", profile.id),
   ]);
@@ -30,7 +31,7 @@ export default async function RegistrationPage() {
           modalities={modalities ?? []}
           initialProfile={{
             nome: profile.nome,
-            telefone: profile.telefone,
+            telefone: formatPhone(profile.telefone),
             avatarUrl: profile.avatarUrl,
             cref: professional?.cref ?? "",
             bairro: professional?.bairro ?? "",
@@ -41,6 +42,12 @@ export default async function RegistrationPage() {
             atendimento: professional?.atendimento ?? "presencial",
             horarios: professional?.horarios ?? [],
             modalidades: selectedModalities?.map((item) => item.modalidade_id) ?? [],
+            whatsapp: formatPhone(professional?.whatsapp),
+            instagram: professional?.instagram_url ?? "",
+            facebook: professional?.facebook_url ?? "",
+            tiktok: professional?.tiktok_url ?? "",
+            youtube: professional?.youtube_url ?? "",
+            website: professional?.website_url ?? "",
           }}
         />
       </div>

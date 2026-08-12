@@ -4,6 +4,13 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { requireRole } from "@/lib/auth";
+import {
+  isSocialUrl,
+  isWebsiteUrl,
+  normalizeSocialInput,
+  normalizeWebsiteInput,
+  onlyPhoneDigits,
+} from "@/lib/contact";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export type ProfileState = {
@@ -12,9 +19,15 @@ export type ProfileState = {
   errors?: Record<string, string[]>;
 };
 
+const optionalSocialUrl = (network: "instagram" | "facebook" | "tiktok" | "youtube", label: string) => z
+  .string()
+  .max(300, `${label}: o endereço está muito longo.`)
+  .refine((value) => isSocialUrl(value, network), `${label}: informe um perfil válido.`);
+
 const profileSchema = z.object({
   nome: z.string().trim().min(2, "Informe seu nome profissional.").max(120),
-  telefone: z.string().trim().min(10, "Informe um telefone com DDD.").max(20),
+  telefone: z.string().regex(/^\d{10,13}$/, "Informe um telefone com DDD."),
+  whatsapp: z.string().refine((value) => !value || /^\d{10,13}$/.test(value), "Informe um WhatsApp com DDD."),
   cref: z.string().trim().toUpperCase().regex(/^\d{4,8}-[A-Z]\/([A-Z]{2})$/, "Use o formato 012345-G/PR."),
   bairro: z.string().trim().min(2, "Informe o bairro principal.").max(80),
   bio: z.string().trim().min(40, "Conte um pouco mais sobre seu trabalho (mínimo de 40 caracteres).").max(1200),
@@ -24,13 +37,19 @@ const profileSchema = z.object({
   atendimento: z.enum(["presencial", "online", "ambos"]),
   horarios: z.string().trim().max(1000),
   modalidades: z.array(z.string().uuid()).min(1, "Escolha pelo menos uma modalidade."),
+  instagram: optionalSocialUrl("instagram", "Instagram"),
+  facebook: optionalSocialUrl("facebook", "Facebook"),
+  tiktok: optionalSocialUrl("tiktok", "TikTok"),
+  youtube: optionalSocialUrl("youtube", "YouTube"),
+  website: z.string().max(300, "O endereço do site está muito longo.").refine(isWebsiteUrl, "Informe um site válido."),
 });
 
 export async function saveProfessionalProfile(_state: ProfileState, formData: FormData): Promise<ProfileState> {
   const profile = await requireRole("personal", "/cadastro");
   const parsed = profileSchema.safeParse({
     nome: formData.get("nome"),
-    telefone: formData.get("telefone"),
+    telefone: onlyPhoneDigits(String(formData.get("telefone") ?? "")),
+    whatsapp: onlyPhoneDigits(String(formData.get("whatsapp") ?? "")),
     cref: formData.get("cref"),
     bairro: formData.get("bairro"),
     bio: formData.get("bio"),
@@ -40,6 +59,11 @@ export async function saveProfessionalProfile(_state: ProfileState, formData: Fo
     atendimento: formData.get("atendimento"),
     horarios: formData.get("horarios"),
     modalidades: formData.getAll("modalidades"),
+    instagram: normalizeSocialInput(String(formData.get("instagram") ?? ""), "instagram"),
+    facebook: normalizeSocialInput(String(formData.get("facebook") ?? ""), "facebook"),
+    tiktok: normalizeSocialInput(String(formData.get("tiktok") ?? ""), "tiktok"),
+    youtube: normalizeSocialInput(String(formData.get("youtube") ?? ""), "youtube"),
+    website: normalizeWebsiteInput(String(formData.get("website") ?? "")),
   });
 
   if (!parsed.success) return { errors: parsed.error.flatten().fieldErrors };
@@ -94,6 +118,12 @@ export async function saveProfessionalProfile(_state: ProfileState, formData: Fo
     preco_mensal_base: parsed.data.preco,
     atendimento: parsed.data.atendimento,
     horarios,
+    whatsapp: parsed.data.whatsapp || null,
+    instagram_url: parsed.data.instagram || null,
+    facebook_url: parsed.data.facebook || null,
+    tiktok_url: parsed.data.tiktok || null,
+    youtube_url: parsed.data.youtube || null,
+    website_url: parsed.data.website || null,
   }).eq("id", profile.id);
 
   if (personalError) {
@@ -101,11 +131,24 @@ export async function saveProfessionalProfile(_state: ProfileState, formData: Fo
     return { message: "Não foi possível salvar os dados profissionais." };
   }
 
-  await admin.from("personal_modalidades").delete().eq("personal_id", profile.id);
-  const { error: modalitiesError } = await admin.from("personal_modalidades").insert(
+  const { data: validModalities } = await admin
+    .from("modalidades")
+    .select("id")
+    .in("id", parsed.data.modalidades)
+    .eq("ativo", true);
+  if (validModalities?.length !== parsed.data.modalidades.length) {
+    return { errors: { modalidades: ["Uma das modalidades escolhidas não está mais disponível."] } };
+  }
+
+  const { error: modalitiesError } = await admin.from("personal_modalidades").upsert(
     parsed.data.modalidades.map((modalidadeId) => ({ personal_id: profile.id, modalidade_id: modalidadeId })),
   );
   if (modalitiesError) return { message: "O perfil foi salvo, mas houve um problema com as modalidades." };
+  await admin
+    .from("personal_modalidades")
+    .delete()
+    .eq("personal_id", profile.id)
+    .not("modalidade_id", "in", `(${parsed.data.modalidades.join(",")})`);
 
   const { data: existingSubscription } = await admin
     .from("assinaturas")
@@ -119,6 +162,15 @@ export async function saveProfessionalProfile(_state: ProfileState, formData: Fo
     const { data: freePlan } = await admin.from("planos").select("id").eq("tipo", "gratuito").single();
     if (freePlan) {
       await admin.from("assinaturas").insert({ personal_id: profile.id, plano_id: freePlan.id, status: "ativa" });
+    }
+  }
+
+  if (avatarUrl && currentProfile?.avatar_url && currentProfile.avatar_url !== avatarUrl) {
+    const marker = "/profile-images/";
+    const markerIndex = currentProfile.avatar_url.indexOf(marker);
+    if (markerIndex >= 0) {
+      const oldStoragePath = decodeURIComponent(currentProfile.avatar_url.slice(markerIndex + marker.length));
+      if (oldStoragePath.startsWith(`${profile.id}/`)) await admin.storage.from("profile-images").remove([oldStoragePath]);
     }
   }
 

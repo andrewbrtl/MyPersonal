@@ -242,16 +242,22 @@ export type Database = {
           bio: string | null
           cref: string | null
           criado_em: string
+          facebook_url: string | null
           formacao: string | null
           horarios: string[]
           id: string
+          instagram_url: string | null
           localizacao: unknown
           nota_media: number
           perfil_publico: boolean
           preco_mensal_base: number | null
           raio_atendimento_km: number
+          tiktok_url: string | null
           total_avaliacoes: number
           video_apresentacao_url: string | null
+          website_url: string | null
+          whatsapp: string | null
+          youtube_url: string | null
         }
         Insert: {
           anos_experiencia?: number | null
@@ -261,16 +267,22 @@ export type Database = {
           bio?: string | null
           cref?: string | null
           criado_em?: string
+          facebook_url?: string | null
           formacao?: string | null
           horarios?: string[]
           id: string
+          instagram_url?: string | null
           localizacao?: unknown
           nota_media?: number
           perfil_publico?: boolean
           preco_mensal_base?: number | null
           raio_atendimento_km?: number
+          tiktok_url?: string | null
           total_avaliacoes?: number
           video_apresentacao_url?: string | null
+          website_url?: string | null
+          whatsapp?: string | null
+          youtube_url?: string | null
         }
         Update: {
           anos_experiencia?: number | null
@@ -280,16 +292,22 @@ export type Database = {
           bio?: string | null
           cref?: string | null
           criado_em?: string
+          facebook_url?: string | null
           formacao?: string | null
           horarios?: string[]
           id?: string
+          instagram_url?: string | null
           localizacao?: unknown
           nota_media?: number
           perfil_publico?: boolean
           preco_mensal_base?: number | null
           raio_atendimento_km?: number
+          tiktok_url?: string | null
           total_avaliacoes?: number
           video_apresentacao_url?: string | null
+          website_url?: string | null
+          whatsapp?: string | null
+          youtube_url?: string | null
         }
         Relationships: [
           {

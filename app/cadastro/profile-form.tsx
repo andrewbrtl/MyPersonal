@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { ArrowRight, Camera, CheckCircle2, Save, UploadCloud } from "lucide-react";
+import { ArrowRight, AtSign, Camera, CheckCircle2, Globe2, MessageCircle, Phone, Save, UploadCloud, UsersRound, Video } from "lucide-react";
 
 import { saveProfessionalProfile, type ProfileState } from "@/app/cadastro/actions";
 
@@ -19,6 +19,12 @@ type InitialProfile = {
   atendimento: "presencial" | "online" | "ambos";
   horarios: string[];
   modalidades: string[];
+  whatsapp: string;
+  instagram: string;
+  facebook: string;
+  tiktok: string;
+  youtube: string;
+  website: string;
 };
 
 const initialState: ProfileState = {};
@@ -64,7 +70,6 @@ export function ProfileForm({ modalities, initialProfile }: { modalities: Modali
 
           <div data-motion-list className="grid gap-5 sm:grid-cols-2">
             <Field label="Nome profissional" name="nome" defaultValue={initialProfile.nome} error={state.errors?.nome} className="sm:col-span-2" required />
-            <Field label="Telefone/WhatsApp" name="telefone" type="tel" defaultValue={initialProfile.telefone} placeholder="(42) 99999-9999" error={state.errors?.telefone} required />
             <Field label="CREF" name="cref" defaultValue={initialProfile.cref} placeholder="012345-G/PR" error={state.errors?.cref} className="uppercase" required />
             <Field label="Bairro principal" name="bairro" defaultValue={initialProfile.bairro} placeholder="Ex.: Centro" error={state.errors?.bairro} required />
             <label><span className="field-label">Atendimento</span><select className="field" name="atendimento" defaultValue={initialProfile.atendimento}><option value="presencial">Presencial</option><option value="online">Online</option><option value="ambos">Presencial e online</option></select></label>
@@ -72,8 +77,25 @@ export function ProfileForm({ modalities, initialProfile }: { modalities: Modali
         </div>
       </section>
 
+      <section id="contatos" className="scroll-mt-6 border border-forest/15 bg-cream p-5 sm:p-8 lg:p-10">
+        <div className="border-b border-forest/15 pb-6">
+          <p className="eyebrow">02 · Contato e redes</p>
+          <h2 className="font-display mt-2 text-3xl font-medium">Facilite a primeira conversa</h2>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-forest/55">Só os canais preenchidos serão exibidos no seu perfil público. Seu e-mail de acesso continua privado.</p>
+        </div>
+        <div data-motion-list className="mt-7 grid gap-5 sm:grid-cols-2">
+          <IconField icon={<Phone size={17} />} label="Telefone público" name="telefone" type="tel" defaultValue={initialProfile.telefone} placeholder="(42) 99999-9999" error={state.errors?.telefone} required />
+          <IconField icon={<MessageCircle size={17} />} label="WhatsApp" name="whatsapp" type="tel" defaultValue={initialProfile.whatsapp} placeholder="(42) 99999-9999" error={state.errors?.whatsapp} />
+          <IconField icon={<Camera size={17} />} label="Instagram" name="instagram" type="text" defaultValue={initialProfile.instagram} placeholder="@seuperfil" error={state.errors?.instagram} />
+          <IconField icon={<UsersRound size={17} />} label="Facebook" name="facebook" type="text" defaultValue={initialProfile.facebook} placeholder="facebook.com/seuperfil" error={state.errors?.facebook} />
+          <IconField icon={<AtSign size={17} />} label="TikTok" name="tiktok" type="text" defaultValue={initialProfile.tiktok} placeholder="@seuperfil" error={state.errors?.tiktok} />
+          <IconField icon={<Video size={17} />} label="YouTube" name="youtube" type="text" defaultValue={initialProfile.youtube} placeholder="youtube.com/@seucanal" error={state.errors?.youtube} />
+          <IconField icon={<Globe2 size={17} />} label="Site" name="website" type="text" defaultValue={initialProfile.website} placeholder="seusite.com.br" error={state.errors?.website} className="sm:col-span-2" />
+        </div>
+      </section>
+
       <section className="border border-forest/15 bg-cream p-5 sm:p-8 lg:p-10">
-        <div className="border-b border-forest/15 pb-6"><p className="eyebrow">02 · Seu trabalho</p><h2 className="font-display mt-2 text-3xl font-medium">Dê contexto antes do primeiro contato</h2></div>
+        <div className="border-b border-forest/15 pb-6"><p className="eyebrow">03 · Seu trabalho</p><h2 className="font-display mt-2 text-3xl font-medium">Dê contexto antes do primeiro contato</h2></div>
         <div data-motion-list className="mt-7 grid gap-6 sm:grid-cols-2">
           <label className="sm:col-span-2"><span className="field-label">Apresentação</span><textarea className="field min-h-36 py-3" name="bio" defaultValue={initialProfile.bio} placeholder="Conte com quem você trabalha, como funciona seu acompanhamento e o que torna seu método especial." required /><FieldError messages={state.errors?.bio} /></label>
           <label className="sm:col-span-2"><span className="field-label">Formação e certificações</span><textarea className="field min-h-24 py-3" name="formacao" defaultValue={initialProfile.formacao} placeholder="Educação Física, especializações e certificações relevantes." required /><FieldError messages={state.errors?.formacao} /></label>
@@ -96,6 +118,10 @@ export function ProfileForm({ modalities, initialProfile }: { modalities: Modali
 
 function Field({ label, error, className = "", ...props }: React.InputHTMLAttributes<HTMLInputElement> & { label: string; error?: string[] }) {
   return <label className={className}><span className="field-label">{label}</span><input className="field" {...props} /><FieldError messages={error} /></label>;
+}
+
+function IconField({ icon, label, error, className = "", ...props }: React.InputHTMLAttributes<HTMLInputElement> & { icon: React.ReactNode; label: string; error?: string[] }) {
+  return <label className={className}><span className="field-label inline-flex items-center gap-2">{icon}{label}</span><input className="field" {...props} /><FieldError messages={error} /></label>;
 }
 
 function FieldError({ messages }: { messages?: string[] }) {

@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 
 import { ProfessionalCard } from "@/components/professional-card";
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
+import { getCurrentProfile } from "@/lib/auth";
 import { modalities } from "@/lib/demo-data";
 import { getPublicProfessionals } from "@/lib/professionals";
 
@@ -13,7 +14,7 @@ const steps = [
 ] as const;
 
 export default async function Home() {
-  const professionals = await getPublicProfessionals();
+  const [professionals, profile] = await Promise.all([getPublicProfessionals(), getCurrentProfile()]);
   return (
     <main>
       <SiteHeader />
@@ -91,7 +92,7 @@ export default async function Home() {
         {professionals.length ? <div data-motion-list className="mt-10 grid gap-5 xl:grid-cols-3">
           {professionals.slice(0, 3).map((professional) => (
             <div key={professional.id} className="xl:[&>article]:block xl:[&>article>div:first-child]:min-h-56">
-              <ProfessionalCard professional={professional} />
+              <ProfessionalCard professional={professional} canFavorite={profile?.role !== "personal"} />
             </div>
           ))}
         </div> : <EmptyProfessionals />}

@@ -72,9 +72,9 @@ export function SiteFooter() {
         <div>
           <p className="eyebrow text-orange-light">Informações</p>
           <div className="mt-4 grid gap-3 text-sm text-cream/70">
-            <Link href="#" className="hover:text-white">Termos de uso</Link>
-            <Link href="#" className="hover:text-white">Privacidade</Link>
-            <Link href="#" className="hover:text-white">Contato</Link>
+            <Link href="/termos" className="hover:text-white">Termos de uso</Link>
+            <Link href="/privacidade" className="hover:text-white">Privacidade</Link>
+            <Link href="/login?modo=criar&tipo=personal&next=%2Fcadastro" className="hover:text-white">Criar perfil profissional</Link>
           </div>
         </div>
       </div>

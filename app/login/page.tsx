@@ -122,7 +122,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         </div>
 
         <p className="pb-2 text-center text-xs leading-5 text-forest/40">
-          Ao continuar, você concorda com os termos de uso e a política de privacidade.
+          Ao continuar, você concorda com os <Link href="/termos" className="underline underline-offset-3 hover:text-forest">termos de uso</Link> e a <Link href="/privacidade" className="underline underline-offset-3 hover:text-forest">política de privacidade</Link>.
         </p>
       </section>
     </main>

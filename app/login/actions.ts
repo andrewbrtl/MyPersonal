@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 export type AuthState = {
@@ -91,6 +92,16 @@ export async function signUpAction(_state: AuthState, formData: FormData): Promi
   });
 
   if (!parsed.success) return { errors: parsed.error.flatten().fieldErrors };
+
+  if (parsed.data.role === "personal") {
+    const admin = createAdminClient();
+    const { data: existingCref } = await admin
+      .from("personais")
+      .select("id")
+      .eq("cref", parsed.data.cref ?? "")
+      .maybeSingle();
+    if (existingCref) return { errors: { cref: ["Este CREF já está vinculado a outra conta."] } };
+  }
 
   const supabase = await createClient();
   const fallback = parsed.data.role === "personal" ? "/cadastro" : "/buscar";

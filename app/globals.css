@@ -46,4 +46,6 @@ button, input, select, textarea { font: inherit; }
   .save-button { @apply grid size-11 shrink-0 place-items-center rounded-xl border border-forest/35 bg-cream text-forest transition hover:border-orange-dark hover:bg-orange-dark hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2; }
   .field { @apply min-h-12 w-full rounded-xl border border-forest/20 bg-cream px-4 text-sm outline-none transition placeholder:text-forest/35 focus:border-forest focus:ring-2 focus:ring-orange/25; }
   .field-label { @apply mb-2 block text-xs font-semibold uppercase tracking-[0.1em] text-forest/60; }
+  .legal-copy { @apply grid gap-4 text-base leading-7 text-forest/65; }
+  .legal-copy h2 { @apply mt-6 text-3xl font-medium text-forest; font-family: "Newsreader Variable", Georgia, serif; }
 }

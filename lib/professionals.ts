@@ -13,6 +13,7 @@ export type Professional = {
   modalidades: string[];
   bairro: string;
   atendimento: string;
+  atendimentoValor: "presencial" | "online" | "ambos";
   preco: number;
   unidade: string;
   nota: number;
@@ -24,20 +25,27 @@ export type Professional = {
   formacao: string[];
   horarios: string[];
   cref: string;
+  telefone: string;
+  whatsapp: string;
+  instagramUrl: string;
+  facebookUrl: string;
+  tiktokUrl: string;
+  youtubeUrl: string;
+  websiteUrl: string;
 };
 
 export const getPublicProfessionals = cache(async (): Promise<Professional[]> => {
   const admin = createAdminClient();
   const { data: personals, error } = await admin
     .from("personais")
-    .select("id,bio,formacao,anos_experiencia,preco_mensal_base,atendimento,nota_media,total_avaliacoes,bairro,horarios,cref")
+    .select("id,bio,formacao,anos_experiencia,preco_mensal_base,atendimento,nota_media,total_avaliacoes,bairro,horarios,cref,whatsapp,instagram_url,facebook_url,tiktok_url,youtube_url,website_url")
     .eq("perfil_publico", true)
     .order("nota_media", { ascending: false });
 
   if (error || !personals?.length) return [];
   const ids = personals.map((item) => item.id);
   const [{ data: profiles }, { data: links }] = await Promise.all([
-    admin.from("profiles").select("id,nome,avatar_url").in("id", ids),
+    admin.from("profiles").select("id,nome,avatar_url,telefone").in("id", ids),
     admin.from("personal_modalidades").select("personal_id,modalidades(nome)").in("personal_id", ids),
   ]);
 
@@ -62,6 +70,7 @@ export const getPublicProfessionals = cache(async (): Promise<Professional[]> =>
       modalidades: modalityNames,
       bairro: personal.bairro ?? "Guarapuava",
       atendimento: personal.atendimento === "ambos" ? "Presencial e online" : personal.atendimento === "online" ? "Online" : "Presencial",
+      atendimentoValor: personal.atendimento,
       preco: Number(personal.preco_mensal_base ?? 0),
       unidade: "por mês",
       nota: Number(personal.nota_media ?? 0),
@@ -73,6 +82,13 @@ export const getPublicProfessionals = cache(async (): Promise<Professional[]> =>
       formacao: personal.formacao?.split("\n").map((item) => item.trim()).filter(Boolean) ?? [],
       horarios: personal.horarios ?? [],
       cref: personal.cref ?? "",
+      telefone: base?.telefone ?? "",
+      whatsapp: personal.whatsapp ?? "",
+      instagramUrl: personal.instagram_url ?? "",
+      facebookUrl: personal.facebook_url ?? "",
+      tiktokUrl: personal.tiktok_url ?? "",
+      youtubeUrl: personal.youtube_url ?? "",
+      websiteUrl: personal.website_url ?? "",
     };
   });
 });
