@@ -76,7 +76,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
             </label>
           </div>
           {filtered.length ? (
-            <div className="mt-6 grid gap-5">{filtered.map((item) => <ProfessionalCard key={item.id} professional={item} />)}</div>
+            <div data-motion-list className="mt-6 grid gap-5">{filtered.map((item) => <ProfessionalCard key={item.id} professional={item} />)}</div>
           ) : (
             <div className="mt-6 border border-forest/15 bg-cream p-10 text-center">
               <h2 className="font-display text-3xl">Nenhum perfil encontrado</h2>

@@ -29,7 +29,7 @@ export default async function RegistrationPage() {
         </aside>
         <section className="border border-forest/15 bg-cream p-5 sm:p-8 lg:p-10">
           <div className="flex items-center justify-between border-b border-forest/15 pb-5"><div><p className="eyebrow">Etapa 1 de 5</p><h2 className="font-display mt-2 text-3xl font-medium">Informações básicas</h2></div><span className="text-sm font-semibold text-orange-dark">20%</span></div>
-          <form className="mt-8 grid gap-6 sm:grid-cols-2">
+          <form data-motion-list className="mt-8 grid gap-6 sm:grid-cols-2">
             <label className="sm:col-span-2"><span className="field-label">Nome completo</span><input className="field" placeholder="Como seu nome aparece profissionalmente" /></label>
             <label><span className="field-label">Telefone</span><input className="field" type="tel" placeholder="(42) 99999-9999" /></label>
             <label><span className="field-label">CREF ou registro</span><input className="field" placeholder="Opcional nesta etapa" /></label>

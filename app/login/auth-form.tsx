@@ -53,7 +53,7 @@ export function AuthForm({ mode, next, role, switchHref, callbackError }: AuthFo
         </Link>
       </div>
 
-      <form id="formulario" action={formAction} className="mt-7 grid gap-5">
+      <form id="formulario" data-motion-list action={formAction} className="mt-7 grid gap-5">
         <input type="hidden" name="next" value={next} />
 
         {isSignup && (

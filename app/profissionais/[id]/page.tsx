@@ -36,7 +36,7 @@ export default async function ProfessionalPage({ params }: PageProps<"/profissio
       </section>
 
       <section className="mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:px-8 lg:grid-cols-[1fr_340px] lg:px-10 lg:py-16">
-        <div className="grid gap-12">
+        <div data-motion-list className="grid gap-12">
           <ProfileSection number="01" title="Sobre"><p>{professional.bio}</p><p className="mt-4 font-semibold text-forest">{professional.experiencia}</p></ProfileSection>
           <ProfileSection number="02" title="Modalidades"><div className="flex flex-wrap gap-2">{professional.modalidades.map((item) => <span className="status-badge min-h-8 px-3" key={item}>{item}</span>)}</div></ProfileSection>
           <ProfileSection number="03" title="Formação"><ul className="grid gap-3">{professional.formacao.map((item) => <li className="border-b border-forest/10 pb-3" key={item}>{item}</li>)}</ul></ProfileSection>

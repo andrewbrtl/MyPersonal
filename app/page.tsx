@@ -67,7 +67,7 @@ export default function Home() {
           </div>
           <Link href="/buscar" className="text-link">Ver todas <ArrowRight size={16} /></Link>
         </div>
-        <div className="mt-10 grid border-l border-t border-forest/15 sm:grid-cols-2 lg:grid-cols-4">
+        <div data-motion-list className="mt-10 grid border-l border-t border-forest/15 sm:grid-cols-2 lg:grid-cols-4">
           {modalities.map(([name, detail], index) => (
             <Link key={name} href={`/buscar?modalidade=${encodeURIComponent(name)}`} className="modality-cell">
               <span className="text-xs text-orange-dark">{String(index + 1).padStart(2, "0")}</span>
@@ -86,7 +86,7 @@ export default function Home() {
           </div>
           <p className="max-w-sm text-sm leading-6 text-forest/55">Perfis locais para você comparar especialidades, valores e formas de atendimento.</p>
         </div>
-        <div className="mt-10 grid gap-5 xl:grid-cols-3">
+        <div data-motion-list className="mt-10 grid gap-5 xl:grid-cols-3">
           {professionals.slice(0, 3).map((professional) => (
             <div key={professional.id} className="xl:[&>article]:block xl:[&>article>div:first-child]:min-h-56">
               <ProfessionalCard professional={professional} />
@@ -100,7 +100,7 @@ export default function Home() {
           <p className="eyebrow text-orange-light">03 · Como funciona</p>
           <div className="mt-7 grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
             <h2 className="font-display text-5xl font-medium leading-[1.02] sm:text-6xl">Simples para quem busca. Direto para quem trabalha.</h2>
-            <div className="border-t border-cream/20">
+            <div data-motion-list className="border-t border-cream/20">
               {steps.map(([number, title, text]) => (
                 <article key={number} className="grid gap-4 border-b border-cream/15 py-6 sm:grid-cols-[48px_150px_1fr] sm:items-start">
                   <span className="text-xs text-orange-light">{number}</span>
