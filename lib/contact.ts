@@ -11,17 +11,27 @@ export function onlyPhoneDigits(value: string) {
   return value.replace(/\D/g, "");
 }
 
-export function formatPhone(value: string | null | undefined) {
+export function normalizeBrazilianPhone(value: string | null | undefined) {
   let digits = onlyPhoneDigits(value ?? "");
-  if ((digits.length === 12 || digits.length === 13) && digits.startsWith("55")) digits = digits.slice(2);
+  if ((digits.length === 12 || digits.length === 13) && digits.startsWith("55")) {
+    digits = digits.slice(2);
+  }
+  return digits;
+}
+
+export function isValidBrazilianPhone(value: string | null | undefined) {
+  return /^\d{10,11}$/.test(normalizeBrazilianPhone(value));
+}
+
+export function formatPhone(value: string | null | undefined) {
+  const digits = normalizeBrazilianPhone(value);
   if (digits.length === 11) return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
   if (digits.length === 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
   return value ?? "";
 }
 
 export function toWhatsAppNumber(value: string) {
-  const digits = onlyPhoneDigits(value);
-  return digits.startsWith("55") && (digits.length === 12 || digits.length === 13) ? digits : `55${digits}`;
+  return `55${normalizeBrazilianPhone(value)}`;
 }
 
 export function normalizeSocialInput(value: string, network: SocialNetwork) {

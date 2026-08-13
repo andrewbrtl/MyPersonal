@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -11,6 +11,31 @@ export type Database = {
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.15"
+  }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
   public: {
     Tables: {
@@ -81,6 +106,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "assinaturas_personal_id_fkey"
+            columns: ["personal_id"]
+            isOneToOne: false
+            referencedRelation: "resumo_personais"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "assinaturas_plano_id_fkey"
             columns: ["plano_id"]
             isOneToOne: false
@@ -126,10 +158,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "avaliacoes_aluno_id_fkey"
+            columns: ["aluno_id"]
+            isOneToOne: false
+            referencedRelation: "usuarios"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "avaliacoes_personal_id_fkey"
             columns: ["personal_id"]
             isOneToOne: false
             referencedRelation: "personais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avaliacoes_personal_id_fkey"
+            columns: ["personal_id"]
+            isOneToOne: false
+            referencedRelation: "resumo_personais"
             referencedColumns: ["id"]
           },
         ]
@@ -168,10 +214,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "contatos_aluno_id_fkey"
+            columns: ["aluno_id"]
+            isOneToOne: false
+            referencedRelation: "usuarios"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "contatos_personal_id_fkey"
             columns: ["personal_id"]
             isOneToOne: false
             referencedRelation: "personais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contatos_personal_id_fkey"
+            columns: ["personal_id"]
+            isOneToOne: false
+            referencedRelation: "resumo_personais"
             referencedColumns: ["id"]
           },
         ]
@@ -201,10 +261,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "favoritos_aluno_id_fkey"
+            columns: ["aluno_id"]
+            isOneToOne: false
+            referencedRelation: "usuarios"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "favoritos_personal_id_fkey"
             columns: ["personal_id"]
             isOneToOne: false
             referencedRelation: "personais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "favoritos_personal_id_fkey"
+            columns: ["personal_id"]
+            isOneToOne: false
+            referencedRelation: "resumo_personais"
             referencedColumns: ["id"]
           },
         ]
@@ -317,6 +391,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "personais_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "usuarios"
+            referencedColumns: ["id"]
+          },
         ]
       }
       personal_fotos: {
@@ -355,6 +436,13 @@ export type Database = {
             referencedRelation: "personais"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "personal_fotos_personal_id_fkey"
+            columns: ["personal_id"]
+            isOneToOne: false
+            referencedRelation: "resumo_personais"
+            referencedColumns: ["id"]
+          },
         ]
       }
       personal_modalidades: {
@@ -386,6 +474,13 @@ export type Database = {
             columns: ["personal_id"]
             isOneToOne: false
             referencedRelation: "personais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "personal_modalidades_personal_id_fkey"
+            columns: ["personal_id"]
+            isOneToOne: false
+            referencedRelation: "resumo_personais"
             referencedColumns: ["id"]
           },
         ]
@@ -521,6 +616,75 @@ export type Database = {
           f_table_schema?: unknown
           srid?: number | null
           type?: string | null
+        }
+        Relationships: []
+      }
+      resumo_personais: {
+        Row: {
+          atendimento: Database["public"]["Enums"]["modalidade_local"] | null
+          avaliacao: number | null
+          bairro: string | null
+          cidade: string | null
+          cref: string | null
+          criado_em: string | null
+          descricao: string | null
+          estado: string | null
+          experiencia_anos: number | null
+          formacao: string | null
+          id: string | null
+          nome: string | null
+          preco_mensal: number | null
+          publicado: boolean | null
+          quantidade_avaliacoes: number | null
+          telefone: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "personais_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "personais_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "usuarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      usuarios: {
+        Row: {
+          cidade: string | null
+          criado_em: string | null
+          estado: string | null
+          foto: string | null
+          id: string | null
+          nome: string | null
+          telefone: string | null
+          tipo_conta: Database["public"]["Enums"]["user_role"] | null
+        }
+        Insert: {
+          cidade?: string | null
+          criado_em?: string | null
+          estado?: string | null
+          foto?: string | null
+          id?: string | null
+          nome?: string | null
+          telefone?: string | null
+          tipo_conta?: Database["public"]["Enums"]["user_role"] | null
+        }
+        Update: {
+          cidade?: string | null
+          criado_em?: string | null
+          estado?: string | null
+          foto?: string | null
+          id?: string | null
+          nome?: string | null
+          telefone?: string | null
+          tipo_conta?: Database["public"]["Enums"]["user_role"] | null
         }
         Relationships: []
       }
@@ -1584,6 +1748,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       modalidade_local: ["presencial", "online", "ambos"],

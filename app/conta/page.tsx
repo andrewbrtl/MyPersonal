@@ -3,8 +3,10 @@ import Link from "next/link";
 import { ArrowLeft, ShieldCheck, UserRound } from "lucide-react";
 
 import { DeleteAccountForm } from "@/app/conta/delete-account-form";
+import { PhoneForm } from "@/app/conta/phone-form";
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
 import { requireUser } from "@/lib/auth";
+import { formatPhone } from "@/lib/contact";
 
 export const metadata: Metadata = { title: "Configurações da conta" };
 
@@ -29,6 +31,13 @@ export default async function AccountPage() {
             <div className="min-w-0"><p className="text-lg font-semibold">{profile.nome}</p><p className="mt-1 break-all text-sm text-forest/50">{profile.email}</p><span className="status-badge mt-3">Conta {profile.role === "personal" ? "profissional" : "de aluno"}</span></div>
           </div>
           <div className="mt-7 flex gap-3 border-t border-forest/10 pt-6 text-sm leading-6 text-forest/55"><ShieldCheck className="mt-0.5 shrink-0 text-orange-dark" size={19} /><p>A exclusão exige sua senha atual e duas confirmações para impedir cliques acidentais.</p></div>
+        </section>
+
+        <section className="border border-forest/15 bg-cream p-5 sm:p-8">
+          <p className="eyebrow">Acesso alternativo</p>
+          <h2 className="font-display mt-3 text-3xl font-medium">Entrar com telefone</h2>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-forest/55">Cadastre um número único para entrar com ele ou com seu e-mail. A senha atual confirma qualquer alteração.</p>
+          <PhoneForm currentPhone={formatPhone(profile.telefone)} />
         </section>
 
         <section className="border border-red-900/20 bg-cream p-5 sm:p-8">

@@ -7,11 +7,13 @@ import {
   ArrowRight,
   Check,
   CheckCircle2,
+  AtSign,
   Eye,
   EyeOff,
   IdCard,
   LockKeyhole,
   Mail,
+  Phone,
   UserRound,
 } from "lucide-react";
 
@@ -20,6 +22,7 @@ import {
   signUpAction,
   type AuthState,
 } from "@/app/login/actions";
+import { passwordRules } from "@/lib/password-rules";
 
 const initialState: AuthState = {};
 
@@ -30,9 +33,10 @@ type AuthFormProps = {
   switchHref: string;
   callbackError?: boolean;
   accountDeleted?: boolean;
+  passwordChanged?: boolean;
 };
 
-export function AuthForm({ mode, next, role, switchHref, callbackError, accountDeleted }: AuthFormProps) {
+export function AuthForm({ mode, next, role, switchHref, callbackError, accountDeleted, passwordChanged }: AuthFormProps) {
   const action = mode === "signup" ? signUpAction : loginAction;
   const [state, formAction, pending] = useActionState(action, initialState);
   const [showPassword, setShowPassword] = useState(false);
@@ -42,14 +46,6 @@ export function AuthForm({ mode, next, role, switchHref, callbackError, accountD
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const professionalFieldsRef = useRef<HTMLDivElement>(null);
   const isSignup = mode === "signup";
-
-  const passwordRules = [
-    ["10+ caracteres", password.length >= 10],
-    ["Letra maiúscula", /[A-Z]/.test(password)],
-    ["Letra minúscula", /[a-z]/.test(password)],
-    ["Número", /[0-9]/.test(password)],
-    ["Caractere especial", /[^A-Za-z0-9]/.test(password)],
-  ] as const;
 
   useLayoutEffect(() => {
     if (!professionalFieldsRef.current || selectedRole !== "personal") return;
@@ -84,6 +80,7 @@ export function AuthForm({ mode, next, role, switchHref, callbackError, accountD
         <input type="hidden" name="next" value={next} />
 
         {accountDeleted && <div role="status" className="flex items-center gap-3 rounded-xl border border-forest/15 bg-forest/5 p-4 text-sm text-forest"><CheckCircle2 size={18} /> Conta excluída com sucesso.</div>}
+        {passwordChanged && <div role="status" className="flex items-center gap-3 rounded-xl border border-forest/15 bg-forest/5 p-4 text-sm text-forest"><CheckCircle2 size={18} /> Senha atualizada. Entre novamente para continuar.</div>}
 
         {isSignup && (
           <label>
@@ -104,22 +101,45 @@ export function AuthForm({ mode, next, role, switchHref, callbackError, accountD
         )}
 
         <label>
-          <span className="field-label">E-mail</span>
+          <span className="field-label">{isSignup ? "E-mail" : "E-mail ou telefone"}</span>
           <span className="relative block">
-            <Mail className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-forest/40" size={18} />
+            {isSignup
+              ? <Mail className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-forest/40" size={18} />
+              : <AtSign className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-forest/40" size={18} />}
             <input
               className="field pl-12"
-              type="email"
-              name="email"
-              autoComplete="email"
-              inputMode="email"
-              placeholder="voce@exemplo.com"
-              aria-invalid={Boolean(state.errors?.email)}
+              type={isSignup ? "email" : "text"}
+              name={isSignup ? "email" : "identificador"}
+              autoComplete={isSignup ? "email" : "username"}
+              inputMode={isSignup ? "email" : undefined}
+              placeholder={isSignup ? "voce@exemplo.com" : "voce@exemplo.com ou (42) 99999-9999"}
+              aria-invalid={Boolean(isSignup ? state.errors?.email : state.errors?.identificador)}
               required
             />
           </span>
-          <FieldError messages={state.errors?.email} />
+          <FieldError messages={isSignup ? state.errors?.email : state.errors?.identificador} />
         </label>
+
+        {isSignup && (
+          <label>
+            <span className="field-label">Telefone com DDD</span>
+            <span className="relative block">
+              <Phone className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-forest/40" size={18} />
+              <input
+                className="field pl-12"
+                type="tel"
+                name="telefone"
+                autoComplete="tel"
+                inputMode="tel"
+                placeholder="(42) 99999-9999"
+                aria-invalid={Boolean(state.errors?.telefone)}
+                required
+              />
+            </span>
+            <span className="mt-2 block text-xs leading-5 text-forest/45">Você também poderá usar este número para entrar.</span>
+            <FieldError messages={state.errors?.telefone} />
+          </label>
+        )}
 
         <label>
           <span className="field-label">Senha</span>
@@ -147,18 +167,27 @@ export function AuthForm({ mode, next, role, switchHref, callbackError, accountD
           </span>
           {isSignup && (
             <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3" aria-label="Requisitos da senha">
-              {passwordRules.map(([label, valid]) => (
+              {passwordRules.map(({ label, test }) => {
+                const valid = test(password);
+                return (
                 <span key={label} className={`flex items-center gap-1.5 text-[0.68rem] font-medium transition ${valid ? "text-forest" : "text-forest/38"}`}>
                   <span className={`grid size-4 place-items-center rounded-full transition ${valid ? "bg-forest text-white" : "border border-forest/20"}`}>
                     {valid && <Check size={10} strokeWidth={3} />}
                   </span>
                   {label}
                 </span>
-              ))}
+                );
+              })}
             </div>
           )}
           <FieldError messages={state.errors?.password} />
         </label>
+
+        {!isSignup && (
+          <Link href={`/login?modo=recuperar${next ? `&next=${encodeURIComponent(next)}` : ""}`} className="-mt-2 w-fit text-xs font-semibold text-orange-dark underline decoration-orange/35 underline-offset-4 transition hover:decoration-orange">
+            Esqueci minha senha
+          </Link>
+        )}
 
         {isSignup && (
           <label>

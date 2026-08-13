@@ -5,6 +5,7 @@ import { ArrowLeft, Check, LogOut, MapPin, ShieldCheck, UserRound } from "lucide
 
 import { signOutAndCreateAccountAction } from "@/app/login/actions";
 import { AuthForm } from "@/app/login/auth-form";
+import { RecoveryForm } from "@/app/login/recovery-form";
 import { BrandPlaceholder } from "@/components/site-shell";
 import { getCurrentProfile } from "@/lib/auth";
 
@@ -27,7 +28,8 @@ function safeNext(value: string | undefined) {
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const query = await searchParams;
-  const mode = first(query.modo) === "criar" ? "signup" : "login";
+  const requestedMode = first(query.modo);
+  const mode = requestedMode === "criar" ? "signup" : requestedMode === "recuperar" ? "recovery" : "login";
   const role = first(query.tipo) === "personal" ? "personal" : "aluno";
   const next = safeNext(first(query.next));
   const profile = await getCurrentProfile();
@@ -105,21 +107,30 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             </div>
             <p className="eyebrow mt-6">Acesso seguro</p>
             <h2 className="font-display mt-3 text-4xl font-medium tracking-[-0.035em] sm:text-5xl">
-              {mode === "signup" ? "Crie seu espaço." : "Bom ter você de volta."}
+              {mode === "signup" ? "Crie seu espaço." : mode === "recovery" ? "Recupere seu acesso." : "Bom ter você de volta."}
             </h2>
             <p className="mt-3 text-sm leading-6 text-forest/55">
-              {mode === "signup" ? "Leva menos de um minuto. Depois você completa o que realmente importa." : "Entre para continuar de onde parou."}
+              {mode === "signup"
+                ? "Leva menos de um minuto. Depois você completa o que realmente importa."
+                : mode === "recovery"
+                  ? "Informe seu e-mail ou telefone. O link seguro será enviado para o e-mail cadastrado."
+                  : "Entre com seu e-mail ou telefone para continuar de onde parou."}
             </p>
           </div>
 
-          <AuthForm
-            mode={mode}
-            next={next}
-            role={role}
-            switchHref={switchHref}
-            callbackError={first(query.erro) === "confirmacao"}
-            accountDeleted={first(query.conta) === "excluida"}
-          />
+          {mode === "recovery"
+            ? <RecoveryForm next={next} expiredLink={first(query.erro) === "link-expirado"} />
+            : (
+              <AuthForm
+                mode={mode}
+                next={next}
+                role={role}
+                switchHref={switchHref}
+                callbackError={first(query.erro) === "confirmacao"}
+                accountDeleted={first(query.conta) === "excluida"}
+                passwordChanged={first(query.senha) === "alterada"}
+              />
+            )}
         </div>
 
         <p className="pb-2 text-center text-xs leading-5 text-forest/40">

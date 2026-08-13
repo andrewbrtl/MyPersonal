@@ -9,7 +9,7 @@ import {
   isWebsiteUrl,
   normalizeSocialInput,
   normalizeWebsiteInput,
-  onlyPhoneDigits,
+  normalizeBrazilianPhone,
 } from "@/lib/contact";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -26,8 +26,8 @@ const optionalSocialUrl = (network: "instagram" | "facebook" | "tiktok" | "youtu
 
 const profileSchema = z.object({
   nome: z.string().trim().min(2, "Informe seu nome profissional.").max(120),
-  telefone: z.string().regex(/^\d{10,13}$/, "Informe um telefone com DDD."),
-  whatsapp: z.string().refine((value) => !value || /^\d{10,13}$/.test(value), "Informe um WhatsApp com DDD."),
+  telefone: z.string().regex(/^\d{10,11}$/, "Informe um telefone com DDD."),
+  whatsapp: z.string().refine((value) => !value || /^\d{10,11}$/.test(value), "Informe um WhatsApp com DDD."),
   cref: z.string().trim().toUpperCase().regex(/^\d{4,8}-[A-Z]\/([A-Z]{2})$/, "Use o formato 012345-G/PR."),
   bairro: z.string().trim().min(2, "Informe o bairro principal.").max(80),
   bio: z.string().trim().min(40, "Conte um pouco mais sobre seu trabalho (mínimo de 40 caracteres).").max(1200),
@@ -48,8 +48,8 @@ export async function saveProfessionalProfile(_state: ProfileState, formData: Fo
   const profile = await requireRole("personal", "/cadastro");
   const parsed = profileSchema.safeParse({
     nome: formData.get("nome"),
-    telefone: onlyPhoneDigits(String(formData.get("telefone") ?? "")),
-    whatsapp: onlyPhoneDigits(String(formData.get("whatsapp") ?? "")),
+    telefone: normalizeBrazilianPhone(String(formData.get("telefone") ?? "")),
+    whatsapp: normalizeBrazilianPhone(String(formData.get("whatsapp") ?? "")),
     cref: formData.get("cref"),
     bairro: formData.get("bairro"),
     bio: formData.get("bio"),
@@ -101,6 +101,7 @@ export async function saveProfessionalProfile(_state: ProfileState, formData: Fo
     ...(avatarUrl !== undefined ? { avatar_url: avatarUrl } : {}),
   };
   const { error: profileError } = await admin.from("profiles").update(profileUpdate).eq("id", profile.id);
+  if (profileError?.code === "23505") return { errors: { telefone: ["Este telefone já está vinculado a outra conta."] } };
   if (profileError) return { message: "Não foi possível salvar seus dados básicos." };
 
   const horarios = parsed.data.horarios
