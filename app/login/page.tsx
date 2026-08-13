@@ -118,6 +118,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             role={role}
             switchHref={switchHref}
             callbackError={first(query.erro) === "confirmacao"}
+            accountDeleted={first(query.conta) === "excluida"}
           />
         </div>
 

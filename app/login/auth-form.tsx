@@ -29,9 +29,10 @@ type AuthFormProps = {
   role: "aluno" | "personal";
   switchHref: string;
   callbackError?: boolean;
+  accountDeleted?: boolean;
 };
 
-export function AuthForm({ mode, next, role, switchHref, callbackError }: AuthFormProps) {
+export function AuthForm({ mode, next, role, switchHref, callbackError, accountDeleted }: AuthFormProps) {
   const action = mode === "signup" ? signUpAction : loginAction;
   const [state, formAction, pending] = useActionState(action, initialState);
   const [showPassword, setShowPassword] = useState(false);
@@ -81,6 +82,8 @@ export function AuthForm({ mode, next, role, switchHref, callbackError }: AuthFo
 
       <form id="formulario" data-motion-list action={formAction} className="mt-7 grid gap-5">
         <input type="hidden" name="next" value={next} />
+
+        {accountDeleted && <div role="status" className="flex items-center gap-3 rounded-xl border border-forest/15 bg-forest/5 p-4 text-sm text-forest"><CheckCircle2 size={18} /> Conta excluída com sucesso.</div>}
 
         {isSignup && (
           <label>

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import { Bookmark, ChevronDown, Dumbbell, LogOut, Plus, Search, Settings, UserRound } from "lucide-react";
+import { Bookmark, ChevronDown, Dumbbell, LogOut, Plus, Search, Settings, UserCog, UserRound } from "lucide-react";
 
 import { signOutAction, signOutAndCreateAccountAction } from "@/app/login/actions";
 
@@ -87,6 +87,7 @@ export function AccountMenu({ profile }: AccountMenuProps) {
                 <MenuLink href="/favoritos" icon={<Bookmark size={16} />}>Meus perfis salvos</MenuLink>
               </>
             )}
+            <MenuLink href="/conta" icon={<UserCog size={16} />}>Configurações da conta</MenuLink>
           </div>
 
           <div className="border-t border-forest/10 p-2">

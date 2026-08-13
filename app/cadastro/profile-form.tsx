@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { ArrowRight, AtSign, Camera, CheckCircle2, Globe2, MessageCircle, Phone, Save, UploadCloud, UsersRound, Video } from "lucide-react";
+import { ArrowRight, AtSign, Camera, CheckCircle2, Globe2, MessageCircle, Phone, Save, UploadCloud, UsersRound, Video, X } from "lucide-react";
 
 import { saveProfessionalProfile, type ProfileState } from "@/app/cadastro/actions";
 
@@ -32,6 +32,7 @@ const initialState: ProfileState = {};
 export function ProfileForm({ modalities, initialProfile }: { modalities: Modality[]; initialProfile: InitialProfile }) {
   const [state, action, pending] = useActionState(saveProfessionalProfile, initialState);
   const [preview, setPreview] = useState<string | null>(initialProfile.avatarUrl);
+  const [removeAvatar, setRemoveAvatar] = useState(false);
 
   useEffect(() => () => {
     if (preview?.startsWith("blob:")) URL.revokeObjectURL(preview);
@@ -46,27 +47,33 @@ export function ProfileForm({ modalities, initialProfile }: { modalities: Modali
         </div>
 
         <div className="mt-7 grid gap-7 md:grid-cols-[180px_1fr]">
-          <label className="group cursor-pointer">
-            <span className="field-label">Foto profissional</span>
-            <span
-              className="relative grid aspect-square place-items-center overflow-hidden rounded-2xl border border-dashed border-forest/30 bg-sand text-center transition group-hover:border-orange"
-              style={preview ? { backgroundImage: `url(${preview})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
-            >
-              {!preview && <span className="grid justify-items-center gap-2 px-4 text-xs text-forest/50"><Camera size={28} /><strong className="text-forest">Escolher foto</strong>JPG, PNG ou WebP</span>}
-              {preview && <span className="absolute inset-x-3 bottom-3 flex items-center justify-center gap-2 rounded-lg bg-forest/85 px-3 py-2 text-xs font-semibold text-white"><UploadCloud size={14} /> Trocar foto</span>}
-            </span>
-            <input
-              className="sr-only"
-              type="file"
-              name="avatar"
-              accept="image/jpeg,image/png,image/webp"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (file) setPreview(URL.createObjectURL(file));
-              }}
-            />
+          <div>
+            <span className="field-label">Foto profissional <span className="normal-case tracking-normal text-forest/38">(opcional)</span></span>
+            <label className="group block cursor-pointer">
+              <span
+                className="relative grid aspect-square place-items-center overflow-hidden rounded-2xl border border-dashed border-forest/30 bg-sand text-center transition group-hover:border-orange"
+                style={preview ? { backgroundImage: `url(${preview})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
+              >
+                {!preview && <span className="grid justify-items-center gap-2 px-4 text-xs text-forest/50"><Camera size={28} /><strong className="text-forest">Adicionar foto</strong>Suas iniciais aparecem se deixar vazio</span>}
+                {preview && <span className="absolute inset-x-3 bottom-3 flex items-center justify-center gap-2 rounded-lg bg-forest/85 px-3 py-2 text-xs font-semibold text-white"><UploadCloud size={14} /> Trocar foto</span>}
+              </span>
+              <input
+                className="sr-only"
+                type="file"
+                name="avatar"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) {
+                    setPreview(URL.createObjectURL(file));
+                    setRemoveAvatar(false);
+                  }
+                }}
+              />
+            </label>
+            {initialProfile.avatarUrl && <label className="mt-3 flex cursor-pointer items-center gap-2 text-xs font-semibold text-forest/55"><input type="checkbox" name="removerAvatar" checked={removeAvatar} onChange={(event) => { setRemoveAvatar(event.target.checked); setPreview(event.target.checked ? null : initialProfile.avatarUrl); }} /><X size={14} /> Remover foto atual</label>}
             <FieldError messages={state.errors?.avatar} />
-          </label>
+          </div>
 
           <div data-motion-list className="grid gap-5 sm:grid-cols-2">
             <Field label="Nome profissional" name="nome" defaultValue={initialProfile.nome} error={state.errors?.nome} className="sm:col-span-2" required />

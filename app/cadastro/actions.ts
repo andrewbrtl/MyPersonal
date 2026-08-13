@@ -70,28 +70,26 @@ export async function saveProfessionalProfile(_state: ProfileState, formData: Fo
 
   const admin = createAdminClient();
   const avatar = formData.get("avatar");
-  if (avatar instanceof File && avatar.size > 0) {
-    if (!avatar.type.match(/^image\/(jpeg|png|webp)$/)) {
+  const removeAvatar = formData.get("removerAvatar") === "on";
+  const avatarFile = avatar instanceof File && avatar.size > 0 && !removeAvatar ? avatar : null;
+  if (avatarFile) {
+    if (!avatarFile.type.match(/^image\/(jpeg|png|webp)$/)) {
       return { errors: { avatar: ["Envie uma imagem JPG, PNG ou WebP."] } };
     }
-    if (avatar.size > 5 * 1024 * 1024) {
+    if (avatarFile.size > 5 * 1024 * 1024) {
       return { errors: { avatar: ["A imagem deve ter no máximo 5 MB."] } };
     }
   }
 
   const { data: currentProfile } = await admin.from("profiles").select("avatar_url").eq("id", profile.id).single();
-  if (!(avatar instanceof File && avatar.size > 0) && !currentProfile?.avatar_url) {
-    return { errors: { avatar: ["Escolha uma foto profissional para publicar o perfil."] } };
-  }
+  let avatarUrl: string | null | undefined = removeAvatar ? null : undefined;
 
-  let avatarUrl: string | undefined;
-
-  if (avatar instanceof File && avatar.size > 0) {
-    const extension = avatar.type.split("/")[1].replace("jpeg", "jpg");
+  if (avatarFile) {
+    const extension = avatarFile.type.split("/")[1].replace("jpeg", "jpg");
     const storagePath = `${profile.id}/avatar-${Date.now()}.${extension}`;
     const { error: uploadError } = await admin.storage
       .from("profile-images")
-      .upload(storagePath, Buffer.from(await avatar.arrayBuffer()), { contentType: avatar.type, upsert: false });
+      .upload(storagePath, Buffer.from(await avatarFile.arrayBuffer()), { contentType: avatarFile.type, upsert: false });
 
     if (uploadError) return { message: "Não foi possível enviar a imagem. Tente novamente." };
     avatarUrl = admin.storage.from("profile-images").getPublicUrl(storagePath).data.publicUrl;
@@ -100,7 +98,7 @@ export async function saveProfessionalProfile(_state: ProfileState, formData: Fo
   const profileUpdate = {
     nome: parsed.data.nome,
     telefone: parsed.data.telefone,
-    ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
+    ...(avatarUrl !== undefined ? { avatar_url: avatarUrl } : {}),
   };
   const { error: profileError } = await admin.from("profiles").update(profileUpdate).eq("id", profile.id);
   if (profileError) return { message: "Não foi possível salvar seus dados básicos." };
@@ -165,7 +163,7 @@ export async function saveProfessionalProfile(_state: ProfileState, formData: Fo
     }
   }
 
-  if (avatarUrl && currentProfile?.avatar_url && currentProfile.avatar_url !== avatarUrl) {
+  if (avatarUrl !== undefined && currentProfile?.avatar_url && currentProfile.avatar_url !== avatarUrl) {
     const marker = "/profile-images/";
     const markerIndex = currentProfile.avatar_url.indexOf(marker);
     if (markerIndex >= 0) {
