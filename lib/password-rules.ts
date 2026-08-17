@@ -1,5 +1,5 @@
 export const passwordRules = [
-  { label: "10+ caracteres", test: (value: string) => value.length >= 10 },
+  { label: "10–128 caracteres", test: (value: string) => value.length >= 10 && value.length <= 128 },
   { label: "Letra maiúscula", test: (value: string) => /[A-Z]/.test(value) },
   { label: "Letra minúscula", test: (value: string) => /[a-z]/.test(value) },
   { label: "Número", test: (value: string) => /[0-9]/.test(value) },

@@ -4,6 +4,7 @@ import { cache } from "react";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
+import { safeInternalPath } from "@/lib/input-validation";
 import type { Database } from "@/types/database.types";
 
 type UserRole = Database["public"]["Enums"]["user_role"];
@@ -32,7 +33,7 @@ export const getCurrentProfile = cache(async () => {
 
 export async function requireUser(returnTo: string) {
   const profile = await getCurrentProfile();
-  if (!profile) redirect(`/login?next=${encodeURIComponent(returnTo)}`);
+  if (!profile) redirect(`/login?next=${encodeURIComponent(safeInternalPath(returnTo, "/"))}`);
   return profile;
 }
 

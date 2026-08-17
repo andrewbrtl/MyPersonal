@@ -839,6 +839,31 @@ export type Database = {
           total_avaliacoes: number
         }[]
       }
+      salvar_perfil_profissional: {
+        Args: {
+          alterar_avatar: boolean
+          nova_avatar_url: string | null
+          nova_bio: string
+          nova_formacao: string
+          novas_modalidades: string[]
+          novo_atendimento: Database["public"]["Enums"]["modalidade_local"]
+          novo_bairro: string
+          novo_cref: string
+          novo_facebook_url: string | null
+          novo_instagram_url: string | null
+          novo_nome: string
+          novo_preco: number
+          novo_telefone: string
+          novo_tiktok_url: string | null
+          novo_website_url: string | null
+          novo_whatsapp: string | null
+          novo_youtube_url: string | null
+          novos_anos_experiencia: number
+          novos_horarios: string[]
+          perfil_id: string
+        }
+        Returns: undefined
+      }
       disablelongtransactions: { Args: never; Returns: string }
       dropgeometrycolumn:
         | {

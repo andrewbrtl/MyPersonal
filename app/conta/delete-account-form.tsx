@@ -5,6 +5,7 @@ import { gsap } from "gsap";
 import { AlertTriangle, LockKeyhole, Trash2, X } from "lucide-react";
 
 import { deleteAccountAction, type DeleteAccountState } from "@/app/conta/actions";
+import { INPUT_LIMITS } from "@/lib/input-validation";
 
 const initialState: DeleteAccountState = {};
 
@@ -48,8 +49,8 @@ export function DeleteAccountForm() {
         </label>
         <FieldError messages={state.errors?.understood} />
 
-        <label><span className="field-label text-red-900">Digite EXCLUIR para confirmar</span><input className="field bg-white uppercase" name="confirmation" value={confirmation} onChange={(event) => setConfirmation(event.target.value.toUpperCase())} autoComplete="off" /><FieldError messages={state.errors?.confirmation} /></label>
-        <label><span className="field-label text-red-900">Senha atual</span><span className="relative block"><LockKeyhole className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-red-900/45" size={17} /><input className="field bg-white pl-11" name="password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" /></span><FieldError messages={state.errors?.password} /></label>
+        <label><span className="field-label text-red-900">Digite EXCLUIR para confirmar</span><input className="field bg-white uppercase" name="confirmation" maxLength={7} value={confirmation} onChange={(event) => setConfirmation(event.target.value.toUpperCase())} autoComplete="off" required /><FieldError messages={state.errors?.confirmation} /></label>
+        <label><span className="field-label text-red-900">Senha atual</span><span className="relative block"><LockKeyhole className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-red-900/45" size={17} /><input className="field bg-white pl-11" name="password" type="password" maxLength={INPUT_LIMITS.password} value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required /></span><FieldError messages={state.errors?.password} /></label>
 
         {state.message && <p role="status" className="rounded-xl border border-red-800/20 bg-red-50 p-4 text-sm text-red-900">{state.message}</p>}
         <button type="submit" disabled={!ready || pending} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-red-800 px-5 font-semibold text-white transition hover:bg-red-950 disabled:cursor-not-allowed disabled:opacity-40">

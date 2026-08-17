@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { requireUser } from "@/lib/auth";
 import { isValidBrazilianPhone, normalizeBrazilianPhone } from "@/lib/contact";
+import { INPUT_LIMITS } from "@/lib/input-validation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -24,14 +25,17 @@ export type PhoneState = {
 };
 
 const deleteAccountSchema = z.object({
-  password: z.string().min(1, "Digite sua senha atual."),
+  password: z.string().min(1, "Digite sua senha atual.").max(INPUT_LIMITS.password, "A senha informada é muito longa."),
   confirmation: z.literal("EXCLUIR", { error: "Digite EXCLUIR exatamente como mostrado." }),
   understood: z.literal("on", { error: "Confirme que entende que a exclusão é permanente." }),
 });
 
 const phoneSchema = z.object({
-  telefone: z.string().transform(normalizeBrazilianPhone).refine(isValidBrazilianPhone, "Digite um telefone com DDD válido."),
-  password: z.string().min(1, "Digite sua senha atual."),
+  telefone: z.string()
+    .max(INPUT_LIMITS.phoneFormatted, "O telefone está muito longo.")
+    .transform(normalizeBrazilianPhone)
+    .refine(isValidBrazilianPhone, "Digite um telefone com DDD válido."),
+  password: z.string().min(1, "Digite sua senha atual.").max(INPUT_LIMITS.password, "A senha informada é muito longa."),
 });
 
 export async function updateLoginPhoneAction(
@@ -55,12 +59,13 @@ export async function updateLoginPhoneAction(
   }
 
   const admin = createAdminClient();
-  const { data: existingPhone } = await admin
+  const { data: existingPhone, error: phoneLookupError } = await admin
     .from("profiles")
     .select("id")
     .eq("telefone", parsed.data.telefone)
     .neq("id", profile.id)
     .maybeSingle();
+  if (phoneLookupError) return { message: "Não foi possível validar o telefone agora. Tente novamente." };
   if (existingPhone) return { errors: { telefone: ["Este telefone já está vinculado a outra conta."] } };
 
   const { error } = await admin.from("profiles").update({ telefone: parsed.data.telefone }).eq("id", profile.id);

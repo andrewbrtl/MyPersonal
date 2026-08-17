@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import { CheckCircle2, Eye, EyeOff, Phone, Save } from "lucide-react";
 
 import { updateLoginPhoneAction, type PhoneState } from "@/app/conta/actions";
+import { INPUT_LIMITS } from "@/lib/input-validation";
 
 const initialState: PhoneState = {};
 
@@ -17,7 +18,7 @@ export function PhoneForm({ currentPhone }: { currentPhone: string }) {
         <span className="field-label">Telefone com DDD</span>
         <span className="relative block">
           <Phone className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-forest/40" size={18} />
-          <input className="field pl-12" type="tel" name="telefone" autoComplete="tel" inputMode="tel" defaultValue={currentPhone} placeholder="(42) 99999-9999" aria-invalid={Boolean(state.errors?.telefone)} required />
+          <input className="field pl-12" type="tel" name="telefone" autoComplete="tel" inputMode="tel" maxLength={INPUT_LIMITS.phoneFormatted} pattern="[0-9()+ -]{10,20}" defaultValue={currentPhone} placeholder="(42) 99999-9999" aria-invalid={Boolean(state.errors?.telefone)} required />
         </span>
         <FieldError messages={state.errors?.telefone} />
       </label>
@@ -25,7 +26,7 @@ export function PhoneForm({ currentPhone }: { currentPhone: string }) {
       <label>
         <span className="field-label">Senha atual</span>
         <span className="relative block">
-          <input className="field pr-12" type={showPassword ? "text" : "password"} name="password" autoComplete="current-password" aria-invalid={Boolean(state.errors?.password)} required />
+          <input className="field pr-12" type={showPassword ? "text" : "password"} name="password" maxLength={INPUT_LIMITS.password} autoComplete="current-password" aria-invalid={Boolean(state.errors?.password)} required />
           <button type="button" onClick={() => setShowPassword((current) => !current)} className="absolute right-2 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-lg text-forest/45 transition hover:bg-forest/5 hover:text-forest focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange" aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}>
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>

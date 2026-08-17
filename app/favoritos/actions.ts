@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { getCurrentProfile } from "@/lib/auth";
+import { safeInternalPath } from "@/lib/input-validation";
 import { createClient } from "@/lib/supabase/server";
 
 export type FavoriteState = {
@@ -25,7 +26,7 @@ export async function toggleFavoriteAction(
   if (!parsedId.success) return { ...state, message: "Perfil inválido." };
 
   const profile = await getCurrentProfile();
-  const safeReturnTo = returnTo.startsWith("/") && !returnTo.startsWith("//") ? returnTo : "/buscar";
+  const safeReturnTo = safeInternalPath(returnTo, "/buscar");
   if (!profile) redirect(`/login?next=${encodeURIComponent(safeReturnTo)}`);
   if (profile.role !== "aluno") return { ...state, message: "Favoritos estão disponíveis para contas de aluno." };
 

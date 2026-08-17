@@ -5,6 +5,7 @@ import { useActionState } from "react";
 import { ArrowLeft, ArrowRight, AtSign, CheckCircle2 } from "lucide-react";
 
 import { requestPasswordResetAction, type AuthState } from "@/app/login/actions";
+import { INPUT_LIMITS } from "@/lib/input-validation";
 
 const initialState: AuthState = {};
 
@@ -29,6 +30,7 @@ export function RecoveryForm({ next, expiredLink }: { next: string; expiredLink?
               className="field pl-12"
               type="text"
               name="identificador"
+              maxLength={INPUT_LIMITS.loginIdentifier}
               autoComplete="username"
               placeholder="voce@exemplo.com ou (42) 99999-9999"
               aria-invalid={Boolean(state.errors?.identificador)}

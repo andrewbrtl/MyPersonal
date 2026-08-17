@@ -3,11 +3,17 @@ import "server-only";
 import { z } from "zod";
 
 import { isValidBrazilianPhone, normalizeBrazilianPhone } from "@/lib/contact";
+import { INPUT_LIMITS } from "@/lib/input-validation";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-const emailSchema = z.string().trim().toLowerCase().email();
+export const emailSchema = z.string()
+  .trim()
+  .toLowerCase()
+  .max(INPUT_LIMITS.email, "O e-mail está muito longo.")
+  .email("Digite um e-mail válido.");
 
 export function validateLoginIdentifier(value: string) {
+  if (value.length > INPUT_LIMITS.loginIdentifier) return false;
   const identifier = value.trim();
   if (emailSchema.safeParse(identifier).success || isValidBrazilianPhone(identifier)) return true;
   return false;

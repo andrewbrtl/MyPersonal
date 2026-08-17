@@ -1,3 +1,5 @@
+import { INPUT_LIMITS } from "@/lib/input-validation";
+
 export type SocialNetwork = "instagram" | "facebook" | "tiktok" | "youtube";
 
 const socialConfig: Record<SocialNetwork, { baseUrl: string; hosts: string[] }> = {
@@ -53,8 +55,12 @@ export function normalizeSocialInput(value: string, network: SocialNetwork) {
     const url = new URL(candidate);
     const hostname = url.hostname.toLowerCase().replace(/^www\./, "");
     const allowed = config.hosts.some((host) => hostname === host || hostname.endsWith(`.${host}`));
-    if (!allowed || !["http:", "https:"].includes(url.protocol)) return trimmed;
+    if (!allowed || !["http:", "https:"].includes(url.protocol) || url.username || url.password || url.port) return trimmed;
     url.protocol = "https:";
+    url.username = "";
+    url.password = "";
+    url.search = "";
+    url.hash = "";
     return url.toString().replace(/\/$/, "");
   } catch {
     return trimmed;
@@ -67,7 +73,11 @@ export function normalizeWebsiteInput(value: string) {
   const candidate = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
   try {
     const url = new URL(candidate);
-    if (!["http:", "https:"].includes(url.protocol) || !url.hostname.includes(".")) return trimmed;
+    if (!["http:", "https:"].includes(url.protocol) || !isPublicHostname(url.hostname) || url.username || url.password || url.port) return trimmed;
+    url.protocol = "https:";
+    url.username = "";
+    url.password = "";
+    url.hash = "";
     return url.toString().replace(/\/$/, "");
   } catch {
     return trimmed;
@@ -76,11 +86,18 @@ export function normalizeWebsiteInput(value: string) {
 
 export function isSocialUrl(value: string, network: SocialNetwork) {
   if (!value) return true;
+  if (value.length > INPUT_LIMITS.url) return false;
   const config = socialConfig[network];
   try {
     const url = new URL(value);
     const hostname = url.hostname.toLowerCase().replace(/^www\./, "");
-    return url.protocol === "https:" && config.hosts.some((host) => hostname === host || hostname.endsWith(`.${host}`));
+    return url.protocol === "https:"
+      && !url.username
+      && !url.password
+      && !url.port
+      && !url.search
+      && !url.hash
+      && config.hosts.some((host) => hostname === host || hostname.endsWith(`.${host}`));
   } catch {
     return false;
   }
@@ -88,10 +105,23 @@ export function isSocialUrl(value: string, network: SocialNetwork) {
 
 export function isWebsiteUrl(value: string) {
   if (!value) return true;
+  if (value.length > INPUT_LIMITS.url) return false;
   try {
     const url = new URL(value);
-    return ["http:", "https:"].includes(url.protocol) && url.hostname.includes(".");
+    return url.protocol === "https:"
+      && !url.username
+      && !url.password
+      && !url.port
+      && !url.hash
+      && isPublicHostname(url.hostname);
   } catch {
     return false;
   }
+}
+
+function isPublicHostname(hostname: string) {
+  const normalized = hostname.toLowerCase().replace(/\.$/, "");
+  if (!normalized.includes(".") || normalized === "localhost" || normalized.includes(":")) return false;
+  if (/^\d{1,3}(?:\.\d{1,3}){3}$/.test(normalized)) return false;
+  return normalized.split(".").every((label) => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i.test(label));
 }

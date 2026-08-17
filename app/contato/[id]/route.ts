@@ -1,12 +1,18 @@
 import { z } from "zod";
 
-import { onlyPhoneDigits, toWhatsAppNumber } from "@/lib/contact";
+import { isValidBrazilianPhone, normalizeBrazilianPhone, toWhatsAppNumber } from "@/lib/contact";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 const idSchema = z.string().uuid();
 
-export async function GET(request: Request, context: RouteContext<"/contato/[id]">) {
+export async function GET() {
+  return new Response("Use POST para iniciar um contato.", { status: 405, headers: { Allow: "POST" } });
+}
+
+export async function POST(request: Request, context: RouteContext<"/contato/[id]">) {
+  if (!isSameOriginRequest(request)) return new Response("Origem não permitida.", { status: 403 });
+
   const { id } = await context.params;
   const url = new URL(request.url);
   const channel = url.searchParams.get("canal");
@@ -25,8 +31,8 @@ export async function GET(request: Request, context: RouteContext<"/contato/[id]
 
   const { data: publicProfile } = await admin.from("profiles").select("telefone").eq("id", id).maybeSingle();
   const phone = channel === "whatsapp" ? professional.whatsapp : publicProfile?.telefone;
-  const digits = onlyPhoneDigits(phone ?? "");
-  if (digits.length < 10) {
+  const digits = normalizeBrazilianPhone(phone);
+  if (!isValidBrazilianPhone(digits)) {
     return Response.redirect(new URL(`/profissionais/${id}?contato=indisponivel`, url.origin), 303);
   }
 
@@ -50,5 +56,25 @@ export async function GET(request: Request, context: RouteContext<"/contato/[id]
     return Response.redirect(`https://wa.me/${toWhatsAppNumber(digits)}?text=${message}`, 303);
   }
 
-  return new Response(null, { status: 302, headers: { Location: `tel:+${toWhatsAppNumber(digits)}` } });
+  return new Response(null, { status: 303, headers: { Location: `tel:+${toWhatsAppNumber(digits)}` } });
+}
+
+function isSameOriginRequest(request: Request) {
+  const requestOrigin = new URL(request.url).origin;
+  const suppliedOrigin = request.headers.get("origin");
+  if (suppliedOrigin) {
+    try {
+      return new URL(suppliedOrigin).origin === requestOrigin;
+    } catch {
+      return false;
+    }
+  }
+
+  const referer = request.headers.get("referer");
+  if (!referer) return false;
+  try {
+    return new URL(referer).origin === requestOrigin;
+  } catch {
+    return false;
+  }
 }

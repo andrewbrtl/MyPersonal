@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
 
 import { PASSWORD_RECOVERY_COOKIE, PASSWORD_RECOVERY_MAX_AGE } from "@/lib/password-recovery";
+import { safeInternalPath } from "@/lib/input-validation";
 import { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   const requestedNext = url.searchParams.get("next");
-  const next = requestedNext?.startsWith("/") && !requestedNext.startsWith("//") ? requestedNext : "/buscar";
+  const next = safeInternalPath(requestedNext, "/buscar");
 
-  if (code) {
+  if (code && code.length <= 4096 && !/[\u0000-\u001f\u007f]/u.test(code)) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {

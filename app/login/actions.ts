@@ -4,7 +4,13 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { isValidBrazilianPhone, normalizeBrazilianPhone } from "@/lib/contact";
-import { resolveLoginEmail, validateLoginIdentifier } from "@/lib/login-identifier";
+import {
+  INPUT_LIMITS,
+  isValidPersonName,
+  normalizeSingleLineText,
+  safeInternalPath,
+} from "@/lib/input-validation";
+import { emailSchema, resolveLoginEmail, validateLoginIdentifier } from "@/lib/login-identifier";
 import { strongPasswordSchema } from "@/lib/password-validation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -25,24 +31,30 @@ export type AuthState = {
 };
 
 const loginSchema = z.object({
-  identificador: z.string().trim().refine(validateLoginIdentifier, "Digite um e-mail ou telefone com DDD válido."),
-  password: z.string().min(1, "Digite sua senha."),
-  next: z.string().optional(),
+  identificador: z.string().max(INPUT_LIMITS.loginIdentifier).trim().refine(validateLoginIdentifier, "Digite um e-mail ou telefone com DDD válido."),
+  password: z.string().min(1, "Digite sua senha.").max(INPUT_LIMITS.password, "A senha informada é muito longa."),
+  next: z.string().max(INPUT_LIMITS.internalPath).optional(),
 });
 
 const recoverySchema = z.object({
-  identificador: z.string().trim().refine(validateLoginIdentifier, "Digite um e-mail ou telefone com DDD válido."),
+  identificador: z.string().max(INPUT_LIMITS.loginIdentifier).trim().refine(validateLoginIdentifier, "Digite um e-mail ou telefone com DDD válido."),
 });
 
 const signUpSchema = z.object({
-  nome: z.string().trim().min(2, "Digite seu nome completo.").max(80, "O nome está muito longo."),
-  email: z.string().trim().email("Digite um e-mail válido."),
-  telefone: z.string().transform(normalizeBrazilianPhone).refine(isValidBrazilianPhone, "Digite um telefone com DDD válido."),
+  nome: z.string()
+    .max(INPUT_LIMITS.signupName, "O nome está muito longo.")
+    .transform(normalizeSingleLineText)
+    .refine((value) => value.length >= 2 && isValidPersonName(value), "Digite um nome válido, sem símbolos ou marcação HTML."),
+  email: emailSchema,
+  telefone: z.string()
+    .max(INPUT_LIMITS.phoneFormatted, "O telefone está muito longo.")
+    .transform(normalizeBrazilianPhone)
+    .refine(isValidBrazilianPhone, "Digite um telefone com DDD válido."),
   password: strongPasswordSchema,
-  passwordConfirm: z.string().min(1, "Confirme sua senha."),
+  passwordConfirm: z.string().min(1, "Confirme sua senha.").max(INPUT_LIMITS.password, "A confirmação está muito longa."),
   role: z.enum(["aluno", "personal"], { error: "Escolha o tipo de conta." }),
-  cref: z.string().trim().toUpperCase().optional(),
-  next: z.string().optional(),
+  cref: z.string().max(INPUT_LIMITS.cref).trim().toUpperCase().optional(),
+  next: z.string().max(INPUT_LIMITS.internalPath).optional(),
 }).superRefine((data, context) => {
   if (data.password !== data.passwordConfirm) {
     context.addIssue({ code: "custom", path: ["passwordConfirm"], message: "As senhas não coincidem." });
@@ -53,13 +65,18 @@ const signUpSchema = z.object({
   }
 });
 
-function safeNext(value: string | undefined, fallback: string) {
-  return value?.startsWith("/") && !value.startsWith("//") ? value : fallback;
-}
-
 function getSiteUrl() {
-  return process.env.NEXT_PUBLIC_SITE_URL
+  const candidate = process.env.NEXT_PUBLIC_SITE_URL
     ?? (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000");
+  try {
+    const url = new URL(candidate);
+    if (url.protocol === "https:" || (url.protocol === "http:" && ["localhost", "127.0.0.1"].includes(url.hostname))) {
+      return url.origin;
+    }
+  } catch {
+    // A configuração inválida é tratada abaixo sem refletir seu conteúdo.
+  }
+  throw new Error("NEXT_PUBLIC_SITE_URL inválida.");
 }
 
 export async function loginAction(_state: AuthState, formData: FormData): Promise<AuthState> {
@@ -88,7 +105,7 @@ export async function loginAction(_state: AuthState, formData: FormData): Promis
     .eq("id", authData.user.id)
     .maybeSingle();
 
-  redirect(safeNext(parsed.data.next, profile?.role === "personal" ? "/painel" : "/buscar"));
+  redirect(safeInternalPath(parsed.data.next, profile?.role === "personal" ? "/painel" : "/buscar"));
 }
 
 export async function signUpAction(_state: AuthState, formData: FormData): Promise<AuthState> {
@@ -106,25 +123,27 @@ export async function signUpAction(_state: AuthState, formData: FormData): Promi
   if (!parsed.success) return { errors: parsed.error.flatten().fieldErrors };
 
   const admin = createAdminClient();
-  const { data: existingPhone } = await admin
+  const { data: existingPhone, error: phoneLookupError } = await admin
     .from("profiles")
     .select("id")
     .eq("telefone", parsed.data.telefone)
     .maybeSingle();
+  if (phoneLookupError) return { message: "Não foi possível validar os dados agora. Tente novamente." };
   if (existingPhone) return { errors: { telefone: ["Este telefone já está vinculado a outra conta."] } };
 
   if (parsed.data.role === "personal") {
-    const { data: existingCref } = await admin
+    const { data: existingCref, error: crefLookupError } = await admin
       .from("personais")
       .select("id")
       .eq("cref", parsed.data.cref ?? "")
       .maybeSingle();
+    if (crefLookupError) return { message: "Não foi possível validar os dados agora. Tente novamente." };
     if (existingCref) return { errors: { cref: ["Este CREF já está vinculado a outra conta."] } };
   }
 
   const supabase = await createClient();
   const fallback = parsed.data.role === "personal" ? "/cadastro" : "/buscar";
-  const next = safeNext(parsed.data.next, fallback);
+  const next = safeInternalPath(parsed.data.next, fallback);
   const siteUrl = getSiteUrl();
   const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
@@ -186,6 +205,7 @@ export async function signOutAndCreateAccountAction(formData: FormData) {
   await supabase.auth.signOut();
   const role = formData.get("tipo") === "personal" ? "personal" : "aluno";
   const next = typeof formData.get("next") === "string" ? String(formData.get("next")) : "";
-  const safeDestination = next.startsWith("/") && !next.startsWith("//") ? `&next=${encodeURIComponent(next)}` : "";
+  const validatedNext = safeInternalPath(next);
+  const safeDestination = validatedNext ? `&next=${encodeURIComponent(validatedNext)}` : "";
   redirect(`/login?modo=criar&tipo=${role}${safeDestination}`);
 }

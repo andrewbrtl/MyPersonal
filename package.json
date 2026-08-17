@@ -7,8 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test:security": "node --no-warnings --experimental-strip-types scripts/test-security.mjs",
     "verify:supabase": "node scripts/verify-supabase.mjs",
-    "smoke:auth": "node scripts/smoke-auth.mjs"
+    "smoke:auth": "node scripts/smoke-auth.mjs",
+    "smoke:security": "node scripts/smoke-security.mjs"
   },
   "dependencies": {
     "@fontsource-variable/figtree": "^5.3.0",

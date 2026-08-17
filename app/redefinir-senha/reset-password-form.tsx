@@ -5,6 +5,7 @@ import { ArrowRight, Check, Eye, EyeOff, LockKeyhole } from "lucide-react";
 
 import { resetPasswordAction, type ResetPasswordState } from "@/app/redefinir-senha/actions";
 import { passwordRules } from "@/lib/password-rules";
+import { INPUT_LIMITS } from "@/lib/input-validation";
 
 const initialState: ResetPasswordState = {};
 
@@ -87,6 +88,7 @@ function PasswordField({
           className="field px-12"
           type={show ? "text" : "password"}
           name={name}
+          maxLength={INPUT_LIMITS.password}
           value={value}
           onChange={(event) => onChange(event.target.value)}
           autoComplete="new-password"

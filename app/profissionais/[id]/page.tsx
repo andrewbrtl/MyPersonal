@@ -71,8 +71,8 @@ export default async function ProfessionalPage({ params }: PageProps<"/profissio
           <p className="mt-4 text-sm text-forest/50">A partir de</p>
           <p className="mt-1 text-3xl font-semibold">{professional.preco > 0 ? <>R$ {professional.preco.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} <span className="text-sm font-normal text-forest/50">{professional.unidade}</span></> : "Sob consulta"}</p>
           <div className="mt-7 grid gap-3">
-            {professional.whatsapp && <a href={`/contato/${professional.id}?canal=whatsapp`} rel="nofollow" className="button-accent min-h-13 w-full"><MessageCircle size={18} /> Chamar no WhatsApp</a>}
-            {professional.telefone && <a href={`/contato/${professional.id}?canal=telefone`} rel="nofollow" className="button-secondary min-h-12 w-full"><Phone size={18} /> {formatPhone(professional.telefone)}</a>}
+            {professional.whatsapp && <form action={`/contato/${professional.id}?canal=whatsapp`} method="post"><button type="submit" className="button-accent min-h-13 w-full"><MessageCircle size={18} /> Chamar no WhatsApp</button></form>}
+            {professional.telefone && <form action={`/contato/${professional.id}?canal=telefone`} method="post"><button type="submit" className="button-secondary min-h-12 w-full"><Phone size={18} /> {formatPhone(professional.telefone)}</button></form>}
             {!professional.whatsapp && !professional.telefone && <p className="rounded-xl border border-forest/15 bg-cream p-4 text-sm leading-6 text-forest/60">Este profissional ainda não informou um contato público.</p>}
           </div>
           {viewer?.role !== "personal" && <FavoriteButton professionalId={professional.id} professionalName={professional.nome} initialSaved={saved} returnTo={`/profissionais/${professional.id}`} wide />}

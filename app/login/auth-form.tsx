@@ -23,6 +23,7 @@ import {
   type AuthState,
 } from "@/app/login/actions";
 import { passwordRules } from "@/lib/password-rules";
+import { INPUT_LIMITS } from "@/lib/input-validation";
 
 const initialState: AuthState = {};
 
@@ -90,6 +91,7 @@ export function AuthForm({ mode, next, role, switchHref, callbackError, accountD
               <input
                 className="field pl-12"
                 name="nome"
+                maxLength={INPUT_LIMITS.signupName}
                 autoComplete="name"
                 placeholder="Como você gosta de ser chamado"
                 aria-invalid={Boolean(state.errors?.nome)}
@@ -110,6 +112,7 @@ export function AuthForm({ mode, next, role, switchHref, callbackError, accountD
               className="field pl-12"
               type={isSignup ? "email" : "text"}
               name={isSignup ? "email" : "identificador"}
+              maxLength={isSignup ? INPUT_LIMITS.email : INPUT_LIMITS.loginIdentifier}
               autoComplete={isSignup ? "email" : "username"}
               inputMode={isSignup ? "email" : undefined}
               placeholder={isSignup ? "voce@exemplo.com" : "voce@exemplo.com ou (42) 99999-9999"}
@@ -131,6 +134,8 @@ export function AuthForm({ mode, next, role, switchHref, callbackError, accountD
                 name="telefone"
                 autoComplete="tel"
                 inputMode="tel"
+                maxLength={INPUT_LIMITS.phoneFormatted}
+                pattern="[0-9()+ -]{10,20}"
                 placeholder="(42) 99999-9999"
                 aria-invalid={Boolean(state.errors?.telefone)}
                 required
@@ -149,6 +154,7 @@ export function AuthForm({ mode, next, role, switchHref, callbackError, accountD
               className="field px-12"
               type={showPassword ? "text" : "password"}
               name="password"
+              maxLength={INPUT_LIMITS.password}
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               autoComplete={isSignup ? "new-password" : "current-password"}
@@ -198,6 +204,7 @@ export function AuthForm({ mode, next, role, switchHref, callbackError, accountD
                 className="field px-12"
                 type={showPasswordConfirm ? "text" : "password"}
                 name="passwordConfirm"
+                maxLength={INPUT_LIMITS.password}
                 value={passwordConfirm}
                 onChange={(event) => setPasswordConfirm(event.target.value)}
                 autoComplete="new-password"
@@ -256,6 +263,7 @@ export function AuthForm({ mode, next, role, switchHref, callbackError, accountD
                 <input
                   className="field bg-white pl-12 uppercase"
                   name="cref"
+                  maxLength={INPUT_LIMITS.cref}
                   autoComplete="off"
                   placeholder="012345-G/PR"
                   pattern="[0-9]{4,8}-[A-Za-z]/[A-Za-z]{2}"

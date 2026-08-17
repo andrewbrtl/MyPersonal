@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { PASSWORD_RECOVERY_COOKIE } from "@/lib/password-recovery";
+import { INPUT_LIMITS } from "@/lib/input-validation";
 import { strongPasswordSchema } from "@/lib/password-validation";
 import { createClient } from "@/lib/supabase/server";
 
@@ -18,7 +19,7 @@ export type ResetPasswordState = {
 
 const resetPasswordSchema = z.object({
   password: strongPasswordSchema,
-  passwordConfirm: z.string().min(1, "Confirme sua nova senha."),
+  passwordConfirm: z.string().min(1, "Confirme sua nova senha.").max(INPUT_LIMITS.password, "A confirmação está muito longa."),
 }).superRefine((data, context) => {
   if (data.password !== data.passwordConfirm) {
     context.addIssue({ code: "custom", path: ["passwordConfirm"], message: "As senhas não coincidem." });

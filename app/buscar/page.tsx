@@ -4,6 +4,7 @@ import { ArrowRight, Search, SlidersHorizontal, X } from "lucide-react";
 import { ProfessionalCard } from "@/components/professional-card";
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
 import { getCurrentProfile } from "@/lib/auth";
+import { INPUT_LIMITS, normalizeSearchInput } from "@/lib/input-validation";
 import { getPublicProfessionals } from "@/lib/professionals";
 import { createClient } from "@/lib/supabase/server";
 
@@ -16,12 +17,19 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
     getPublicProfessionals(),
     supabase.from("modalidades").select("nome").eq("ativo", true).order("nome"),
   ]);
-  const rawTerm = typeof params.q === "string" ? params.q.trim() : "";
-  const modality = typeof params.modalidade === "string" ? params.modalidade.trim() : "";
-  const neighborhood = typeof params.bairro === "string" ? params.bairro.trim() : "";
-  const attendance = ["presencial", "online", "ambos"].includes(String(params.atendimento)) ? String(params.atendimento) : "";
-  const order = ["relevancia", "preco", "avaliacao"].includes(String(params.ordem)) ? String(params.ordem) : "relevancia";
   const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const availableModalities = modalityRows?.map((item) => item.nome) ?? [];
+  const neighborhoods = [...new Set(professionals.map((item) => item.bairro).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+  const rawTerm = normalizeSearchInput(params.q);
+  const requestedModality = normalizeSearchInput(params.modalidade);
+  const allowedModalityNames = new Set([...availableModalities.map(normalize), "lutas", "yoga e pilates", "outros esportes"]);
+  const modality = requestedModality && allowedModalityNames.has(normalize(requestedModality)) ? requestedModality : "";
+  const requestedNeighborhood = normalizeSearchInput(params.bairro);
+  const neighborhood = requestedNeighborhood && neighborhoods.some((item) => normalize(item) === normalize(requestedNeighborhood))
+    ? requestedNeighborhood
+    : "";
+  const attendance = typeof params.atendimento === "string" && ["presencial", "online", "ambos"].includes(params.atendimento) ? params.atendimento : "";
+  const order = typeof params.ordem === "string" && ["relevancia", "preco", "avaliacao"].includes(params.ordem) ? params.ordem : "relevancia";
   const term = normalize(rawTerm);
   const filtered = professionals.filter((item) => {
     const text = normalize(`${item.nome} ${item.especialidade} ${item.modalidades.join(" ")} ${item.bairro}`);
@@ -46,8 +54,6 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
       ? b.nota - a.nota || b.avaliacoes - a.avaliacoes
       : b.nota - a.nota);
 
-  const availableModalities = modalityRows?.map((item) => item.nome) ?? [];
-  const neighborhoods = [...new Set(professionals.map((item) => item.bairro).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
   const profile = await getCurrentProfile();
   const favoriteIds = new Set<string>();
   if (profile?.role === "aluno") {
@@ -65,7 +71,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
           <p className="mt-4 text-forest/60">Compare especialidades, valores e locais de atendimento.</p>
           <form className="mt-8 flex max-w-3xl flex-col gap-3 sm:flex-row" action="/buscar">
             <label className="sr-only" htmlFor="search">Especialidade ou nome</label>
-            <input id="search" name="q" defaultValue={rawTerm} className="field flex-1 bg-cream" placeholder="Musculação, corrida ou nome" />
+            <input id="search" name="q" maxLength={INPUT_LIMITS.search} defaultValue={rawTerm} className="field flex-1 bg-cream" placeholder="Musculação, corrida ou nome" />
             <button className="button-accent min-h-12 sm:min-w-36" type="submit"><Search size={18} /> Buscar <ArrowRight size={17} /></button>
           </form>
         </div>

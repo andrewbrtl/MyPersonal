@@ -8,6 +8,7 @@ import { AuthForm } from "@/app/login/auth-form";
 import { RecoveryForm } from "@/app/login/recovery-form";
 import { BrandPlaceholder } from "@/components/site-shell";
 import { getCurrentProfile } from "@/lib/auth";
+import { safeInternalPath } from "@/lib/input-validation";
 
 export const metadata: Metadata = {
   title: "Entrar ou criar conta",
@@ -22,16 +23,12 @@ function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
-function safeNext(value: string | undefined) {
-  return value?.startsWith("/") && !value.startsWith("//") ? value : "";
-}
-
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const query = await searchParams;
   const requestedMode = first(query.modo);
   const mode = requestedMode === "criar" ? "signup" : requestedMode === "recuperar" ? "recovery" : "login";
   const role = first(query.tipo) === "personal" ? "personal" : "aluno";
-  const next = safeNext(first(query.next));
+  const next = safeInternalPath(first(query.next));
   const profile = await getCurrentProfile();
 
   if (profile && mode === "signup") {

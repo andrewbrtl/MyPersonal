@@ -2,6 +2,8 @@ import "server-only";
 
 import { cache } from "react";
 
+import { isSocialUrl, isWebsiteUrl } from "@/lib/contact";
+import { isUuid } from "@/lib/input-validation";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export type Professional = {
@@ -65,7 +67,7 @@ export const getPublicProfessionals = cache(async (): Promise<Professional[]> =>
       id: personal.id,
       nome,
       iniciais,
-      avatarUrl: base?.avatar_url ?? null,
+      avatarUrl: trustedAvatarUrl(base?.avatar_url, personal.id),
       especialidade: modalityNames.slice(0, 2).join(" e ") || "Treinamento personalizado",
       modalidades: modalityNames,
       bairro: personal.bairro ?? "Guarapuava",
@@ -84,16 +86,39 @@ export const getPublicProfessionals = cache(async (): Promise<Professional[]> =>
       cref: personal.cref ?? "",
       telefone: base?.telefone ?? "",
       whatsapp: personal.whatsapp ?? "",
-      instagramUrl: personal.instagram_url ?? "",
-      facebookUrl: personal.facebook_url ?? "",
-      tiktokUrl: personal.tiktok_url ?? "",
-      youtubeUrl: personal.youtube_url ?? "",
-      websiteUrl: personal.website_url ?? "",
+      instagramUrl: personal.instagram_url && isSocialUrl(personal.instagram_url, "instagram") ? personal.instagram_url : "",
+      facebookUrl: personal.facebook_url && isSocialUrl(personal.facebook_url, "facebook") ? personal.facebook_url : "",
+      tiktokUrl: personal.tiktok_url && isSocialUrl(personal.tiktok_url, "tiktok") ? personal.tiktok_url : "",
+      youtubeUrl: personal.youtube_url && isSocialUrl(personal.youtube_url, "youtube") ? personal.youtube_url : "",
+      websiteUrl: personal.website_url && isWebsiteUrl(personal.website_url) ? personal.website_url : "",
     };
   });
 });
 
 export const getPublicProfessional = cache(async (id: string) => {
+  if (!isUuid(id)) return null;
   const professionals = await getPublicProfessionals();
   return professionals.find((item) => item.id === id) ?? null;
 });
+
+function trustedAvatarUrl(value: string | null | undefined, profileId: string) {
+  if (!value || value.length > 500) return null;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!supabaseUrl) return null;
+
+  try {
+    const imageUrl = new URL(value);
+    const expectedOrigin = new URL(supabaseUrl).origin;
+    const expectedPrefix = `/storage/v1/object/public/profile-images/${profileId}/`;
+    return imageUrl.origin === expectedOrigin
+      && imageUrl.pathname.startsWith(expectedPrefix)
+      && !imageUrl.username
+      && !imageUrl.password
+      && !imageUrl.search
+      && !imageUrl.hash
+      ? imageUrl.toString()
+      : null;
+  } catch {
+    return null;
+  }
+}
