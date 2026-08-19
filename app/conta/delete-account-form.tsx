@@ -5,6 +5,7 @@ import { gsap } from "gsap";
 import { AlertTriangle, LockKeyhole, Trash2, X } from "lucide-react";
 
 import { deleteAccountAction, type DeleteAccountState } from "@/app/conta/actions";
+import { useActionNotice } from "@/components/site-notices";
 import { INPUT_LIMITS } from "@/lib/input-validation";
 
 const initialState: DeleteAccountState = {};
@@ -16,6 +17,11 @@ export function DeleteAccountForm() {
   const [password, setPassword] = useState("");
   const [state, action, pending] = useActionState(deleteAccountAction, initialState);
   const panelRef = useRef<HTMLDivElement>(null);
+  useActionNotice(state, {
+    successTitle: "Conta excluída",
+    errorTitle: "A conta não foi excluída",
+    validationTitle: "A confirmação está incompleta",
+  });
 
   useLayoutEffect(() => {
     if (!open || !panelRef.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -52,7 +58,6 @@ export function DeleteAccountForm() {
         <label><span className="field-label text-red-900">Digite EXCLUIR para confirmar</span><input className="field bg-white uppercase" name="confirmation" maxLength={7} value={confirmation} onChange={(event) => setConfirmation(event.target.value.toUpperCase())} autoComplete="off" required /><FieldError messages={state.errors?.confirmation} /></label>
         <label><span className="field-label text-red-900">Senha atual</span><span className="relative block"><LockKeyhole className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-red-900/45" size={17} /><input className="field bg-white pl-11" name="password" type="password" maxLength={INPUT_LIMITS.password} value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required /></span><FieldError messages={state.errors?.password} /></label>
 
-        {state.message && <p role="status" className="rounded-xl border border-red-800/20 bg-red-50 p-4 text-sm text-red-900">{state.message}</p>}
         <button type="submit" disabled={!ready || pending} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-red-800 px-5 font-semibold text-white transition hover:bg-red-950 disabled:cursor-not-allowed disabled:opacity-40">
           <Trash2 size={17} /> {pending ? "Excluindo conta..." : "Excluir conta definitivamente"}
         </button>

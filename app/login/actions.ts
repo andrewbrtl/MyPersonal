@@ -9,6 +9,7 @@ import {
   isValidPersonName,
   normalizeSingleLineText,
   safeInternalPath,
+  withSiteNotice,
 } from "@/lib/input-validation";
 import { emailSchema, resolveLoginEmail, validateLoginIdentifier } from "@/lib/login-identifier";
 import { strongPasswordSchema } from "@/lib/password-validation";
@@ -31,13 +32,13 @@ export type AuthState = {
 };
 
 const loginSchema = z.object({
-  identificador: z.string().max(INPUT_LIMITS.loginIdentifier).trim().refine(validateLoginIdentifier, "Digite um e-mail ou telefone com DDD válido."),
+  identificador: z.string().max(INPUT_LIMITS.loginIdentifier).trim().refine(validateLoginIdentifier, "Digite um email ou telefone com DDD válido."),
   password: z.string().min(1, "Digite sua senha.").max(INPUT_LIMITS.password, "A senha informada é muito longa."),
   next: z.string().max(INPUT_LIMITS.internalPath).optional(),
 });
 
 const recoverySchema = z.object({
-  identificador: z.string().max(INPUT_LIMITS.loginIdentifier).trim().refine(validateLoginIdentifier, "Digite um e-mail ou telefone com DDD válido."),
+  identificador: z.string().max(INPUT_LIMITS.loginIdentifier).trim().refine(validateLoginIdentifier, "Digite um email ou telefone com DDD válido."),
 });
 
 const signUpSchema = z.object({
@@ -89,7 +90,7 @@ export async function loginAction(_state: AuthState, formData: FormData): Promis
   if (!parsed.success) return { errors: parsed.error.flatten().fieldErrors };
 
   const email = await resolveLoginEmail(parsed.data.identificador);
-  if (!email) return { message: "E-mail, telefone ou senha inválidos. Confira os dados e tente novamente." };
+  if (!email) return { message: "Email, telefone ou senha inválidos. Confira os dados e tente novamente." };
 
   const supabase = await createClient();
   const { data: authData, error } = await supabase.auth.signInWithPassword({
@@ -97,7 +98,7 @@ export async function loginAction(_state: AuthState, formData: FormData): Promis
     password: parsed.data.password,
   });
 
-  if (error) return { message: "E-mail, telefone ou senha inválidos. Confira os dados e tente novamente." };
+  if (error) return { message: "Email, telefone ou senha inválidos. Confira os dados e tente novamente." };
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -105,7 +106,8 @@ export async function loginAction(_state: AuthState, formData: FormData): Promis
     .eq("id", authData.user.id)
     .maybeSingle();
 
-  redirect(safeInternalPath(parsed.data.next, profile?.role === "personal" ? "/painel" : "/buscar"));
+  const destination = safeInternalPath(parsed.data.next, profile?.role === "personal" ? "/painel" : "/buscar");
+  redirect(withSiteNotice(destination, "entrada-confirmada"));
 }
 
 export async function signUpAction(_state: AuthState, formData: FormData): Promise<AuthState> {
@@ -144,6 +146,10 @@ export async function signUpAction(_state: AuthState, formData: FormData): Promi
   const supabase = await createClient();
   const fallback = parsed.data.role === "personal" ? "/cadastro" : "/buscar";
   const next = safeInternalPath(parsed.data.next, fallback);
+  const accountDestination = withSiteNotice(
+    next,
+    parsed.data.role === "personal" ? "conta-criada-personal" : "conta-criada-aluno",
+  );
   const siteUrl = getSiteUrl();
   const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
@@ -155,7 +161,7 @@ export async function signUpAction(_state: AuthState, formData: FormData): Promi
         telefone: parsed.data.telefone,
         cref: parsed.data.role === "personal" ? parsed.data.cref : undefined,
       },
-      emailRedirectTo: `${siteUrl}/auth/callback?next=${encodeURIComponent(next)}`,
+      emailRedirectTo: `${siteUrl}/auth/callback?next=${encodeURIComponent(accountDestination)}`,
     },
   });
 
@@ -164,16 +170,16 @@ export async function signUpAction(_state: AuthState, formData: FormData): Promi
       return { message: "Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente." };
     }
     if (error.message.toLowerCase().includes("already registered")) {
-      return { message: "Já existe uma conta com este e-mail. Tente entrar." };
+      return { message: "Já existe uma conta com este email. Tente entrar." };
     }
     if (error.message.toLowerCase().includes("password")) {
       return { message: "A senha não atende aos requisitos de segurança." };
     }
     return { message: "Não foi possível criar a conta. Confira os dados e tente novamente." };
   }
-  if (!data.session) return { success: true, message: "Conta criada. Abra o e-mail de confirmação para continuar." };
+  if (!data.session) return { success: true, message: "Conta criada. Abra o email de confirmação para continuar." };
 
-  redirect(next);
+  redirect(accountDestination);
 }
 
 export async function requestPasswordResetAction(_state: AuthState, formData: FormData): Promise<AuthState> {
@@ -190,14 +196,14 @@ export async function requestPasswordResetAction(_state: AuthState, formData: Fo
 
   return {
     success: true,
-    message: "Se encontramos essa conta, enviamos um link de recuperação para o e-mail cadastrado.",
+    message: "Se encontramos essa conta, enviamos um link de recuperação para o email cadastrado.",
   };
 }
 
 export async function signOutAction() {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect("/");
+  redirect(withSiteNotice("/", "sessao-encerrada"));
 }
 
 export async function signOutAndCreateAccountAction(formData: FormData) {

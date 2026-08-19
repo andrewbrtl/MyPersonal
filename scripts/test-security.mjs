@@ -13,6 +13,7 @@ import {
   parseIntegerInput,
   parseMoneyInput,
   safeInternalPath,
+  withSiteNotice,
 } from "../lib/input-validation.ts";
 import { detectSupportedImage, isSafeImageDimensions, readImageDimensions } from "../lib/image-validation.ts";
 
@@ -24,6 +25,8 @@ assert.equal(safeInternalPath("/\\evil.example", "/"), "/");
 assert.equal(safeInternalPath("https://evil.example", "/"), "/");
 assert.equal(safeInternalPath("/buscar\r\nLocation:https://evil.example", "/"), "/");
 assert.equal(safeInternalPath(`/${"a".repeat(INPUT_LIMITS.internalPath)}`, "/"), "/");
+assert.equal(withSiteNotice("/buscar?q=corrida#resultados", "conta-criada-aluno"), "/buscar?q=corrida&aviso=conta-criada-aluno#resultados");
+assert.equal(withSiteNotice("https://evil.example", "entrada-confirmada"), "/?aviso=entrada-confirmada");
 
 assert.equal(isValidPersonName("Ana Maria D'Ávila"), true);
 assert.equal(isValidPersonName("' OR 1=1 --"), false);

@@ -1,9 +1,10 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { ArrowRight, AtSign, Camera, CheckCircle2, Globe2, MessageCircle, Phone, Save, UploadCloud, UsersRound, Video, X } from "lucide-react";
+import { ArrowRight, AtSign, Camera, Globe2, MessageCircle, Phone, Save, UploadCloud, UsersRound, Video, X } from "lucide-react";
 
 import { saveProfessionalProfile, type ProfileState } from "@/app/cadastro/actions";
+import { useActionNotice } from "@/components/site-notices";
 import { INPUT_LIMITS } from "@/lib/input-validation";
 
 type Modality = { id: string; nome: string };
@@ -34,6 +35,11 @@ export function ProfileForm({ modalities, initialProfile }: { modalities: Modali
   const [state, action, pending] = useActionState(saveProfessionalProfile, initialState);
   const [preview, setPreview] = useState<string | null>(initialProfile.avatarUrl);
   const [removeAvatar, setRemoveAvatar] = useState(false);
+  useActionNotice(state, {
+    successTitle: "Perfil no ar",
+    errorTitle: "O perfil não foi salvo",
+    validationTitle: "Seu perfil pede alguns ajustes",
+  });
 
   useEffect(() => () => {
     if (preview?.startsWith("blob:")) URL.revokeObjectURL(preview);
@@ -89,7 +95,7 @@ export function ProfileForm({ modalities, initialProfile }: { modalities: Modali
         <div className="border-b border-forest/15 pb-6">
           <p className="eyebrow">02 · Contato e redes</p>
           <h2 className="font-display mt-2 text-3xl font-medium">Facilite a primeira conversa</h2>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-forest/55">Só os canais preenchidos serão exibidos no seu perfil público. Seu e-mail de acesso continua privado.</p>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-forest/55">Só os canais preenchidos serão exibidos no seu perfil público. Seu email de acesso continua privado.</p>
         </div>
         <div data-motion-list className="mt-7 grid gap-5 sm:grid-cols-2">
           <IconField icon={<Phone size={17} />} label="Telefone público" name="telefone" type="tel" inputMode="tel" maxLength={INPUT_LIMITS.phoneFormatted} pattern="[0-9()+ -]{10,20}" defaultValue={initialProfile.telefone} placeholder="(42) 99999-9999" error={state.errors?.telefone} required />
@@ -113,8 +119,6 @@ export function ProfileForm({ modalities, initialProfile }: { modalities: Modali
           <label className="sm:col-span-2"><span className="field-label">Horários disponíveis</span><textarea className="field min-h-28 py-3" name="horarios" maxLength={INPUT_LIMITS.schedule} defaultValue={initialProfile.horarios.join("\n")} placeholder={"Segunda e quarta · 06h às 11h\nTerça e quinta · 18h às 21h"} /><span className="mt-2 block text-xs text-forest/45">Use uma linha para cada período disponível (máximo de {INPUT_LIMITS.scheduleLines}).</span><FieldError messages={state.errors?.horarios} /></label>
         </div>
       </section>
-
-      {(state.message || state.success) && <div role="status" aria-live="polite" className={`flex items-center gap-3 border p-4 text-sm ${state.success ? "border-forest/20 bg-forest/5" : "border-orange/30 bg-orange/8 text-orange-dark"}`}>{state.success && <CheckCircle2 size={19} />}{state.message}</div>}
 
       <div className="sticky bottom-4 z-10 flex flex-col gap-3 rounded-2xl border border-forest/15 bg-cream/95 p-4 shadow-xl backdrop-blur sm:flex-row sm:items-center sm:justify-between">
         <span className="text-xs leading-5 text-forest/50">Você poderá editar essas informações quando quiser.</span>

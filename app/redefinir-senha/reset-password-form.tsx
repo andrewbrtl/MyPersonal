@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import { ArrowRight, Check, Eye, EyeOff, LockKeyhole } from "lucide-react";
 
 import { resetPasswordAction, type ResetPasswordState } from "@/app/redefinir-senha/actions";
+import { useActionNotice } from "@/components/site-notices";
 import { passwordRules } from "@/lib/password-rules";
 import { INPUT_LIMITS } from "@/lib/input-validation";
 
@@ -15,6 +16,11 @@ export function ResetPasswordForm() {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  useActionNotice(state, {
+    successTitle: "Senha atualizada",
+    errorTitle: "A senha não foi alterada",
+    validationTitle: "A nova senha precisa de ajuste",
+  });
 
   return (
     <form data-motion-list action={action} className="mt-8 grid gap-5">
@@ -51,8 +57,6 @@ export function ResetPasswordForm() {
         onToggle={() => setShowPasswordConfirm((current) => !current)}
         error={state.errors?.passwordConfirm}
       />
-
-      {state.message && <div role="status" aria-live="polite" className="border border-orange/30 bg-orange/8 p-4 text-sm leading-6 text-[#7b321f]">{state.message}</div>}
 
       <button type="submit" disabled={pending} className="button-accent min-h-13 w-full disabled:cursor-not-allowed disabled:opacity-55">
         {pending ? "Atualizando..." : "Salvar nova senha"}

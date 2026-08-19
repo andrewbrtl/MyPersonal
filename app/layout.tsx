@@ -5,6 +5,7 @@ import "@fontsource-variable/newsreader";
 import "./globals.css";
 
 import { PageMotion } from "@/components/page-motion";
+import { SiteNoticeProvider } from "@/components/site-notices";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="pt-BR" className="h-full antialiased" data-scroll-behavior="smooth">
-      <body className="min-h-full">{children}<PageMotion /></body>
+      <body className="min-h-full"><SiteNoticeProvider>{children}<PageMotion /></SiteNoticeProvider></body>
     </html>
   );
 }

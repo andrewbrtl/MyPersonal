@@ -14,7 +14,7 @@ export default function PrivacyPage() {
         <p className="mt-4 text-sm text-forest/50">Versão inicial · agosto de 2026</p>
         <div className="legal-copy mt-10">
           <h2>Dados usados pela plataforma</h2>
-          <p>Usamos dados da conta, como nome, e-mail e telefone, para autenticação. O telefone também pode identificar sua conta no login, enquanto links de recuperação de senha são enviados apenas ao e-mail cadastrado. Em perfis profissionais, as informações marcadas para publicação — foto, descrição, CREF, telefone, redes sociais, modalidades e valores — ficam visíveis para visitantes.</p>
+          <p>Usamos dados da conta, como nome, email e telefone, para autenticação. O telefone também pode identificar sua conta no login, enquanto links de recuperação de senha são enviados apenas ao email cadastrado. Em perfis profissionais, as informações marcadas para publicação — foto, descrição, CREF, telefone, redes sociais, modalidades e valores — ficam visíveis para visitantes.</p>
           <h2>Favoritos e contatos</h2>
           <p>Perfis salvos ficam ligados à conta do aluno. Quando alguém usa um botão de telefone ou WhatsApp, registramos o canal, a origem e o horário do contato para o painel do profissional; visitantes anônimos não são identificados.</p>
           <h2>Proteção e fornecedores</h2>

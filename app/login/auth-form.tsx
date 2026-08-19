@@ -24,6 +24,7 @@ import {
 } from "@/app/login/actions";
 import { passwordRules } from "@/lib/password-rules";
 import { INPUT_LIMITS } from "@/lib/input-validation";
+import { useActionNotice } from "@/components/site-notices";
 
 const initialState: AuthState = {};
 
@@ -32,12 +33,9 @@ type AuthFormProps = {
   next: string;
   role: "aluno" | "personal";
   switchHref: string;
-  callbackError?: boolean;
-  accountDeleted?: boolean;
-  passwordChanged?: boolean;
 };
 
-export function AuthForm({ mode, next, role, switchHref, callbackError, accountDeleted, passwordChanged }: AuthFormProps) {
+export function AuthForm({ mode, next, role, switchHref }: AuthFormProps) {
   const action = mode === "signup" ? signUpAction : loginAction;
   const [state, formAction, pending] = useActionState(action, initialState);
   const [showPassword, setShowPassword] = useState(false);
@@ -47,6 +45,11 @@ export function AuthForm({ mode, next, role, switchHref, callbackError, accountD
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const professionalFieldsRef = useRef<HTMLDivElement>(null);
   const isSignup = mode === "signup";
+  useActionNotice(state, {
+    successTitle: "Conta criada com sucesso",
+    errorTitle: isSignup ? "A conta ainda não foi criada" : "Não foi possível entrar",
+    validationTitle: "Falta acertar alguns dados",
+  });
 
   useLayoutEffect(() => {
     if (!professionalFieldsRef.current || selectedRole !== "personal") return;
@@ -80,9 +83,6 @@ export function AuthForm({ mode, next, role, switchHref, callbackError, accountD
       <form id="formulario" data-motion-list action={formAction} className="mt-7 grid gap-5">
         <input type="hidden" name="next" value={next} />
 
-        {accountDeleted && <div role="status" className="flex items-center gap-3 rounded-xl border border-forest/15 bg-forest/5 p-4 text-sm text-forest"><CheckCircle2 size={18} /> Conta excluída com sucesso.</div>}
-        {passwordChanged && <div role="status" className="flex items-center gap-3 rounded-xl border border-forest/15 bg-forest/5 p-4 text-sm text-forest"><CheckCircle2 size={18} /> Senha atualizada. Entre novamente para continuar.</div>}
-
         {isSignup && (
           <label>
             <span className="field-label">Nome completo</span>
@@ -103,7 +103,7 @@ export function AuthForm({ mode, next, role, switchHref, callbackError, accountD
         )}
 
         <label>
-          <span className="field-label">{isSignup ? "E-mail" : "E-mail ou telefone"}</span>
+          <span className="field-label">{isSignup ? "Email" : "Email ou Telefone"}</span>
           <span className="relative block">
             {isSignup
               ? <Mail className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-forest/40" size={18} />
@@ -274,17 +274,6 @@ export function AuthForm({ mode, next, role, switchHref, callbackError, accountD
               <span className="mt-2 block text-xs leading-5 text-forest/50">O número será exibido no perfil profissional e poderá ser verificado antes da publicação.</span>
               <FieldError messages={state.errors?.cref} />
             </label>
-          </div>
-        )}
-
-        {(state.message || callbackError) && (
-          <div
-            className={`flex gap-3 border p-4 text-sm leading-6 ${state.success ? "border-forest/20 bg-forest/5 text-forest" : "border-orange/30 bg-orange/8 text-[#7b321f]"}`}
-            role="status"
-            aria-live="polite"
-          >
-            {state.success && <CheckCircle2 className="mt-0.5 shrink-0" size={18} />}
-            <span>{state.message ?? "O link de confirmação expirou ou já foi utilizado. Entre com sua conta ou solicite um novo acesso."}</span>
           </div>
         )}
 

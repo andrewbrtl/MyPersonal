@@ -1,9 +1,10 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { CheckCircle2, Eye, EyeOff, Phone, Save } from "lucide-react";
+import { Eye, EyeOff, Phone, Save } from "lucide-react";
 
 import { updateLoginPhoneAction, type PhoneState } from "@/app/conta/actions";
+import { useActionNotice } from "@/components/site-notices";
 import { INPUT_LIMITS } from "@/lib/input-validation";
 
 const initialState: PhoneState = {};
@@ -11,6 +12,11 @@ const initialState: PhoneState = {};
 export function PhoneForm({ currentPhone }: { currentPhone: string }) {
   const [state, action, pending] = useActionState(updateLoginPhoneAction, initialState);
   const [showPassword, setShowPassword] = useState(false);
+  useActionNotice(state, {
+    successTitle: "Novo acesso salvo",
+    errorTitle: "O telefone não foi alterado",
+    validationTitle: "Revise o telefone e a senha",
+  });
 
   return (
     <form action={action} className="mt-6 grid gap-5 sm:grid-cols-2">
@@ -33,8 +39,6 @@ export function PhoneForm({ currentPhone }: { currentPhone: string }) {
         </span>
         <FieldError messages={state.errors?.password} />
       </label>
-
-      {(state.message || state.success) && <div role="status" aria-live="polite" className={`flex items-center gap-3 border p-4 text-sm sm:col-span-2 ${state.success ? "border-forest/20 bg-forest/5 text-forest" : "border-orange/30 bg-orange/8 text-orange-dark"}`}>{state.success && <CheckCircle2 size={18} />}{state.message}</div>}
 
       <button type="submit" disabled={pending} className="button-accent min-h-12 sm:col-span-2 sm:w-fit disabled:cursor-not-allowed disabled:opacity-55"><Save size={17} /> {pending ? "Salvando..." : "Salvar telefone"}</button>
     </form>

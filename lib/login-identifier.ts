@@ -9,8 +9,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 export const emailSchema = z.string()
   .trim()
   .toLowerCase()
-  .max(INPUT_LIMITS.email, "O e-mail está muito longo.")
-  .email("Digite um e-mail válido.");
+  .max(INPUT_LIMITS.email, "O email está muito longo.")
+  .email("Digite um email válido.");
 
 export function validateLoginIdentifier(value: string) {
   if (value.length > INPUT_LIMITS.loginIdentifier) return false;

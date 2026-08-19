@@ -36,14 +36,14 @@ export default async function AccountPage() {
         <section className="border border-forest/15 bg-cream p-5 sm:p-8">
           <p className="eyebrow">Acesso alternativo</p>
           <h2 className="font-display mt-3 text-3xl font-medium">Entrar com telefone</h2>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-forest/55">Cadastre um número único para entrar com ele ou com seu e-mail. A senha atual confirma qualquer alteração.</p>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-forest/55">Cadastre um número único para entrar com ele ou com seu email. A senha atual confirma qualquer alteração.</p>
           <PhoneForm currentPhone={formatPhone(profile.telefone)} />
         </section>
 
         <section className="border border-red-900/20 bg-cream p-5 sm:p-8">
           <p className="eyebrow text-red-800">Zona de risco</p>
           <h2 className="font-display mt-3 text-3xl font-medium">Excluir conta</h2>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-forest/55">Seu acesso, perfil, imagens e dados vinculados serão removidos definitivamente. Depois disso, o mesmo e-mail poderá criar uma nova conta do zero.</p>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-forest/55">Seu acesso, perfil, imagens e dados vinculados serão removidos definitivamente. Depois disso, o mesmo email poderá criar uma nova conta do zero.</p>
           <div className="mt-6"><DeleteAccountForm /></div>
         </section>
       </div>

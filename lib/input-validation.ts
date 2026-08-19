@@ -77,6 +77,19 @@ export function safeInternalPath(value: string | null | undefined, fallback = ""
   }
 }
 
+export type SiteNoticeCode =
+  | "conta-criada-aluno"
+  | "conta-criada-personal"
+  | "entrada-confirmada"
+  | "sessao-encerrada";
+
+export function withSiteNotice(path: string, notice: SiteNoticeCode) {
+  const safePath = safeInternalPath(path, "/");
+  const parsed = new URL(safePath, "https://internal.invalid");
+  parsed.searchParams.set("aviso", notice);
+  return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+}
+
 export function normalizeSearchInput(value: unknown) {
   if (typeof value !== "string" || value.length > INPUT_LIMITS.search) return "";
   const normalized = normalizeSingleLineText(value);

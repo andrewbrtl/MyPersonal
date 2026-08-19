@@ -110,8 +110,8 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
               {mode === "signup"
                 ? "Leva menos de um minuto. Depois você completa o que realmente importa."
                 : mode === "recovery"
-                  ? "Informe seu e-mail ou telefone. O link seguro será enviado para o e-mail cadastrado."
-                  : "Entre com seu e-mail ou telefone para continuar de onde parou."}
+                  ? "Informe seu email ou telefone. O link seguro será enviado para o email cadastrado."
+                  : "Entre com seu email ou telefone para continuar de onde parou."}
             </p>
           </div>
 
@@ -123,9 +123,6 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
                 next={next}
                 role={role}
                 switchHref={switchHref}
-                callbackError={first(query.erro) === "confirmacao"}
-                accountDeleted={first(query.conta) === "excluida"}
-                passwordChanged={first(query.senha) === "alterada"}
               />
             )}
         </div>

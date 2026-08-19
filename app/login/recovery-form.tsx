@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
-import { ArrowLeft, ArrowRight, AtSign, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, AtSign } from "lucide-react";
 
 import { requestPasswordResetAction, type AuthState } from "@/app/login/actions";
+import { useActionNotice } from "@/components/site-notices";
 import { INPUT_LIMITS } from "@/lib/input-validation";
 
 const initialState: AuthState = {};
@@ -12,6 +13,11 @@ const initialState: AuthState = {};
 export function RecoveryForm({ next, expiredLink }: { next: string; expiredLink?: boolean }) {
   const [state, action, pending] = useActionState(requestPasswordResetAction, initialState);
   const loginHref = `/login${next ? `?next=${encodeURIComponent(next)}` : ""}`;
+  useActionNotice(state, {
+    successTitle: "Pedido recebido",
+    errorTitle: "Não foi possível enviar o link",
+    validationTitle: "Confira o Email ou Telefone",
+  });
 
   return (
     <div>
@@ -23,7 +29,7 @@ export function RecoveryForm({ next, expiredLink }: { next: string; expiredLink?
         )}
 
         <label>
-          <span className="field-label">E-mail ou telefone</span>
+          <span className="field-label">Email ou Telefone</span>
           <span className="relative block">
             <AtSign className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-forest/40" size={18} />
             <input
@@ -39,17 +45,6 @@ export function RecoveryForm({ next, expiredLink }: { next: string; expiredLink?
           </span>
           <FieldError messages={state.errors?.identificador} />
         </label>
-
-        {state.message && (
-          <div
-            className={`flex gap-3 border p-4 text-sm leading-6 ${state.success ? "border-forest/20 bg-forest/5 text-forest" : "border-orange/30 bg-orange/8 text-[#7b321f]"}`}
-            role="status"
-            aria-live="polite"
-          >
-            {state.success && <CheckCircle2 className="mt-0.5 shrink-0" size={18} />}
-            <span>{state.message}</span>
-          </div>
-        )}
 
         <button type="submit" disabled={pending || state.success} className="button-accent min-h-13 w-full disabled:cursor-not-allowed disabled:opacity-55">
           {pending ? "Enviando..." : "Enviar link de recuperação"}
