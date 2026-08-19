@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LogIn, MapPin, UserPlus } from "lucide-react";
+import { LogIn, UserPlus } from "lucide-react";
 
 import { AccountMenu } from "@/components/account-menu";
 import { getCurrentProfile } from "@/lib/auth";
@@ -9,40 +9,38 @@ export function BrandPlaceholder({ inverted = false }: { inverted?: boolean }) {
     <Link
       href="/"
       aria-label="Página inicial"
-      className={`inline-flex items-center gap-3 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-4 ${inverted ? "focus-visible:ring-offset-forest" : "focus-visible:ring-offset-cream"}`}
+      className={`brand-lockup outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-4 ${inverted ? "brand-lockup-inverted focus-visible:ring-offset-forest" : "focus-visible:ring-offset-cream"}`}
     >
-      <span className={`relative grid size-10 place-items-center rounded-xl border ${inverted ? "border-cream/30 bg-cream text-forest" : "border-forest bg-forest text-cream"}`} aria-hidden="true">
-        <MapPin size={19} strokeWidth={2.3} />
-        <span className="absolute -bottom-1 -right-1 size-3 rounded-full border-2 border-current bg-orange" />
-      </span>
-      <span className={`hidden text-xs font-semibold uppercase tracking-[0.16em] sm:block ${inverted ? "text-cream/70" : "text-forest/60"}`}>
-        Guarapuava, PR
+      <span className="brand-orbit" aria-hidden="true"><i /><b /></span>
+      <span className="brand-place">
+        <strong>Guarapuava</strong>
+        <small>Paraná · Brasil</small>
       </span>
     </Link>
   );
 }
 
-export async function SiteHeader({ compact = false }: { compact?: boolean }) {
+export async function SiteHeader({ compact = false, overlay = false }: { compact?: boolean; overlay?: boolean }) {
   const profile = await getCurrentProfile();
 
   return (
-    <header className="border-b border-forest/15 bg-cream">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8 lg:px-10">
-        <BrandPlaceholder />
+    <header className={`site-header ${overlay ? "site-header-overlay" : ""}`}>
+      <div className="mx-auto flex max-w-[96rem] items-center justify-between px-5 py-4 sm:px-8 lg:px-12">
+        <BrandPlaceholder inverted />
         <nav aria-label="Navegação principal" className="flex items-center gap-2 sm:gap-6">
-          <Link href="/buscar" className="nav-link hidden md:inline-flex">Encontrar profissionais</Link>
-          {!compact && <Link href="/#como-funciona" className="nav-link hidden lg:inline-flex">Como funciona</Link>}
+          <Link href="/buscar" className="nav-link nav-link-inverted hidden md:inline-flex">Profissionais</Link>
+          {!compact && <Link href="/#como-funciona" className="nav-link nav-link-inverted hidden lg:inline-flex">Como funciona</Link>}
           {profile ? (
             <>
-              <Link href={profile.role === "personal" ? "/painel" : "/favoritos"} className="nav-link hidden sm:inline-flex">
+              <Link href={profile.role === "personal" ? "/painel" : "/favoritos"} className="nav-link nav-link-inverted hidden sm:inline-flex">
                 {profile.role === "personal" ? "Meu painel" : "Meus salvos"}
               </Link>
-              <AccountMenu profile={profile} />
+              <AccountMenu profile={profile} inverted />
             </>
           ) : (
             <>
-            <Link href="/login" className="nav-link hidden gap-2 sm:inline-flex"><LogIn size={16} /> Entrar</Link>
-              <Link href="/login?modo=criar&tipo=personal&next=%2Fcadastro" className="button-accent min-h-11 px-4 text-sm sm:px-5"><UserPlus size={17} /> Criar perfil</Link>
+              <Link href="/login" className="nav-link nav-link-inverted hidden gap-2 sm:inline-flex"><LogIn size={15} /> Entrar</Link>
+              <Link href="/login?modo=criar&tipo=personal&next=%2Fcadastro" className="button-accent min-h-11 px-4 sm:px-5"><UserPlus size={16} /> Criar perfil</Link>
             </>
           )}
         </nav>
@@ -53,17 +51,17 @@ export async function SiteHeader({ compact = false }: { compact?: boolean }) {
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-cream/20 bg-forest text-cream">
-      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:px-8 md:grid-cols-[1.3fr_1fr_1fr] lg:px-10">
+    <footer className="site-footer">
+      <div className="mx-auto grid max-w-[90rem] gap-10 px-5 py-14 sm:px-8 md:grid-cols-[1.3fr_1fr_1fr] lg:px-12 lg:py-20">
         <div>
           <BrandPlaceholder inverted />
-          <p className="mt-5 max-w-sm text-sm leading-6 text-cream/60">
-            Profissionais do esporte e pessoas que querem se movimentar, mais perto umas das outras.
+          <p className="mt-6 max-w-sm text-sm leading-7 text-cream/48">
+            Um ponto de encontro local entre quem orienta o movimento e quem decidiu começar.
           </p>
         </div>
         <div>
           <p className="eyebrow text-orange-light">Explorar</p>
-          <div className="mt-4 grid gap-3 text-sm text-cream/70">
+          <div className="mt-5 grid gap-4 text-xs font-semibold uppercase tracking-[0.08em] text-cream/55">
             <Link href="/buscar" className="hover:text-white">Profissionais</Link>
             <Link href="/#modalidades" className="hover:text-white">Modalidades</Link>
             <Link href="/#como-funciona" className="hover:text-white">Como funciona</Link>
@@ -71,15 +69,15 @@ export function SiteFooter() {
         </div>
         <div>
           <p className="eyebrow text-orange-light">Informações</p>
-          <div className="mt-4 grid gap-3 text-sm text-cream/70">
+          <div className="mt-5 grid gap-4 text-xs font-semibold uppercase tracking-[0.08em] text-cream/55">
             <Link href="/termos" className="hover:text-white">Termos de uso</Link>
             <Link href="/privacidade" className="hover:text-white">Privacidade</Link>
             <Link href="/login?modo=criar&tipo=personal&next=%2Fcadastro" className="hover:text-white">Criar perfil profissional</Link>
           </div>
         </div>
       </div>
-      <div className="border-t border-cream/10 px-5 py-5 text-center text-xs text-cream/45">
-        © 2026 · Guarapuava, Paraná
+      <div className="border-t border-cream/10 px-5 py-5 text-center text-[0.6rem] uppercase tracking-[0.16em] text-cream/35">
+        © 2026 · Feito em Guarapuava, Paraná
       </div>
     </footer>
   );

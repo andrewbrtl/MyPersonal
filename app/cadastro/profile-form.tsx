@@ -58,7 +58,7 @@ export function ProfileForm({ modalities, initialProfile }: { modalities: Modali
             <span className="field-label">Foto profissional <span className="normal-case tracking-normal text-forest/38">(opcional)</span></span>
             <label className="group block cursor-pointer">
               <span
-                className="relative grid aspect-square place-items-center overflow-hidden rounded-2xl border border-dashed border-forest/30 bg-sand text-center transition group-hover:border-orange"
+                className="relative grid aspect-square place-items-center overflow-hidden rounded-[2px] border border-dashed border-forest/30 bg-sand text-center transition group-hover:border-orange"
                 style={preview ? { backgroundImage: `url(${preview})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
               >
                 {!preview && <span className="grid justify-items-center gap-2 px-4 text-xs text-forest/50"><Camera size={28} /><strong className="text-forest">Adicionar foto</strong>Suas iniciais aparecem se deixar vazio</span>}
@@ -115,12 +115,12 @@ export function ProfileForm({ modalities, initialProfile }: { modalities: Modali
           <label className="sm:col-span-2"><span className="field-label">Formação e certificações</span><textarea className="field min-h-24 py-3" name="formacao" minLength={5} maxLength={INPUT_LIMITS.education} defaultValue={initialProfile.formacao} placeholder="Educação Física, especializações e certificações relevantes." required /><FieldError messages={state.errors?.formacao} /></label>
           <Field label="Anos de experiência" name="anosExperiencia" type="number" min="0" max={INPUT_LIMITS.experienceYears} step="1" defaultValue={initialProfile.anosExperiencia ?? 0} error={state.errors?.anosExperiencia} required />
           <Field label="Valor mensal a partir de" name="preco" type="number" inputMode="decimal" min="0" max={INPUT_LIMITS.price} step="0.01" defaultValue={initialProfile.preco ?? 0} error={state.errors?.preco} required />
-          <fieldset className="sm:col-span-2"><legend className="field-label">Modalidades</legend><div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">{modalities.map((item) => <label key={item.id} className="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border border-forest/15 px-4 text-sm transition has-checked:border-forest has-checked:bg-forest has-checked:text-white"><input type="checkbox" name="modalidades" value={item.id} defaultChecked={initialProfile.modalidades.includes(item.id)} />{item.nome}</label>)}</div><FieldError messages={state.errors?.modalidades} /></fieldset>
+          <fieldset className="sm:col-span-2"><legend className="field-label">Modalidades</legend><div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">{modalities.map((item) => <label key={item.id} className="flex min-h-12 cursor-pointer items-center gap-3 rounded-[2px] border border-forest/15 px-4 text-sm transition has-checked:border-forest has-checked:bg-forest has-checked:text-white"><input type="checkbox" name="modalidades" value={item.id} defaultChecked={initialProfile.modalidades.includes(item.id)} />{item.nome}</label>)}</div><FieldError messages={state.errors?.modalidades} /></fieldset>
           <label className="sm:col-span-2"><span className="field-label">Horários disponíveis</span><textarea className="field min-h-28 py-3" name="horarios" maxLength={INPUT_LIMITS.schedule} defaultValue={initialProfile.horarios.join("\n")} placeholder={"Segunda e quarta · 06h às 11h\nTerça e quinta · 18h às 21h"} /><span className="mt-2 block text-xs text-forest/45">Use uma linha para cada período disponível (máximo de {INPUT_LIMITS.scheduleLines}).</span><FieldError messages={state.errors?.horarios} /></label>
         </div>
       </section>
 
-      <div className="sticky bottom-4 z-10 flex flex-col gap-3 rounded-2xl border border-forest/15 bg-cream/95 p-4 shadow-xl backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+      <div className="sticky bottom-4 z-10 flex flex-col gap-3 rounded-[2px] border border-forest/15 bg-cream/95 p-4 shadow-xl backdrop-blur sm:flex-row sm:items-center sm:justify-between">
         <span className="text-xs leading-5 text-forest/50">Você poderá editar essas informações quando quiser.</span>
         <button type="submit" disabled={pending} className="button-accent min-h-12 disabled:cursor-not-allowed disabled:opacity-55"><Save size={17} /> {pending ? "Salvando..." : "Salvar e publicar"} {!pending && <ArrowRight size={17} />}</button>
       </div>

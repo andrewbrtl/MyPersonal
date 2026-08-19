@@ -27,7 +27,7 @@ export default async function AccountPage() {
       <div className="mx-auto grid max-w-4xl gap-8 px-5 py-12 sm:px-8 lg:py-16">
         <section className="border border-forest/15 bg-cream p-5 sm:p-8">
           <div className="flex items-start gap-4">
-            <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-forest text-white"><UserRound size={20} /></span>
+            <span className="grid size-12 shrink-0 place-items-center rounded-[2px] bg-forest text-white"><UserRound size={20} /></span>
             <div className="min-w-0"><p className="text-lg font-semibold">{profile.nome}</p><p className="mt-1 break-all text-sm text-forest/50">{profile.email}</p><span className="status-badge mt-3">Conta {profile.role === "personal" ? "profissional" : "de aluno"}</span></div>
           </div>
           <div className="mt-7 flex gap-3 border-t border-forest/10 pt-6 text-sm leading-6 text-forest/55"><ShieldCheck className="mt-0.5 shrink-0 text-orange-dark" size={19} /><p>A exclusão exige sua senha atual e duas confirmações para impedir cliques acidentais.</p></div>

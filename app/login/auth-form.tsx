@@ -255,7 +255,7 @@ export function AuthForm({ mode, next, role, switchHref }: AuthFormProps) {
         )}
 
         {isSignup && selectedRole === "personal" && (
-          <div ref={professionalFieldsRef} className="rounded-xl border border-orange/25 bg-orange/6 p-4 sm:p-5">
+          <div ref={professionalFieldsRef} className="rounded-[2px] border border-orange/25 bg-orange/6 p-4 sm:p-5">
             <label>
               <span className="field-label text-orange-dark">CREF obrigatório</span>
               <span className="relative block">
@@ -308,7 +308,7 @@ function RoleOption({
   return (
     <label className="relative cursor-pointer">
       <input className="peer sr-only" type="radio" name="role" value={value} defaultChecked={defaultChecked} onChange={() => onSelect(value)} />
-      <span className="block min-h-24 rounded-xl border border-forest/20 bg-cream p-4 transition peer-checked:border-forest peer-checked:bg-forest peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-orange peer-focus-visible:ring-offset-2">
+      <span className="block min-h-24 rounded-[2px] border border-forest/20 bg-cream p-4 transition peer-checked:border-forest peer-checked:bg-forest peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-orange peer-focus-visible:ring-offset-2">
         <span className="block text-sm font-semibold">{title}</span>
         <span className="mt-1 block text-xs leading-5 opacity-60">{description}</span>
       </span>

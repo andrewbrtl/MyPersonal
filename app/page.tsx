@@ -1,130 +1,186 @@
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown, MapPin, ShieldCheck } from "lucide-react";
 
+import heroImage from "@/public/images/gym-interior-hero-v2.webp";
+import storyImage from "@/public/images/gym-athlete-story.webp";
 import { ProfessionalCard } from "@/components/professional-card";
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
 import { getCurrentProfile } from "@/lib/auth";
 import { modalities } from "@/lib/demo-data";
 import { getPublicProfessionals } from "@/lib/professionals";
 
+import styles from "./home.module.css";
+
 const steps = [
-  ["01", "Busque", "Filtre por modalidade, bairro, formato de atendimento e valor."],
-  ["02", "Compare", "Conheça o trabalho, a experiência e os valores de cada profissional."],
-  ["03", "Converse", "Tire suas dúvidas diretamente antes de combinar o primeiro treino."],
+  ["01", "Defina o movimento", "Escolha modalidade, bairro, atendimento e a faixa que cabe no seu momento."],
+  ["02", "Leia o profissional", "Compare experiência, apresentação, disponibilidade e valores sem correr."],
+  ["03", "Comece a conversa", "Abra o canal disponibilizado pelo profissional e alinhe o primeiro encontro."],
 ] as const;
 
 export default async function Home() {
   const [professionals, profile] = await Promise.all([getPublicProfessionals(), getCurrentProfile()]);
+
   return (
-    <main>
-      <SiteHeader />
+    <main className={styles.home}>
+      <div className={styles.heroFrame}>
+        <SiteHeader overlay />
+        <section className={styles.hero} data-motion-static>
+          <Image
+            src={heroImage}
+            alt="Academia de musculação com equipamentos profissionais em iluminação baixa"
+            fill
+            priority
+            sizes="100vw"
+            className={styles.heroImage}
+            data-motion-hero-image
+          />
+          <div className={styles.heroShade} aria-hidden="true" />
+          <div className={styles.heroGrid} aria-hidden="true" />
 
-      <section className="overflow-hidden bg-cream">
-        <div className="mx-auto grid max-w-7xl lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="px-5 pb-16 pt-14 sm:px-8 sm:py-20 lg:px-10 lg:py-28">
-            <p className="eyebrow"><span className="eyebrow-line" /> Guia local de esporte</p>
-            <h1 className="font-display mt-8 max-w-3xl text-hero font-medium text-forest">
-              Seu treino começa com a pessoa certa.
-            </h1>
-            <p className="mt-7 max-w-xl text-lg leading-8 text-forest/68">
-              Encontre profissionais de esporte em Guarapuava por modalidade, bairro e faixa de preço.
-            </p>
-            <div className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-center">
-              <Link href="/buscar" className="button-primary sm:min-w-64">
-                Encontrar profissionais <ArrowRight size={18} />
-              </Link>
-              <span className="text-sm text-forest/50">Gratuito para quem busca</span>
-            </div>
-          </div>
-
-          <div className="relative bg-forest px-5 py-10 text-cream sm:px-8 lg:px-10 lg:py-16">
-            <div className="absolute right-8 top-0 h-2 w-24 bg-orange sm:right-12 sm:w-32" aria-hidden="true" />
-            <div className="relative max-w-xl">
-              <p className="eyebrow text-orange-light">Comece pela modalidade</p>
-              <h2 className="font-display mt-4 max-w-md text-4xl font-medium leading-tight sm:text-5xl">
-                Encontre alguém que combine com seu ritmo.
-              </h2>
-              <div className="mt-10 border-t border-cream/20">
-                {modalities.slice(0, 4).map(([name], index) => (
-                  <Link
-                    key={name}
-                    href={`/buscar?modalidade=${encodeURIComponent(name)}`}
-                    className="group flex items-center gap-5 border-b border-cream/15 py-4 outline-none hover:text-orange-light focus-visible:text-orange-light"
-                  >
-                    <span className="text-xs tabular-nums text-orange-light">0{index + 1}</span>
-                    <span className="flex-1 text-lg font-semibold">{name}</span>
-                    <ArrowRight size={18} className="transition group-hover:translate-x-1" />
-                  </Link>
-                ))}
+          <div className={styles.heroContent}>
+            <div className={styles.heroCopy}>
+              <p className={styles.heroKicker}><span /> Curadoria local · Guarapuava</p>
+              <h1>
+                Menos tentativa.<br />
+                <em>Mais direção.</em>
+              </h1>
+              <p className={styles.heroText}>
+                Encontre profissionais de esporte perto de você, compare o que realmente importa e escolha com calma quem vai acompanhar seu ritmo.
+              </p>
+              <div className={styles.heroActions}>
+                <Link href="/buscar" className={styles.heroPrimary}>
+                  Explorar profissionais <ArrowRight size={18} />
+                </Link>
+                <Link href="/#criterios" className={styles.heroSecondary}>
+                  Entender a escolha
+                </Link>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      <section id="modalidades" className="section-shell bg-sand">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">01 · Modalidades</p>
-            <h2 className="font-display section-title">O que você quer praticar?</h2>
+            <dl className={styles.heroSpecs}>
+              <div><dt>Base</dt><dd><MapPin size={14} /> Guarapuava, PR</dd></div>
+              <div><dt>Catálogo</dt><dd>{modalities.length.toString().padStart(2, "0")} modalidades</dd></div>
+              <div><dt>Acesso</dt><dd>Gratuito para alunos</dd></div>
+            </dl>
           </div>
-          <Link href="/buscar" className="text-link">Ver todas <ArrowRight size={16} /></Link>
-        </div>
-        <div data-motion-list className="mt-10 grid border-l border-t border-forest/15 sm:grid-cols-2 lg:grid-cols-4">
-          {modalities.map(([name, detail], index) => (
-            <Link key={name} href={`/buscar?modalidade=${encodeURIComponent(name)}`} className="modality-cell">
-              <span className="text-xs text-orange-dark">{String(index + 1).padStart(2, "0")}</span>
-              <h3 className="mt-8 text-lg font-semibold">{name}</h3>
-              <p className="mt-1 text-sm text-forest/55">{detail}</p>
-            </Link>
-          ))}
-        </div>
-      </section>
 
-      <section className="section-shell bg-cream">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">02 · Perto de você</p>
-            <h2 className="font-display section-title">Profissionais em destaque</h2>
-          </div>
-          <p className="max-w-sm text-sm leading-6 text-forest/55">Perfis locais para você comparar especialidades, valores e formas de atendimento.</p>
-        </div>
-        {professionals.length ? <div data-motion-list className="mt-10 grid gap-5 xl:grid-cols-3">
-          {professionals.slice(0, 3).map((professional) => (
-            <div key={professional.id} className="xl:[&>article]:block xl:[&>article>div:first-child]:min-h-56">
-              <ProfessionalCard professional={professional} canFavorite={profile?.role !== "personal"} />
+          <a href="#modalidades" className={styles.scrollCue} aria-label="Ir para modalidades">
+            <span>Explorar</span><ChevronDown size={17} />
+          </a>
+          <span className={styles.heroIndex} aria-hidden="true">01 / 05</span>
+        </section>
+      </div>
+
+      <section id="modalidades" className={styles.modalitiesSection}>
+        <div className={styles.sectionRail}><span>01</span><p>Escolha por modalidade</p></div>
+        <div className={styles.modalitiesBody}>
+          <div className={styles.editorialHeading}>
+            <div>
+              <p className="eyebrow">Comece pelo que move você</p>
+              <h2>Precisão antes<br />da repetição.</h2>
             </div>
-          ))}
-        </div> : <EmptyProfessionals />}
+            <p>Do primeiro treino à preparação avançada: encontre alguém que entenda seu objetivo, seu bairro e sua rotina.</p>
+          </div>
+
+          <div className={styles.modalityList} data-motion-list>
+            {modalities.map(([name, detail], index) => (
+              <Link key={name} href={`/buscar?modalidade=${encodeURIComponent(name)}`}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <div><h3>{name}</h3><p>{detail}</p></div>
+                <ArrowRight size={19} />
+              </Link>
+            ))}
+          </div>
+        </div>
       </section>
 
-      <section id="como-funciona" className="bg-forest text-cream">
-        <div className="section-shell">
-          <p className="eyebrow text-orange-light">03 · Como funciona</p>
-          <div className="mt-7 grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
-            <h2 className="font-display text-5xl font-medium leading-[1.02] sm:text-6xl">Simples para quem busca. Direto para quem trabalha.</h2>
-            <div data-motion-list className="border-t border-cream/20">
-              {steps.map(([number, title, text]) => (
-                <article key={number} className="grid gap-4 border-b border-cream/15 py-6 sm:grid-cols-[48px_150px_1fr] sm:items-start">
-                  <span className="text-xs text-orange-light">{number}</span>
-                  <h3 className="text-lg font-semibold">{title}</h3>
-                  <p className="text-sm leading-6 text-cream/60">{text}</p>
-                </article>
+      <section id="criterios" className={styles.methodSection}>
+        <div className={styles.storyImageFrame}>
+          <Image
+            src={storyImage}
+            alt="Atleta treinando força com kettlebells em uma academia"
+            fill
+            sizes="(max-width: 900px) 100vw, 55vw"
+            className={styles.storyImage}
+          />
+          <span className={styles.imageCaption}>Força · Controle · Consistência</span>
+        </div>
+        <div className={styles.methodCopy}>
+          <p className="eyebrow text-orange-dark">02 · O que muda</p>
+          <h2>Você não precisa de mais um treino salvo.</h2>
+          <p className={styles.methodLead}>Precisa de alguém que saiba ler o seu momento.</p>
+          <p className={styles.methodText}>
+            Aqui, o perfil não para na foto. Você vê especialidades, formato de atendimento, região, valor inicial e os canais que cada profissional decidiu abrir.
+          </p>
+          <div className={styles.methodDetails}>
+            <div><span>01</span><strong>Contexto local</strong><p>Perfis organizados para quem vive e treina em Guarapuava.</p></div>
+            <div><span>02</span><strong>Informação objetiva</strong><p>Menos promessa. Mais dados para uma primeira escolha consciente.</p></div>
+            <div><span>03</span><strong>Contato direto</strong><p>A conversa começa no canal publicado pelo próprio profissional.</p></div>
+          </div>
+          <Link href="/buscar" className="text-link mt-8">Ver todos os profissionais <ArrowRight size={16} /></Link>
+        </div>
+      </section>
+
+      <section className={styles.professionalsSection}>
+        <div className={styles.sectionRail}><span>03</span><p>Seleção local</p></div>
+        <div className={styles.professionalsBody}>
+          <div className={styles.professionalsHeading}>
+            <div>
+              <p className="eyebrow">Perto de você</p>
+              <h2>Quem entende<br />do movimento.</h2>
+            </div>
+            <div>
+              <p>Perfis publicados por profissionais da região para você comparar sem pressa.</p>
+              <Link href="/buscar" className="text-link">Abrir catálogo completo <ArrowRight size={16} /></Link>
+            </div>
+          </div>
+
+          {professionals.length ? (
+            <div className={styles.professionalGrid} data-motion-list>
+              {professionals.slice(0, 3).map((professional) => (
+                <ProfessionalCard key={professional.id} professional={professional} canFavorite={profile?.role !== "personal"} />
               ))}
             </div>
-          </div>
+          ) : <EmptyProfessionals />}
         </div>
       </section>
 
-      <section className="border-t border-forest/15 bg-sand text-forest">
-        <div className="section-shell grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
-          <div>
-            <p className="eyebrow text-orange-dark">04 · Para profissionais</p>
-            <h2 className="font-display mt-5 max-w-3xl text-5xl font-medium leading-tight sm:text-6xl">Mostre seu trabalho para pessoas da sua região.</h2>
-          </div>
-          <Link href="/login?modo=criar&tipo=personal&next=%2Fcadastro" className="button-accent min-h-13">Criar perfil profissional <ArrowRight size={18} /></Link>
+      <section id="como-funciona" className={styles.processSection}>
+        <div className={styles.processIntro}>
+          <p className="eyebrow text-orange-light">04 · Como funciona</p>
+          <h2>Três movimentos.<br /><em>Zero ruído.</em></h2>
+          <p>Uma busca direta, feita para sair da tela e chegar ao treino.</p>
+        </div>
+        <div className={styles.processList} data-motion-list>
+          {steps.map(([number, title, text]) => (
+            <article key={number}>
+              <span>{number}</span>
+              <h3>{title}</h3>
+              <p>{text}</p>
+              <ArrowRight size={18} aria-hidden="true" />
+            </article>
+          ))}
         </div>
       </section>
+
+      <section className={styles.professionalCta}>
+        <div className={styles.ctaSeal} aria-hidden="true"><ShieldCheck size={24} /><span>Perfil<br />profissional</span></div>
+        <div>
+          <p className="eyebrow">05 · Para profissionais</p>
+          <h2>Seu trabalho merece mais do que uma bio curta.</h2>
+        </div>
+        <div className={styles.ctaCopy}>
+          <p>Apresente sua formação, modalidades, valores, agenda e canais de contato em um perfil feito para a sua região.</p>
+          <Link href="/login?modo=criar&tipo=personal&next=%2Fcadastro" className="button-accent min-h-13">
+            Criar perfil profissional <ArrowRight size={18} />
+          </Link>
+        </div>
+      </section>
+
+      <div className={styles.ticker} aria-hidden="true">
+        <span>Musculação</span><i /> <span>Corrida</span><i /> <span>Funcional</span><i /> <span>Lutas</span><i /> <span>Mobilidade</span><i /> <span>Performance</span>
+      </div>
 
       <SiteFooter />
     </main>
@@ -132,5 +188,12 @@ export default async function Home() {
 }
 
 function EmptyProfessionals() {
-  return <div className="mt-10 border border-forest/15 bg-sand p-8 sm:p-10"><p className="eyebrow">Começando por Guarapuava</p><h3 className="font-display mt-3 text-3xl font-medium">Os primeiros perfis estão sendo preparados.</h3><p className="mt-3 max-w-xl text-sm leading-6 text-forest/55">Profissionais reais aparecerão aqui assim que concluírem e publicarem seus cadastros.</p><Link href="/login?modo=criar&tipo=personal&next=%2Fcadastro" className="text-link mt-5">Criar o primeiro perfil <ArrowRight size={16} /></Link></div>;
+  return (
+    <div className={styles.emptyProfessionals}>
+      <p className="eyebrow">Abertura local</p>
+      <h3>Os primeiros perfis estão sendo preparados.</h3>
+      <p>Profissionais reais aparecem aqui assim que concluem e publicam seus cadastros.</p>
+      <Link href="/login?modo=criar&tipo=personal&next=%2Fcadastro" className="text-link">Publicar o primeiro perfil <ArrowRight size={16} /></Link>
+    </div>
+  );
 }

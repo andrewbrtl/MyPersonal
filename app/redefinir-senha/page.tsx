@@ -28,7 +28,7 @@ export default async function ResetPasswordPage() {
           <BrandPlaceholder />
           <Link href="/" className="text-link"><ArrowLeft size={16} /> Início</Link>
         </div>
-        <div className="mt-10 grid size-12 place-items-center rounded-xl bg-forest text-white"><ShieldCheck size={21} /></div>
+        <div className="mt-10 grid size-12 place-items-center rounded-[2px] bg-forest text-white"><ShieldCheck size={21} /></div>
         <p className="eyebrow mt-7">Acesso protegido</p>
         <h1 className="font-display mt-3 text-4xl font-medium tracking-[-0.035em] sm:text-5xl">Crie uma nova senha.</h1>
         <p className="mt-4 text-sm leading-6 text-forest/55">Use uma senha forte e diferente das anteriores. Ao salvar, você entrará novamente com o novo acesso.</p>

@@ -17,6 +17,15 @@ export function PageMotion() {
     gsap.registerPlugin(ScrollTrigger);
 
     const context = gsap.context(() => {
+      const heroImage = root.querySelector<HTMLElement>("[data-motion-hero-image]");
+      if (heroImage) {
+        gsap.fromTo(
+          heroImage,
+          { scale: 1.055, autoAlpha: 0.72 },
+          { scale: 1, autoAlpha: 1, duration: 1.45, ease: "power3.out", clearProps: "opacity,visibility,transform" },
+        );
+      }
+
       const title = Array.from(root.querySelectorAll<HTMLElement>("h1, h2.font-display"))
         .find((element) => element.getClientRects().length > 0);
 
@@ -26,13 +35,13 @@ export function PageMotion() {
 
         gsap.fromTo(
           introItems,
-          { autoAlpha: 0, y: 18 },
+          { autoAlpha: 0, y: 22 },
           {
             autoAlpha: 1,
             y: 0,
-            duration: 0.68,
-            stagger: 0.07,
-            ease: "power2.out",
+            duration: 0.82,
+            stagger: 0.09,
+            ease: "power3.out",
             clearProps: "opacity,visibility,transform",
           },
         );

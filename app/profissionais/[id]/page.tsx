@@ -43,7 +43,7 @@ export default async function ProfessionalPage({ params }: PageProps<"/profissio
         <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 sm:px-8 md:grid-cols-[280px_1fr] lg:px-10 lg:py-14">
           <div
             className="grid min-h-72 place-items-center bg-forest text-cream"
-            style={professional.avatarUrl ? { backgroundImage: `linear-gradient(to top, rgb(24 52 44 / .35), transparent), url(${professional.avatarUrl})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
+            style={professional.avatarUrl ? { backgroundImage: `linear-gradient(to top, rgb(11 13 14 / .48), transparent), url(${professional.avatarUrl})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
             role={professional.avatarUrl ? "img" : undefined}
             aria-label={professional.avatarUrl ? `Foto de ${professional.nome}` : undefined}
           >
@@ -73,7 +73,7 @@ export default async function ProfessionalPage({ params }: PageProps<"/profissio
           <div className="mt-7 grid gap-3">
             {professional.whatsapp && <form action={`/contato/${professional.id}?canal=whatsapp`} method="post"><button type="submit" className="button-accent min-h-13 w-full"><MessageCircle size={18} /> Chamar no WhatsApp</button></form>}
             {professional.telefone && <form action={`/contato/${professional.id}?canal=telefone`} method="post"><button type="submit" className="button-secondary min-h-12 w-full"><Phone size={18} /> {formatPhone(professional.telefone)}</button></form>}
-            {!professional.whatsapp && !professional.telefone && <p className="rounded-xl border border-forest/15 bg-cream p-4 text-sm leading-6 text-forest/60">Este profissional ainda não informou um contato público.</p>}
+            {!professional.whatsapp && !professional.telefone && <p className="rounded-[2px] border border-forest/15 bg-cream p-4 text-sm leading-6 text-forest/60">Este profissional ainda não informou um contato público.</p>}
           </div>
           {viewer?.role !== "personal" && <FavoriteButton professionalId={professional.id} professionalName={professional.nome} initialSaved={saved} returnTo={`/profissionais/${professional.id}`} wide />}
           {socials.length > 0 && <div className="mt-6 border-t border-forest/15 pt-5"><p className="field-label">Redes e links</p><div className="grid grid-cols-2 gap-2">{socials.map((item) => <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer nofollow" className="button-quiet justify-start border border-forest/12 bg-cream px-3">{item.icon}{item.label}</a>)}</div></div>}
