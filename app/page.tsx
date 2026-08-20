@@ -78,7 +78,7 @@ export default async function Home() {
           <div className={styles.editorialHeading} data-motion-heading>
             <div>
               <p className="eyebrow">Catálogo por especialidade</p>
-              <h2>Modalidades<br />disponíveis.</h2>
+              <h2>Precisão antes<br />da repetição.</h2>
             </div>
             <p>Selecione uma modalidade para consultar os profissionais publicados, locais de atendimento e valores iniciais.</p>
           </div>
