@@ -18,18 +18,77 @@ export function PageMotion() {
 
     const context = gsap.context(() => {
       const heroImage = root.querySelector<HTMLElement>("[data-motion-hero-image]");
+      const titleLines = Array.from(root.querySelectorAll<HTMLElement>("[data-motion-title-line]"));
+      const heroIntro = Array.from(root.querySelectorAll<HTMLElement>("[data-motion-hero-copy] [data-motion-intro]"));
+      const heroSpecs = Array.from(root.querySelectorAll<HTMLElement>("[data-motion-specs] > *"));
+
       if (heroImage) {
         gsap.fromTo(
           heroImage,
-          { scale: 1.055, autoAlpha: 0.72 },
-          { scale: 1, autoAlpha: 1, duration: 1.45, ease: "power3.out", clearProps: "opacity,visibility,transform" },
+          { scale: 1.075, autoAlpha: 0.64 },
+          { scale: 1, autoAlpha: 1, duration: 1.8, ease: "power3.out", clearProps: "opacity,visibility,transform" },
         );
       }
+
+      if (titleLines.length) {
+        gsap.fromTo(
+          titleLines,
+          { yPercent: 112, rotate: 1.4 },
+          {
+            yPercent: 0,
+            rotate: 0,
+            duration: 1.05,
+            stagger: 0.11,
+            ease: "power4.out",
+            clearProps: "transform",
+          },
+        );
+      }
+
+      if (heroIntro.length) {
+        gsap.fromTo(
+          heroIntro,
+          { autoAlpha: 0, y: 18 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.8,
+            delay: titleLines.length ? 0.34 : 0,
+            stagger: 0.08,
+            ease: "power3.out",
+            clearProps: "opacity,visibility,transform",
+          },
+        );
+      }
+
+      if (heroSpecs.length) {
+        gsap.fromTo(
+          heroSpecs,
+          { autoAlpha: 0, y: 12 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.65,
+            delay: 0.72,
+            stagger: 0.08,
+            ease: "power2.out",
+            clearProps: "opacity,visibility,transform",
+          },
+        );
+      }
+
+      root.querySelectorAll<HTMLElement>("[data-motion-rule]").forEach((rule) => {
+        gsap.fromTo(
+          rule,
+          { scaleX: 0, transformOrigin: "left center" },
+          { scaleX: 1, duration: 0.9, delay: 0.18, ease: "power3.out", clearProps: "transform,transformOrigin" },
+        );
+      });
 
       const title = Array.from(root.querySelectorAll<HTMLElement>("h1, h2.font-display"))
         .find((element) => element.getClientRects().length > 0);
 
-      if (title) {
+      if (title && !titleLines.length && !heroIntro.length) {
         const introItems = [title.previousElementSibling, title, title.nextElementSibling]
           .filter((element): element is HTMLElement => element instanceof HTMLElement);
 
@@ -47,32 +106,69 @@ export function PageMotion() {
         );
       }
 
-      const introSection = title?.closest("section");
-      const allSections = Array.from(root.querySelectorAll<HTMLElement>("section"));
-      const topLevelSections = allSections.filter(
-        (section) => !allSections.some((candidate) => candidate !== section && candidate.contains(section)),
-      );
+      root.querySelectorAll<HTMLElement>("[data-motion-heading], [data-motion-form-intro]").forEach((group) => {
+        const items = Array.from(group.children).filter(
+          (element): element is HTMLElement => element instanceof HTMLElement,
+        );
 
-      topLevelSections
-        .filter((section) => section !== introSection && !section.hasAttribute("data-motion-static"))
-        .forEach((section) => {
+        if (!items.length) return;
+
+        gsap.fromTo(
+          items,
+          { autoAlpha: 0, y: 24 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.78,
+            stagger: 0.075,
+            ease: "power3.out",
+            clearProps: "opacity,visibility,transform",
+            scrollTrigger: {
+              trigger: group,
+              start: "top 86%",
+              once: true,
+            },
+          },
+        );
+      });
+
+      root.querySelectorAll<HTMLElement>("[data-motion-image-frame]").forEach((frame) => {
+        const image = frame.querySelector<HTMLElement>("[data-motion-parallax]");
+
+        gsap.fromTo(
+          frame,
+          { clipPath: "inset(0 100% 0 0)" },
+          {
+            clipPath: "inset(0 0% 0 0)",
+            duration: 1.15,
+            ease: "power3.inOut",
+            clearProps: "clipPath",
+            scrollTrigger: {
+              trigger: frame,
+              start: "top 82%",
+              once: true,
+            },
+          },
+        );
+
+        if (image) {
           gsap.fromTo(
-            section,
-            { autoAlpha: 0, y: 20 },
+            image,
+            { scale: 1.07, yPercent: -1.6 },
             {
-              autoAlpha: 1,
-              y: 0,
-              duration: 0.62,
-              ease: "power2.out",
-              clearProps: "opacity,visibility,transform",
+              scale: 1.07,
+              yPercent: 1.6,
+              ease: "none",
               scrollTrigger: {
-                trigger: section,
-                start: "top 88%",
-                once: true,
+                trigger: frame,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 0.8,
               },
             },
           );
-        });
+        }
+      });
 
       root.querySelectorAll<HTMLElement>("[data-motion-list]").forEach((list) => {
         const items = Array.from(list.children).filter(
@@ -93,11 +189,20 @@ export function PageMotion() {
             clearProps: "opacity,visibility,transform",
             scrollTrigger: {
               trigger: list,
-              start: "top 90%",
+              start: "top 88%",
               once: true,
             },
           },
         );
+      });
+
+      root.querySelectorAll<HTMLElement>("[data-motion-marquee]").forEach((track) => {
+        gsap.to(track, {
+          xPercent: -50,
+          duration: 26,
+          repeat: -1,
+          ease: "none",
+        });
       });
     }, root);
 

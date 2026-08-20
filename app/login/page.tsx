@@ -10,7 +10,9 @@ import { RecoveryForm } from "@/app/login/recovery-form";
 import { BrandPlaceholder } from "@/components/site-shell";
 import { getCurrentProfile } from "@/lib/auth";
 import { safeInternalPath } from "@/lib/input-validation";
-import loginImage from "@/public/images/gym-athlete-story.webp";
+import loginImage from "@/public/images/gym-login-interior-v3.webp";
+
+import styles from "./login.module.css";
 
 export const metadata: Metadata = {
   title: "Entrar ou criar conta",
@@ -68,20 +70,25 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
   return (
     <main className="grid min-h-screen bg-cream lg:grid-cols-[minmax(0,1.08fr)_minmax(460px,0.92fr)]">
-      <section className="relative hidden min-h-screen overflow-hidden bg-forest px-10 py-9 text-cream lg:flex lg:flex-col lg:justify-between xl:px-16 xl:py-12">
-        <Image src={loginImage} alt="" fill priority sizes="55vw" className="object-cover object-center grayscale-[18%]" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,9,10,.96),rgba(7,9,10,.46)),linear-gradient(0deg,rgba(7,9,10,.92),transparent_55%)]" aria-hidden="true" />
-        <div className="relative"><BrandPlaceholder inverted /></div>
+      <section className={`${styles.visual} relative hidden min-h-screen overflow-hidden bg-forest px-10 py-9 text-cream lg:flex lg:flex-col lg:justify-between xl:px-16 xl:py-12`}>
+        <Image src={loginImage} alt="" fill priority sizes="55vw" className={styles.visualImage} data-motion-hero-image />
+        <div className={styles.visualShade} aria-hidden="true" />
+        <div className={styles.visualGrid} aria-hidden="true" />
+        <div className="relative flex items-start justify-between gap-8">
+          <BrandPlaceholder inverted />
+          <span className={styles.coordinates}>25°23&apos; S / 51°27&apos; W</span>
+        </div>
 
-        <div className="relative max-w-xl py-16">
-          <p className="eyebrow text-orange-light"><span className="eyebrow-line" /> Acesso reservado</p>
-          <h1 className="font-display mt-6 text-[4.6rem] font-normal leading-[0.86] tracking-[-0.052em] xl:text-[5.6rem]">
-            Direção muda o movimento.
+        <div className={`${styles.copy} py-16`} data-motion-hero-copy>
+          <p className="eyebrow text-orange-light" data-motion-intro><span className="eyebrow-line" data-motion-rule /> Acesso reservado</p>
+          <h1 className={styles.title} aria-label="Direção muda o movimento.">
+            <span className={styles.titleLine}><span data-motion-title-line>Direção muda</span></span>
+            <span className={styles.titleLine}><span data-motion-title-line>o movimento.</span></span>
           </h1>
-          <p className="mt-7 max-w-lg text-base leading-7 text-cream/62">
+          <p className="mt-7 max-w-lg text-base leading-7 text-cream/62" data-motion-intro>
             Entre para guardar suas escolhas ou publicar um trabalho que merece ser encontrado na sua região.
           </p>
-          <div className="mt-10 grid max-w-md gap-4 border-t border-cream/15 pt-7 text-sm text-cream/72">
+          <div className={`${styles.benefits} mt-10 grid max-w-md gap-4 border-t border-cream/15 pt-7 text-sm text-cream/72`} data-motion-list>
             <Benefit>Perfis e preferências em um só lugar</Benefit>
             <Benefit>Área separada para alunos e profissionais</Benefit>
             <Benefit>Seus dados protegidos pelo Supabase</Benefit>
@@ -93,14 +100,14 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         </div>
       </section>
 
-      <section className="flex min-h-screen flex-col bg-cream px-5 py-6 sm:px-10 lg:px-14 xl:px-20">
+      <section className={`${styles.panel} flex min-h-screen flex-col bg-cream px-5 py-6 sm:px-10 lg:px-14 xl:px-20`}>
         <div className="flex items-center justify-between lg:justify-end">
           <div className="lg:hidden"><BrandPlaceholder /></div>
           <Link href="/" className="text-link"><ArrowLeft size={16} /> Voltar ao início</Link>
         </div>
 
         <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-12">
-          <div className="mb-8">
+          <div className={`${styles.formIntro} mb-8`} data-motion-form-intro>
             <div className="flex size-11 items-center justify-center rounded-[2px] border border-forest/20 bg-sand text-forest">
               <ShieldCheck size={21} />
             </div>
@@ -138,5 +145,5 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 }
 
 function Benefit({ children }: { children: React.ReactNode }) {
-  return <span className="flex items-center gap-3"><span className="grid size-6 place-items-center border border-orange/45 bg-black/20 text-orange-light"><Check size={13} strokeWidth={3} /></span>{children}</span>;
+  return <span className="flex items-center gap-3"><span className={styles.benefitMark}><Check size={12} strokeWidth={2.5} /></span>{children}</span>;
 }

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight, ChevronDown, MapPin, ShieldCheck } from "lucide-react";
 
 import heroImage from "@/public/images/gym-interior-hero-v2.webp";
-import storyImage from "@/public/images/gym-athlete-story.webp";
+import storyImage from "@/public/images/gym-coaching-plan-v4.webp";
 import { ProfessionalCard } from "@/components/professional-card";
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
 import { getCurrentProfile } from "@/lib/auth";
@@ -39,16 +39,16 @@ export default async function Home() {
           <div className={styles.heroGrid} aria-hidden="true" />
 
           <div className={styles.heroContent}>
-            <div className={styles.heroCopy}>
-              <p className={styles.heroKicker}><span /> Curadoria local · Guarapuava</p>
-              <h1>
-                Menos tentativa.<br />
-                <em>Mais direção.</em>
+            <div className={styles.heroCopy} data-motion-hero-copy>
+              <p className={styles.heroKicker} data-motion-intro><span data-motion-rule /> Curadoria local · Guarapuava</p>
+              <h1 aria-label="Menos tentativa. Mais direção.">
+                <span className={styles.motionLine}><span data-motion-title-line>Menos tentativa.</span></span>
+                <span className={styles.motionLine}><em data-motion-title-line>Mais direção.</em></span>
               </h1>
-              <p className={styles.heroText}>
+              <p className={styles.heroText} data-motion-intro>
                 Encontre profissionais de esporte perto de você, compare o que realmente importa e escolha com calma quem vai acompanhar seu ritmo.
               </p>
-              <div className={styles.heroActions}>
+              <div className={styles.heroActions} data-motion-intro>
                 <Link href="/buscar" className={styles.heroPrimary}>
                   Explorar profissionais <ArrowRight size={18} />
                 </Link>
@@ -58,7 +58,7 @@ export default async function Home() {
               </div>
             </div>
 
-            <dl className={styles.heroSpecs}>
+            <dl className={styles.heroSpecs} data-motion-specs>
               <div><dt>Base</dt><dd><MapPin size={14} /> Guarapuava, PR</dd></div>
               <div><dt>Catálogo</dt><dd>{modalities.length.toString().padStart(2, "0")} modalidades</dd></div>
               <div><dt>Acesso</dt><dd>Gratuito para alunos</dd></div>
@@ -75,7 +75,7 @@ export default async function Home() {
       <section id="modalidades" className={styles.modalitiesSection}>
         <div className={styles.sectionRail}><span>01</span><p>Escolha por modalidade</p></div>
         <div className={styles.modalitiesBody}>
-          <div className={styles.editorialHeading}>
+          <div className={styles.editorialHeading} data-motion-heading>
             <div>
               <p className="eyebrow">Comece pelo que move você</p>
               <h2>Precisão antes<br />da repetição.</h2>
@@ -96,17 +96,19 @@ export default async function Home() {
       </section>
 
       <section id="criterios" className={styles.methodSection}>
-        <div className={styles.storyImageFrame}>
+        <div className={styles.storyImageFrame} data-motion-image-frame>
           <Image
             src={storyImage}
-            alt="Atleta treinando força com kettlebells em uma academia"
+            alt="Treinador e aluna conversando sobre o plano de treino em uma academia"
             fill
             sizes="(max-width: 900px) 100vw, 55vw"
             className={styles.storyImage}
+            data-motion-parallax
           />
+          <span className={styles.imageMeta} aria-hidden="true">Field note / 02</span>
           <span className={styles.imageCaption}>Força · Controle · Consistência</span>
         </div>
-        <div className={styles.methodCopy}>
+        <div className={styles.methodCopy} data-motion-heading>
           <p className="eyebrow text-orange-dark">02 · O que muda</p>
           <h2>Você não precisa de mais um treino salvo.</h2>
           <p className={styles.methodLead}>Precisa de alguém que saiba ler o seu momento.</p>
@@ -125,7 +127,7 @@ export default async function Home() {
       <section className={styles.professionalsSection}>
         <div className={styles.sectionRail}><span>03</span><p>Seleção local</p></div>
         <div className={styles.professionalsBody}>
-          <div className={styles.professionalsHeading}>
+          <div className={styles.professionalsHeading} data-motion-heading>
             <div>
               <p className="eyebrow">Perto de você</p>
               <h2>Quem entende<br />do movimento.</h2>
@@ -147,7 +149,7 @@ export default async function Home() {
       </section>
 
       <section id="como-funciona" className={styles.processSection}>
-        <div className={styles.processIntro}>
+        <div className={styles.processIntro} data-motion-heading>
           <p className="eyebrow text-orange-light">04 · Como funciona</p>
           <h2>Três movimentos.<br /><em>Zero ruído.</em></h2>
           <p>Uma busca direta, feita para sair da tela e chegar ao treino.</p>
@@ -166,7 +168,7 @@ export default async function Home() {
 
       <section className={styles.professionalCta}>
         <div className={styles.ctaSeal} aria-hidden="true"><ShieldCheck size={24} /><span>Perfil<br />profissional</span></div>
-        <div>
+        <div data-motion-heading>
           <p className="eyebrow">05 · Para profissionais</p>
           <h2>Seu trabalho merece mais do que uma bio curta.</h2>
         </div>
@@ -179,11 +181,22 @@ export default async function Home() {
       </section>
 
       <div className={styles.ticker} aria-hidden="true">
-        <span>Musculação</span><i /> <span>Corrida</span><i /> <span>Funcional</span><i /> <span>Lutas</span><i /> <span>Mobilidade</span><i /> <span>Performance</span>
+        <div className={styles.tickerTrack} data-motion-marquee>
+          <TickerSet />
+          <TickerSet />
+        </div>
       </div>
 
       <SiteFooter />
     </main>
+  );
+}
+
+function TickerSet() {
+  return (
+    <span className={styles.tickerSet}>
+      <span>Musculação</span><i /> <span>Corrida</span><i /> <span>Funcional</span><i /> <span>Lutas</span><i /> <span>Mobilidade</span><i /> <span>Performance</span><i />
+    </span>
   );
 }
 
