@@ -192,10 +192,7 @@
 .storyImageFrame { position: relative; min-height: 42rem; overflow: hidden; background: #090b0c; }
 .storyImage { object-fit: cover; object-position: center; filter: grayscale(.14) saturate(.84) contrast(1.08) brightness(.86); transition: transform 900ms cubic-bezier(.2,.7,.2,1); }
 .storyImageFrame:hover .storyImage { transform: scale(1.025); }
-.storyImageFrame::before { content: ""; position: absolute; z-index: 1; inset: 1.4rem; border: 1px solid rgba(238,233,222,.18); pointer-events: none; }
 .storyImageFrame::after { content: ""; position: absolute; z-index: 0; inset: 0; background: linear-gradient(90deg, rgba(8,10,11,.14), transparent 58%, rgba(238,233,221,.72)); pointer-events: none; }
-.imageMeta { position: absolute; z-index: 2; top: 2.2rem; right: 2.25rem; color: rgba(238,233,222,.5); font-size: .56rem; font-weight: 650; letter-spacing: .18em; text-transform: uppercase; writing-mode: vertical-rl; }
-.imageCaption { position: absolute; bottom: 2rem; left: 2rem; z-index: 1; border-left: 2px solid var(--bronze); padding-left: 1rem; color: rgba(238,233,222,.66); font-size: .6rem; font-weight: 650; letter-spacing: .15em; text-transform: uppercase; }
 .methodCopy { display: flex; padding: clamp(4rem, 7vw, 7.5rem) clamp(1.5rem, 5vw, 5.5rem); flex-direction: column; justify-content: center; }
 .methodCopy h2 { max-width: 39rem; margin: 1.6rem 0 0; font-family: "Newsreader Variable", Georgia, serif; font-size: clamp(3.3rem, 5vw, 5.6rem); font-weight: 410; line-height: .92; letter-spacing: -.05em; }
 .methodLead { max-width: 35rem; margin: 1.5rem 0 0; color: #8a6437; font-family: "Newsreader Variable", Georgia, serif; font-size: clamp(1.45rem, 2vw, 2.05rem); line-height: 1.18; }

@@ -105,8 +105,6 @@ export default async function Home() {
             className={styles.storyImage}
             data-motion-parallax
           />
-          <span className={styles.imageMeta} aria-hidden="true">Catálogo / 02</span>
-          <span className={styles.imageCaption}>Equipamento · Ambiente · Estrutura</span>
         </div>
         <div className={styles.methodCopy} data-motion-heading>
           <p className="eyebrow text-orange-dark">02 · Informações do perfil</p>
