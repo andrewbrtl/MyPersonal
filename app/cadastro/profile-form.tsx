@@ -50,7 +50,7 @@ export function ProfileForm({ modalities, initialProfile }: { modalities: Modali
       <section className="border border-forest/15 bg-cream p-5 sm:p-8 lg:p-10">
         <div className="border-b border-forest/15 pb-6">
           <p className="eyebrow">01 · Identidade</p>
-          <h2 className="font-display mt-2 text-3xl font-medium">Como as pessoas verão você</h2>
+          <h2 className="font-display mt-2 text-3xl font-medium">Informações públicas</h2>
         </div>
 
         <div className="mt-7 grid gap-7 md:grid-cols-[180px_1fr]">
@@ -94,7 +94,7 @@ export function ProfileForm({ modalities, initialProfile }: { modalities: Modali
       <section id="contatos" className="scroll-mt-6 border border-forest/15 bg-cream p-5 sm:p-8 lg:p-10">
         <div className="border-b border-forest/15 pb-6">
           <p className="eyebrow">02 · Contato e redes</p>
-          <h2 className="font-display mt-2 text-3xl font-medium">Facilite a primeira conversa</h2>
+          <h2 className="font-display mt-2 text-3xl font-medium">Canais de contato</h2>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-forest/55">Só os canais preenchidos serão exibidos no seu perfil público. Seu email de acesso continua privado.</p>
         </div>
         <div data-motion-list className="mt-7 grid gap-5 sm:grid-cols-2">
@@ -109,7 +109,7 @@ export function ProfileForm({ modalities, initialProfile }: { modalities: Modali
       </section>
 
       <section className="border border-forest/15 bg-cream p-5 sm:p-8 lg:p-10">
-        <div className="border-b border-forest/15 pb-6"><p className="eyebrow">03 · Seu trabalho</p><h2 className="font-display mt-2 text-3xl font-medium">Dê contexto antes do primeiro contato</h2></div>
+        <div className="border-b border-forest/15 pb-6"><p className="eyebrow">03 · Serviços</p><h2 className="font-display mt-2 text-3xl font-medium">Atendimento e disponibilidade</h2></div>
         <div data-motion-list className="mt-7 grid gap-6 sm:grid-cols-2">
           <label className="sm:col-span-2"><span className="field-label">Apresentação</span><textarea className="field min-h-36 py-3" name="bio" minLength={40} maxLength={INPUT_LIMITS.bio} defaultValue={initialProfile.bio} placeholder="Conte com quem você trabalha, como funciona seu acompanhamento e o que torna seu método especial." required /><FieldError messages={state.errors?.bio} /></label>
           <label className="sm:col-span-2"><span className="field-label">Formação e certificações</span><textarea className="field min-h-24 py-3" name="formacao" minLength={5} maxLength={INPUT_LIMITS.education} defaultValue={initialProfile.formacao} placeholder="Educação Física, especializações e certificações relevantes." required /><FieldError messages={state.errors?.formacao} /></label>

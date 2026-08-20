@@ -25,7 +25,7 @@ export default async function RegistrationPage() {
       <header className="border-b border-cream/15 bg-forest text-cream"><div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8"><BrandPlaceholder inverted /><div className="flex items-center gap-3"><Link href="/conta" className="text-link hidden text-cream sm:inline-flex">Configurações</Link><form action={signOutAction}><button type="submit" className="text-link text-cream"><LogOut size={16} /> Sair</button></form></div></div></header>
       <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8 lg:py-14">
         <div className="mb-9 grid gap-6 border-b border-forest/15 pb-8 lg:grid-cols-[1fr_auto] lg:items-end">
-          <div><p className="eyebrow">Seu perfil profissional</p><h1 className="font-display mt-4 max-w-3xl text-5xl font-medium tracking-[-0.04em] sm:text-6xl">Mostre seu trabalho com clareza.</h1><p className="mt-4 max-w-2xl text-sm leading-6 text-forest/55">Um perfil completo transmite confiança antes mesmo da primeira conversa.</p></div>
+          <div><p className="eyebrow">Perfil profissional</p><h1 className="font-display mt-4 max-w-3xl text-5xl font-medium tracking-[-0.04em] sm:text-6xl">Cadastro do perfil profissional</h1><p className="mt-4 max-w-2xl text-sm leading-6 text-forest/55">Preencha as informações que serão exibidas no catálogo público.</p></div>
           <div className="flex max-w-sm gap-3 rounded-[2px] border border-forest/15 bg-cream p-4 text-xs leading-5 text-forest/55"><ShieldCheck className="shrink-0 text-orange-dark" size={20} /><span>O CREF é obrigatório para profissionais. A verificação documental poderá ser solicitada posteriormente.</span></div>
         </div>
         <ProfileForm

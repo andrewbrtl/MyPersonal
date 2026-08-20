@@ -80,18 +80,18 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         </div>
 
         <div className={`${styles.copy} py-16`} data-motion-hero-copy>
-          <p className="eyebrow text-orange-light" data-motion-intro><span className="eyebrow-line" data-motion-rule /> Acesso reservado</p>
-          <h1 className={styles.title} aria-label="Direção muda o movimento.">
-            <span className={styles.titleLine}><span data-motion-title-line>Direção muda</span></span>
-            <span className={styles.titleLine}><span data-motion-title-line>o movimento.</span></span>
+          <p className="eyebrow text-orange-light" data-motion-intro><span className="eyebrow-line" data-motion-rule /> Acesso à plataforma</p>
+          <h1 className={styles.title} aria-label="Entrar ou criar conta.">
+            <span className={styles.titleLine}><span data-motion-title-line>Entrar ou</span></span>
+            <span className={styles.titleLine}><span data-motion-title-line>criar conta.</span></span>
           </h1>
           <p className="mt-7 max-w-lg text-base leading-7 text-cream/62" data-motion-intro>
-            Entre para guardar suas escolhas ou publicar um trabalho que merece ser encontrado na sua região.
+            Alunos podem salvar perfis. Profissionais podem publicar e editar informações de atendimento.
           </p>
           <div className={`${styles.benefits} mt-10 grid max-w-md gap-4 border-t border-cream/15 pt-7 text-sm text-cream/72`} data-motion-list>
-            <Benefit>Perfis e preferências em um só lugar</Benefit>
-            <Benefit>Área separada para alunos e profissionais</Benefit>
-            <Benefit>Seus dados protegidos pelo Supabase</Benefit>
+            <Benefit>Favoritos do aluno</Benefit>
+            <Benefit>Cadastro do perfil profissional</Benefit>
+            <Benefit>Autenticação e recuperação de acesso</Benefit>
           </div>
         </div>
 
@@ -113,14 +113,14 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             </div>
             <p className="eyebrow mt-6">Acesso seguro</p>
             <h2 className="font-display mt-3 text-4xl font-medium tracking-[-0.035em] sm:text-5xl">
-              {mode === "signup" ? "Crie seu espaço." : mode === "recovery" ? "Recupere seu acesso." : "Bom ter você de volta."}
+              {mode === "signup" ? "Criar conta" : mode === "recovery" ? "Recuperar acesso" : "Entrar"}
             </h2>
             <p className="mt-3 text-sm leading-6 text-forest/55">
               {mode === "signup"
-                ? "Leva menos de um minuto. Depois você completa o que realmente importa."
+                ? "Informe os dados de acesso. O perfil profissional é preenchido na etapa seguinte."
                 : mode === "recovery"
                   ? "Informe seu email ou telefone. O link seguro será enviado para o email cadastrado."
-                  : "Entre com seu email ou telefone para continuar de onde parou."}
+                  : "Use o email ou telefone cadastrado para acessar sua conta."}
             </p>
           </div>
 

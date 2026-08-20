@@ -95,7 +95,7 @@
   left: 0;
   width: 5rem;
   height: 1px;
-  background: #c3985b;
+  background: #ad8552;
 }
 
 .benefitMark {
@@ -106,7 +106,7 @@
   flex: 0 0 auto;
   place-items: center;
   border: 1px solid rgba(195, 152, 91, .48);
-  color: #e2c18e;
+  color: #d8b680;
 }
 
 .benefitMark::after {
@@ -116,7 +116,7 @@
   right: -1px;
   width: .3rem;
   height: .3rem;
-  background: #c3985b;
+  background: #ad8552;
 }
 
 .panel {
@@ -130,7 +130,7 @@
   right: 0;
   left: 0;
   height: 3px;
-  background: linear-gradient(90deg, #c3985b 0 19%, rgba(11, 13, 14, .12) 19% 100%);
+  background: linear-gradient(90deg, #ad8552 0 19%, rgba(11, 13, 14, .12) 19% 100%);
 }
 
 .panel::after {

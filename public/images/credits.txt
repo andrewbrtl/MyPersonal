@@ -10,7 +10,6 @@ Foto original: Salman Sidheek
 Fonte: https://unsplash.com/photos/ER28K86K4Ho
 Licença: Unsplash License
 
-gym-coaching-plan-v4.webp
-Foto original: Vitaly Gariev
-Fonte: https://unsplash.com/photos/6ESp0qoio_I
-Licença: Unsplash License
+gym-dumbbell-rack-v7.webp
+Imagem original gerada para o projeto com OpenAI ImageGen
+Conteúdo: halter em rack de academia, sem pessoas, marcas ou texto

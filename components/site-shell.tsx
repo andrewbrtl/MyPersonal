@@ -56,7 +56,7 @@ export function SiteFooter() {
         <div>
           <BrandPlaceholder inverted />
           <p className="mt-6 max-w-sm text-sm leading-7 text-cream/48">
-            Um ponto de encontro local entre quem orienta o movimento e quem decidiu começar.
+            Catálogo local de profissionais de esporte, modalidades, valores e canais de contato.
           </p>
         </div>
         <div>

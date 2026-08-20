@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   description: "Encontre profissionais de esporte em Guarapuava por modalidade, bairro e faixa de preço.",
   openGraph: {
-    title: "Menos tentativa. Mais direção.",
+    title: "Profissionais de esporte em Guarapuava",
     description: "Compare profissionais de esporte, especialidades, valores e locais de atendimento em Guarapuava.",
     images: [{
       url: "/images/gym-interior-hero-v2.webp",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Menos tentativa. Mais direção.",
+    title: "Profissionais de esporte em Guarapuava",
     description: "Profissionais de esporte perto de você, em Guarapuava.",
     images: ["/images/gym-interior-hero-v2.webp"],
   },

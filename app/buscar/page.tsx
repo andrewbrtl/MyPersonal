@@ -67,8 +67,8 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
       <section className="relative overflow-hidden border-b border-cream/12 bg-[#111415] text-cream">
         <div className="pointer-events-none absolute inset-0 opacity-15 [background-image:linear-gradient(rgba(238,233,222,.16)_1px,transparent_1px),linear-gradient(90deg,rgba(238,233,222,.16)_1px,transparent_1px)] [background-size:25%_100%,100%_50%]" aria-hidden="true" />
         <div className="relative mx-auto max-w-[90rem] px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
-          <p className="eyebrow text-orange-light">Explorar · Guarapuava</p>
-          <h1 className="font-display mt-4 max-w-5xl text-6xl font-normal leading-[.9] tracking-[-0.05em] sm:text-7xl">Encontre quem entende<br />do seu movimento.</h1>
+          <p className="eyebrow text-orange-light">Catálogo · Guarapuava</p>
+          <h1 className="font-display mt-4 max-w-5xl text-6xl font-normal leading-[.9] tracking-[-0.05em] sm:text-7xl">Profissionais de esporte<br />em Guarapuava.</h1>
           <p className="mt-5 text-cream/50">Compare especialidades, valores e locais de atendimento.</p>
           <form className="mt-8 flex max-w-3xl flex-col gap-3 sm:flex-row" action="/buscar">
             <label className="sr-only" htmlFor="search">Especialidade ou nome</label>
