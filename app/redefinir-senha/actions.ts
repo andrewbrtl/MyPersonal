@@ -19,7 +19,7 @@ export type ResetPasswordState = {
 
 const resetPasswordSchema = z.object({
   password: strongPasswordSchema,
-  passwordConfirm: z.string().min(1, "Confirme sua nova senha.").max(INPUT_LIMITS.password, "A confirmação está muito longa."),
+  passwordConfirm: z.string().min(1, "Confirme sua nova senha.").max(INPUT_LIMITS.newPassword, "A confirmação está muito longa."),
 }).superRefine((data, context) => {
   if (data.password !== data.passwordConfirm) {
     context.addIssue({ code: "custom", path: ["passwordConfirm"], message: "As senhas não coincidem." });

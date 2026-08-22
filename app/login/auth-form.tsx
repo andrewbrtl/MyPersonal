@@ -154,7 +154,7 @@ export function AuthForm({ mode, next, role, switchHref }: AuthFormProps) {
               className="field px-12"
               type={showPassword ? "text" : "password"}
               name="password"
-              maxLength={INPUT_LIMITS.password}
+              maxLength={isSignup ? INPUT_LIMITS.newPassword : INPUT_LIMITS.password}
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               autoComplete={isSignup ? "new-password" : "current-password"}
@@ -204,7 +204,7 @@ export function AuthForm({ mode, next, role, switchHref }: AuthFormProps) {
                 className="field px-12"
                 type={showPasswordConfirm ? "text" : "password"}
                 name="passwordConfirm"
-                maxLength={INPUT_LIMITS.password}
+                maxLength={INPUT_LIMITS.newPassword}
                 value={passwordConfirm}
                 onChange={(event) => setPasswordConfirm(event.target.value)}
                 autoComplete="new-password"

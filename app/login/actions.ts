@@ -52,7 +52,7 @@ const signUpSchema = z.object({
     .transform(normalizeBrazilianPhone)
     .refine(isValidBrazilianPhone, "Digite um telefone com DDD válido."),
   password: strongPasswordSchema,
-  passwordConfirm: z.string().min(1, "Confirme sua senha.").max(INPUT_LIMITS.password, "A confirmação está muito longa."),
+  passwordConfirm: z.string().min(1, "Confirme sua senha.").max(INPUT_LIMITS.newPassword, "A confirmação está muito longa."),
   role: z.enum(["aluno", "personal"], { error: "Escolha o tipo de conta." }),
   cref: z.string().max(INPUT_LIMITS.cref).trim().toUpperCase().optional(),
   next: z.string().max(INPUT_LIMITS.internalPath).optional(),

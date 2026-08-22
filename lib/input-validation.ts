@@ -1,9 +1,12 @@
+export const NEW_PASSWORD_LIMITS = { min: 8, max: 30 } as const;
+
 export const INPUT_LIMITS = {
   name: 120,
   signupName: 80,
   email: 254,
   loginIdentifier: 254,
   password: 128,
+  newPassword: NEW_PASSWORD_LIMITS.max,
   internalPath: 500,
   cref: 13,
   neighborhood: 80,

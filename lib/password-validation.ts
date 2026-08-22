@@ -1,10 +1,10 @@
 import { z } from "zod";
 
-import { INPUT_LIMITS } from "@/lib/input-validation";
+import { NEW_PASSWORD_LIMITS } from "@/lib/input-validation";
 
 export const strongPasswordSchema = z.string()
-  .min(10, "Use pelo menos 10 caracteres.")
-  .max(INPUT_LIMITS.password, `Use no máximo ${INPUT_LIMITS.password} caracteres.`)
+  .min(NEW_PASSWORD_LIMITS.min, `Use pelo menos ${NEW_PASSWORD_LIMITS.min} caracteres.`)
+  .max(NEW_PASSWORD_LIMITS.max, `Use no máximo ${NEW_PASSWORD_LIMITS.max} caracteres.`)
   .regex(/[a-z]/, "Inclua pelo menos uma letra minúscula.")
   .regex(/[A-Z]/, "Inclua pelo menos uma letra maiúscula.")
   .regex(/[0-9]/, "Inclua pelo menos um número.")

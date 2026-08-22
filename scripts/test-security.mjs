@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 
 import {
   INPUT_LIMITS,
+  NEW_PASSWORD_LIMITS,
   isSafeMultilineText,
   isValidNeighborhood,
   isValidPersonName,
@@ -27,6 +28,8 @@ assert.equal(safeInternalPath("/buscar\r\nLocation:https://evil.example", "/"), 
 assert.equal(safeInternalPath(`/${"a".repeat(INPUT_LIMITS.internalPath)}`, "/"), "/");
 assert.equal(withSiteNotice("/buscar?q=corrida#resultados", "conta-criada-aluno"), "/buscar?q=corrida&aviso=conta-criada-aluno#resultados");
 assert.equal(withSiteNotice("https://evil.example", "entrada-confirmada"), "/?aviso=entrada-confirmada");
+assert.deepEqual(NEW_PASSWORD_LIMITS, { min: 8, max: 30 });
+assert.equal(INPUT_LIMITS.newPassword, 30);
 
 assert.equal(isValidPersonName("Ana Maria D'Ávila"), true);
 assert.equal(isValidPersonName("' OR 1=1 --"), false);

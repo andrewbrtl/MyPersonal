@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight, ChevronDown, MapPin, ShieldCheck } from "lucide-react";
 
 import heroImage from "@/public/images/gym-interior-hero-v2.webp";
-import storyImage from "@/public/images/gym-dumbbell-rack-v7.webp";
+import storyImage from "@/public/images/gym-dumbbell-rack-v9.webp";
 import { ProfessionalCard } from "@/components/professional-card";
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
 import { getCurrentProfile } from "@/lib/auth";
@@ -99,7 +99,7 @@ export default async function Home() {
         <div className={styles.storyImageFrame} data-motion-image-frame>
           <Image
             src={storyImage}
-            alt="Halter de ferro apoiado em um rack de academia sob iluminação fria"
+            alt="Fileira de halteres de ferro em um rack de academia"
             fill
             sizes="(max-width: 900px) 100vw, 55vw"
             className={styles.storyImage}

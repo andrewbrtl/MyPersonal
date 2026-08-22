@@ -92,7 +92,7 @@ function PasswordField({
           className="field px-12"
           type={show ? "text" : "password"}
           name={name}
-          maxLength={INPUT_LIMITS.password}
+          maxLength={INPUT_LIMITS.newPassword}
           value={value}
           onChange={(event) => onChange(event.target.value)}
           autoComplete="new-password"
