@@ -93,7 +93,7 @@ export function AuthForm({ mode, next, role, switchHref }: AuthFormProps) {
                 name="nome"
                 maxLength={INPUT_LIMITS.signupName}
                 autoComplete="name"
-                placeholder="Como você gosta de ser chamado"
+                placeholder="Seu nome completo"
                 aria-invalid={Boolean(state.errors?.nome)}
                 required
               />
@@ -266,19 +266,20 @@ export function AuthForm({ mode, next, role, switchHref }: AuthFormProps) {
                   maxLength={INPUT_LIMITS.cref}
                   autoComplete="off"
                   placeholder="012345-G/PR"
-                  pattern="[0-9]{4,8}-[A-Za-z]/[A-Za-z]{2}"
+                  pattern="[0-9]{4,8}-[A-Za-z]/PR"
+                  title="Use um CREF do Paraná no formato 012345-G/PR"
                   aria-invalid={Boolean(state.errors?.cref)}
                   required
                 />
               </span>
-              <span className="mt-2 block text-xs leading-5 text-forest/50">O número será exibido no perfil profissional e poderá ser verificado antes da publicação.</span>
+              <span className="mt-2 block text-xs leading-5 text-forest/50">Antes de criar a conta, conferimos número, situação e nome completo na consulta pública do CREF9/PR.</span>
               <FieldError messages={state.errors?.cref} />
             </label>
           </div>
         )}
 
         <button type="submit" disabled={pending || state.success} className="button-accent min-h-13 w-full disabled:cursor-not-allowed disabled:opacity-55">
-          {pending ? "Aguarde..." : isSignup ? "Criar minha conta" : "Entrar na minha conta"}
+          {pending ? (isSignup && selectedRole === "personal" ? "Consultando CREF9..." : "Aguarde...") : isSignup ? "Criar minha conta" : "Entrar na minha conta"}
           {!pending && <ArrowRight size={18} />}
         </button>
 

@@ -84,7 +84,22 @@ export function ProfileForm({ modalities, initialProfile }: { modalities: Modali
 
           <div data-motion-list className="grid gap-5 sm:grid-cols-2">
             <Field label="Nome profissional" name="nome" defaultValue={initialProfile.nome} maxLength={INPUT_LIMITS.name} error={state.errors?.nome} className="sm:col-span-2" required />
-            <Field label="CREF" name="cref" defaultValue={initialProfile.cref} maxLength={INPUT_LIMITS.cref} pattern="[0-9]{4,8}-[A-Za-z]/[A-Za-z]{2}" placeholder="012345-G/PR" error={state.errors?.cref} className="uppercase" required />
+            <label>
+              <span className="field-label">CREF · CREF9/PR</span>
+              <input
+                className="field bg-sand/65 uppercase read-only:cursor-not-allowed read-only:text-forest/60"
+                name="cref"
+                defaultValue={initialProfile.cref}
+                maxLength={INPUT_LIMITS.cref}
+                pattern="[0-9]{4,8}-[A-Za-z]/PR"
+                placeholder="012345-G/PR"
+                title="Use um CREF do Paraná no formato 012345-G/PR"
+                readOnly={Boolean(initialProfile.cref)}
+                required
+              />
+              <span className="mt-2 block text-xs leading-5 text-forest/45">O registro é consultado no CREF9 antes da publicação e, depois de validado, fica vinculado à conta.</span>
+              <FieldError messages={state.errors?.cref} />
+            </label>
             <Field label="Bairro principal" name="bairro" defaultValue={initialProfile.bairro} maxLength={INPUT_LIMITS.neighborhood} placeholder="Ex.: Centro" error={state.errors?.bairro} required />
             <label><span className="field-label">Atendimento</span><select className="field" name="atendimento" defaultValue={initialProfile.atendimento}><option value="presencial">Presencial</option><option value="online">Online</option><option value="ambos">Presencial e online</option></select></label>
           </div>

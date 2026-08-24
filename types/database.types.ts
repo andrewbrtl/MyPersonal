@@ -307,6 +307,42 @@ export type Database = {
         }
         Relationships: []
       }
+      validacoes_cref9: {
+        Row: {
+          categoria: string
+          criado_em: string
+          cref: string
+          email: string
+          expira_em: string
+          nome_informado: string
+          nome_oficial: string
+          situacao: string
+          token: string
+        }
+        Insert: {
+          categoria: string
+          criado_em?: string
+          cref: string
+          email: string
+          expira_em: string
+          nome_informado: string
+          nome_oficial: string
+          situacao: string
+          token: string
+        }
+        Update: {
+          categoria?: string
+          criado_em?: string
+          cref?: string
+          email?: string
+          expira_em?: string
+          nome_informado?: string
+          nome_oficial?: string
+          situacao?: string
+          token?: string
+        }
+        Relationships: []
+      }
       personais: {
         Row: {
           anos_experiencia: number | null
@@ -314,7 +350,9 @@ export type Database = {
           atualizado_em: string
           bairro: string | null
           bio: string | null
+          categoria_cref: string | null
           cref: string | null
+          cref_verificado_em: string | null
           criado_em: string
           facebook_url: string | null
           formacao: string | null
@@ -323,9 +361,11 @@ export type Database = {
           instagram_url: string | null
           localizacao: unknown
           nota_media: number
+          nome_oficial_cref: string | null
           perfil_publico: boolean
           preco_mensal_base: number | null
           raio_atendimento_km: number
+          situacao_cref: string | null
           tiktok_url: string | null
           total_avaliacoes: number
           video_apresentacao_url: string | null
@@ -339,7 +379,9 @@ export type Database = {
           atualizado_em?: string
           bairro?: string | null
           bio?: string | null
+          categoria_cref?: string | null
           cref?: string | null
+          cref_verificado_em?: string | null
           criado_em?: string
           facebook_url?: string | null
           formacao?: string | null
@@ -348,9 +390,11 @@ export type Database = {
           instagram_url?: string | null
           localizacao?: unknown
           nota_media?: number
+          nome_oficial_cref?: string | null
           perfil_publico?: boolean
           preco_mensal_base?: number | null
           raio_atendimento_km?: number
+          situacao_cref?: string | null
           tiktok_url?: string | null
           total_avaliacoes?: number
           video_apresentacao_url?: string | null
@@ -364,7 +408,9 @@ export type Database = {
           atualizado_em?: string
           bairro?: string | null
           bio?: string | null
+          categoria_cref?: string | null
           cref?: string | null
+          cref_verificado_em?: string | null
           criado_em?: string
           facebook_url?: string | null
           formacao?: string | null
@@ -373,9 +419,11 @@ export type Database = {
           instagram_url?: string | null
           localizacao?: unknown
           nota_media?: number
+          nome_oficial_cref?: string | null
           perfil_publico?: boolean
           preco_mensal_base?: number | null
           raio_atendimento_km?: number
+          situacao_cref?: string | null
           tiktok_url?: string | null
           total_avaliacoes?: number
           video_apresentacao_url?: string | null

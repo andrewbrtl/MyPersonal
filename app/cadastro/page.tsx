@@ -26,7 +26,7 @@ export default async function RegistrationPage() {
       <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8 lg:py-14">
         <div className="mb-9 grid gap-6 border-b border-forest/15 pb-8 lg:grid-cols-[1fr_auto] lg:items-end">
           <div><p className="eyebrow">Perfil profissional</p><h1 className="font-display mt-4 max-w-3xl text-5xl font-medium tracking-[-0.04em] sm:text-6xl">Cadastro do perfil profissional</h1><p className="mt-4 max-w-2xl text-sm leading-6 text-forest/55">Preencha as informações que serão exibidas no catálogo público.</p></div>
-          <div className="flex max-w-sm gap-3 rounded-[2px] border border-forest/15 bg-cream p-4 text-xs leading-5 text-forest/55"><ShieldCheck className="shrink-0 text-orange-dark" size={20} /><span>O CREF é obrigatório para profissionais. A verificação documental poderá ser solicitada posteriormente.</span></div>
+          <div className="flex max-w-sm gap-3 rounded-[2px] border border-forest/15 bg-cream p-4 text-xs leading-5 text-forest/55"><ShieldCheck className="shrink-0 text-orange-dark" size={20} /><span>Antes de publicar, confirmamos número, situação ativa e nome na consulta pública do CREF9/PR.</span></div>
         </div>
         <ProfileForm
           modalities={modalities ?? []}

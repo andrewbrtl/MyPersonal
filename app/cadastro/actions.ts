@@ -12,6 +12,7 @@ import {
   normalizeWebsiteInput,
   normalizeBrazilianPhone,
 } from "@/lib/contact";
+import { validateCref9Registration } from "@/lib/cref9-validation";
 import { AVATAR_MAX_BYTES, detectSupportedImage, isSafeImageDimensions, readImageDimensions } from "@/lib/image-validation";
 import {
   INPUT_LIMITS,
@@ -52,7 +53,7 @@ const profileSchema = z.object({
     .max(INPUT_LIMITS.phoneFormatted, "O WhatsApp está muito longo.")
     .transform(normalizeBrazilianPhone)
     .refine((value) => !value || isValidBrazilianPhone(value), "Informe um WhatsApp com DDD válido."),
-  cref: z.string().max(INPUT_LIMITS.cref).trim().toUpperCase().regex(/^\d{4,8}-[A-Z]\/([A-Z]{2})$/, "Use o formato 012345-G/PR."),
+  cref: z.string().max(INPUT_LIMITS.cref).trim().toUpperCase().regex(/^\d{4,8}-[A-Z]\/PR$/, "Use um CREF do Paraná no formato 012345-G/PR."),
   bairro: z.string()
     .max(INPUT_LIMITS.neighborhood, "O bairro está muito longo.")
     .transform(normalizeSingleLineText)
@@ -120,6 +121,34 @@ export async function saveProfessionalProfile(_state: ProfileState, formData: Fo
   if (!parsed.success) return { errors: parsed.error.flatten().fieldErrors };
 
   const admin = createAdminClient();
+  const [{ data: currentProfile, error: currentProfileError }, { data: currentProfessional, error: currentProfessionalError }] = await Promise.all([
+    admin.from("profiles").select("avatar_url,nome").eq("id", profile.id).single(),
+    admin.from("personais").select("cref").eq("id", profile.id).single(),
+  ]);
+  if (currentProfileError || currentProfessionalError) return { message: "Não foi possível carregar seus dados atuais." };
+
+  const savedCref = currentProfessional.cref?.trim().toUpperCase() ?? "";
+  if (savedCref && parsed.data.cref !== savedCref) {
+    return { errors: { cref: ["O CREF validado da conta não pode ser alterado por este formulário."] } };
+  }
+
+  const crefValidation = await validateCref9Registration(parsed.data.cref, savedCref ? undefined : currentProfile.nome);
+  if (!crefValidation.ok) {
+    if (crefValidation.reason === "service_unavailable") {
+      return { message: "A consulta do CREF9/PR está indisponível no momento. O perfil não foi publicado; tente novamente em alguns minutos." };
+    }
+    if (crefValidation.reason === "name_mismatch") {
+      return { errors: { nome: ["Use seu nome completo exatamente como consta no cadastro do CREF9/PR."] } };
+    }
+    if (crefValidation.reason === "inactive") {
+      return { errors: { cref: ["Este registro consta como inativo no CREF9/PR."] } };
+    }
+    if (crefValidation.reason === "category_mismatch") {
+      return { errors: { cref: ["A letra G/P informada não corresponde à categoria deste registro no CREF9/PR."] } };
+    }
+    return { errors: { cref: ["Este registro não foi localizado na consulta pública do CREF9/PR."] } };
+  }
+
   const avatar = formData.get("avatar");
   const removeAvatar = formData.get("removerAvatar") === "on";
   const avatarFile = avatar instanceof File && avatar.size > 0 && !removeAvatar ? avatar : null;
@@ -146,13 +175,6 @@ export async function saveProfessionalProfile(_state: ProfileState, formData: Fo
   if (validModalities?.length !== parsed.data.modalidades.length) {
     return { errors: { modalidades: ["Uma das modalidades escolhidas não está mais disponível."] } };
   }
-
-  const { data: currentProfile, error: currentProfileError } = await admin
-    .from("profiles")
-    .select("avatar_url")
-    .eq("id", profile.id)
-    .single();
-  if (currentProfileError) return { message: "Não foi possível carregar seus dados atuais." };
 
   let avatarUrl: string | null | undefined = removeAvatar ? null : undefined;
   let uploadedStoragePath: string | null = null;

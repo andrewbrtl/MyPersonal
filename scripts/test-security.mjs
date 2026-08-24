@@ -17,6 +17,14 @@ import {
   withSiteNotice,
 } from "../lib/input-validation.ts";
 import { detectSupportedImage, isSafeImageDimensions, readImageDimensions } from "../lib/image-validation.ts";
+import {
+  extractWebFormHiddenFields,
+  hasCref9NoResultsMarker,
+  parseCref9Registration,
+  parseCref9SearchHtml,
+  registryCategoryMatches,
+  registryNamesMatch,
+} from "../lib/cref9-parser.ts";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -60,6 +68,34 @@ assert.equal(normalizeSearchInput("  musculação   centro "), "musculação cen
 assert.equal(normalizeSearchInput("<script>"), "");
 assert.equal(normalizeSearchInput("a".repeat(INPUT_LIMITS.search + 1)), "");
 
+assert.deepEqual(parseCref9Registration(" 010870-g/pr "), {
+  number: "010870",
+  categoryLetter: "G",
+  formatted: "010870-G/PR",
+});
+assert.equal(parseCref9Registration("010870-G/SP"), null);
+assert.equal(parseCref9Registration("' OR 1=1 --"), null);
+assert.equal(registryNamesMatch("Jéferson de Oliveira Bomfim", "JEFERSON DE OLIVEIRA BOMFIM"), true);
+assert.equal(registryNamesMatch("Outra Pessoa", "JEFERSON DE OLIVEIRA BOMFIM"), false);
+assert.equal(registryCategoryMatches("G", "LICENCIADO/BACHAREL"), true);
+assert.equal(registryCategoryMatches("P", "PROVISIONADO-KARATE"), true);
+assert.equal(registryCategoryMatches("G", "PROVISIONADO-KARATE"), false);
+const cref9Fixture = `
+  <input type="hidden" name="__VIEWSTATE" value="abc&amp;123">
+  <input type="hidden" name="__EVENTVALIDATION" value="event">
+  <tr id="ContentPlaceHolder1_Callbackconsulta_gridConsulta_DXDataRow0">
+    <td>PR-010870</td><td>JEFERSON DE OLIVEIRA BOMFIM</td><td>LICENCIADO/BACHAREL</td><td>ATIVO</td>
+  </tr>`;
+assert.equal(extractWebFormHiddenFields(cref9Fixture).get("__VIEWSTATE"), "abc&123");
+assert.deepEqual(parseCref9SearchHtml(cref9Fixture, "010870"), {
+  registration: "PR-010870",
+  name: "JEFERSON DE OLIVEIRA BOMFIM",
+  category: "LICENCIADO/BACHAREL",
+  status: "ATIVO",
+});
+assert.equal(hasCref9NoResultsMarker(`<tr id="gridConsulta_DXEmptyRow"><td>As Informações fornecidas não constam em nossa base de dados.</td></tr>`), true);
+assert.equal(hasCref9NoResultsMarker("<html>Serviço temporariamente indisponível</html>"), false);
+
 const png = new Uint8Array(24);
 png.set([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 png.set([0, 0, 4, 0], 16);
@@ -86,6 +122,17 @@ for (const required of [
   "grant execute on function public.salvar_perfil_profissional",
 ]) {
   assert.equal(migration.includes(required), true, `Proteção de banco ausente: ${required}`);
+}
+
+const crefGateMigration = await readFile(path.join(root, "supabase/migrations/0008_cref9_registration_gate.sql"), "utf8");
+for (const required of [
+  "validacoes_cref9",
+  "delete from public.validacoes_cref9",
+  "cref_validation_token",
+  "cref_verificado_em",
+  "grant select, insert, delete on table public.validacoes_cref9 to service_role",
+]) {
+  assert.equal(crefGateMigration.includes(required), true, `Bloqueio de cadastro profissional ausente: ${required}`);
 }
 
 console.log(JSON.stringify({

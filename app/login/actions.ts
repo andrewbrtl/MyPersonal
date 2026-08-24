@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { isValidBrazilianPhone, normalizeBrazilianPhone } from "@/lib/contact";
+import { validateCref9Registration } from "@/lib/cref9-validation";
 import {
   INPUT_LIMITS,
   isValidPersonName,
@@ -61,8 +62,8 @@ const signUpSchema = z.object({
     context.addIssue({ code: "custom", path: ["passwordConfirm"], message: "As senhas não coincidem." });
   }
 
-  if (data.role === "personal" && !/^\d{4,8}-[A-Z]\/([A-Z]{2})$/.test(data.cref ?? "")) {
-    context.addIssue({ code: "custom", path: ["cref"], message: "Informe um CREF válido, como 012345-G/PR." });
+  if (data.role === "personal" && !/^\d{4,8}-[A-Z]\/PR$/.test(data.cref ?? "")) {
+    context.addIssue({ code: "custom", path: ["cref"], message: "Informe um CREF do Paraná, como 012345-G/PR." });
   }
 });
 
@@ -133,14 +134,48 @@ export async function signUpAction(_state: AuthState, formData: FormData): Promi
   if (phoneLookupError) return { message: "Não foi possível validar os dados agora. Tente novamente." };
   if (existingPhone) return { errors: { telefone: ["Este telefone já está vinculado a outra conta."] } };
 
+  let crefValidationToken: string | undefined;
   if (parsed.data.role === "personal") {
+    const cref = parsed.data.cref ?? "";
     const { data: existingCref, error: crefLookupError } = await admin
       .from("personais")
       .select("id")
-      .eq("cref", parsed.data.cref ?? "")
+      .eq("cref", cref)
       .maybeSingle();
     if (crefLookupError) return { message: "Não foi possível validar os dados agora. Tente novamente." };
     if (existingCref) return { errors: { cref: ["Este CREF já está vinculado a outra conta."] } };
+
+    const crefValidation = await validateCref9Registration(cref, parsed.data.nome);
+    if (!crefValidation.ok) {
+      if (crefValidation.reason === "service_unavailable") {
+        return { message: "A consulta do CREF9/PR está indisponível no momento. Nenhuma conta foi criada; tente novamente em alguns minutos." };
+      }
+      if (crefValidation.reason === "name_mismatch") {
+        return { errors: { nome: ["Use seu nome completo exatamente como consta no cadastro do CREF9/PR."] } };
+      }
+      if (crefValidation.reason === "inactive") {
+        return { errors: { cref: ["Este registro consta como inativo no CREF9/PR."] } };
+      }
+      if (crefValidation.reason === "category_mismatch") {
+        return { errors: { cref: ["A letra G/P informada não corresponde à categoria deste registro no CREF9/PR."] } };
+      }
+      return { errors: { cref: ["Este registro não foi localizado na consulta pública do CREF9/PR."] } };
+    }
+
+    crefValidationToken = crypto.randomUUID();
+    const now = Date.now();
+    await admin.from("validacoes_cref9").delete().lte("expira_em", new Date(now).toISOString());
+    const { error: ticketError } = await admin.from("validacoes_cref9").insert({
+      token: crefValidationToken,
+      email: parsed.data.email.toLowerCase(),
+      nome_informado: parsed.data.nome,
+      cref,
+      nome_oficial: crefValidation.record.name,
+      categoria: crefValidation.record.category,
+      situacao: "ATIVO",
+      expira_em: new Date(now + 10 * 60 * 1000).toISOString(),
+    });
+    if (ticketError) return { message: "Não foi possível concluir a validação profissional agora. Nenhuma conta foi criada." };
   }
 
   const supabase = await createClient();
@@ -160,10 +195,15 @@ export async function signUpAction(_state: AuthState, formData: FormData): Promi
         role: parsed.data.role,
         telefone: parsed.data.telefone,
         cref: parsed.data.role === "personal" ? parsed.data.cref : undefined,
+        cref_validation_token: crefValidationToken,
       },
       emailRedirectTo: `${siteUrl}/auth/callback?next=${encodeURIComponent(accountDestination)}`,
     },
   });
+
+  if (crefValidationToken) {
+    await admin.from("validacoes_cref9").delete().eq("token", crefValidationToken);
+  }
 
   if (error) {
     if (error.message.toLowerCase().includes("rate limit")) {
