@@ -13,6 +13,7 @@ const admin = createClient(url, secretKey, { auth: { persistSession: false, auto
 const createdUserIds = [];
 const validationTickets = [];
 const result = [];
+let professionalCpfFingerprint = "";
 
 try {
   for (const role of ["aluno", "personal"]) {
@@ -22,7 +23,8 @@ try {
     const phone = `429${stamp.slice(-8)}`;
     const password = "TesteSeguro!2026";
     const name = `Teste ${role}`;
-    const validationToken = role === "personal" ? await createValidationTicket(email, name, cref) : undefined;
+    const validation = role === "personal" ? await createValidationTicket(email, name, cref) : undefined;
+    if (validation) professionalCpfFingerprint = validation.cpfFingerprint;
     const client = createClient(url, publishableKey, { auth: { persistSession: false, autoRefreshToken: false } });
     const { data, error } = await client.auth.signUp({
       email,
@@ -32,7 +34,7 @@ try {
           nome: name,
           role,
           telefone: phone,
-          ...(role === "personal" ? { cref, cref_validation_token: validationToken } : {}),
+          ...(role === "personal" ? { cref, cref_validation_token: validation?.token } : {}),
         },
         emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/auth/callback`,
       },
@@ -71,10 +73,43 @@ try {
     if (role === "personal") {
       const { data: professional, error: professionalError } = await admin.from("personais").select("cref").eq("id", data.user.id).single();
       if (professionalError || professional?.cref !== cref) throw new Error("personal: registro profissional não foi criado corretamente.");
+      const { data: identity, error: identityError } = await admin.from("identidades_personais").select("cpf_fingerprint").eq("personal_id", data.user.id).single();
+      if (identityError || identity?.cpf_fingerprint !== professionalCpfFingerprint) throw new Error("personal: proteção privada do CPF não foi criada corretamente.");
     }
 
     result.push({ role, userCreated: true, sessionCreated: Boolean(data.session), triggerValidated: true, phoneLoginValidated: true, duplicatePhoneBlocked: true, recoveryLinkValidated: true });
   }
+
+  const duplicateCpfStamp = `${Date.now()}8`;
+  const duplicateCpfEmail = `codex.qa.cpf.${duplicateCpfStamp}@gmail.com`;
+  const duplicateCpfName = "Tentativa CPF Repetido";
+  const duplicateCpfCref = `${duplicateCpfStamp.slice(-6)}-G/PR`;
+  const duplicateCpfValidation = await createValidationTicket(
+    duplicateCpfEmail,
+    duplicateCpfName,
+    duplicateCpfCref,
+    professionalCpfFingerprint,
+  );
+  const duplicateCpfClient = createClient(url, publishableKey, { auth: { persistSession: false, autoRefreshToken: false } });
+  const { data: duplicateCpfData, error: duplicateCpfError } = await duplicateCpfClient.auth.signUp({
+    email: duplicateCpfEmail,
+    password: "TesteSeguro!2026",
+    options: {
+      data: {
+        nome: duplicateCpfName,
+        role: "personal",
+        telefone: `426${duplicateCpfStamp.slice(-8)}`,
+        cref: duplicateCpfCref,
+        cref_validation_token: duplicateCpfValidation.token,
+      },
+    },
+  });
+  if (duplicateCpfData.user?.id) {
+    createdUserIds.push(duplicateCpfData.user.id);
+    throw new Error("personal: um segundo cadastro com o mesmo CPF foi aceito.");
+  }
+  if (!duplicateCpfError) throw new Error("personal: CPF repetido não foi recusado pelo banco.");
+  result.push({ role: "personal_cpf_repetido", blocked: true });
 
   const bypassStamp = `${Date.now()}9`;
   const bypassClient = createClient(url, publishableKey, { auth: { persistSession: false, autoRefreshToken: false } });
@@ -103,7 +138,7 @@ try {
 
 console.log(JSON.stringify({ conectado: true, fluxos: result, dadosTemporariosRemovidos: createdUserIds.length }));
 
-async function createValidationTicket(email, name, cref) {
+async function createValidationTicket(email, name, cref, cpfFingerprint = createTestFingerprint()) {
   const token = crypto.randomUUID();
   validationTickets.push(token);
   const { error } = await admin.from("validacoes_cref9").insert({
@@ -114,8 +149,13 @@ async function createValidationTicket(email, name, cref) {
     nome_oficial: name.toUpperCase(),
     categoria: "LICENCIADO/BACHAREL",
     situacao: "ATIVO",
+    cpf_fingerprint: cpfFingerprint,
     expira_em: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
   });
   if (error) throw error;
-  return token;
+  return { token, cpfFingerprint };
+}
+
+function createTestFingerprint() {
+  return `${crypto.randomUUID().replaceAll("-", "")}${crypto.randomUUID().replaceAll("-", "")}`;
 }

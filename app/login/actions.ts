@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { isValidBrazilianPhone, normalizeBrazilianPhone } from "@/lib/contact";
+import { createCpfFingerprint } from "@/lib/cpf-fingerprint";
+import { CPF_FORMATTED_MAX_LENGTH, isValidCpfInput, normalizeCpf } from "@/lib/cpf";
 import { validateCref9Registration } from "@/lib/cref9-validation";
 import {
   INPUT_LIMITS,
@@ -23,6 +25,7 @@ export type AuthState = {
     identificador?: string[];
     email?: string[];
     telefone?: string[];
+    cpf?: string[];
     password?: string[];
     passwordConfirm?: string[];
     role?: string[];
@@ -55,6 +58,7 @@ const signUpSchema = z.object({
   password: strongPasswordSchema,
   passwordConfirm: z.string().min(1, "Confirme sua senha.").max(INPUT_LIMITS.newPassword, "A confirmação está muito longa."),
   role: z.enum(["aluno", "personal"], { error: "Escolha o tipo de conta." }),
+  cpf: z.string().max(CPF_FORMATTED_MAX_LENGTH, "O CPF está muito longo.").trim().optional(),
   cref: z.string().max(INPUT_LIMITS.cref).trim().toUpperCase().optional(),
   next: z.string().max(INPUT_LIMITS.internalPath).optional(),
 }).superRefine((data, context) => {
@@ -64,6 +68,10 @@ const signUpSchema = z.object({
 
   if (data.role === "personal" && !/^\d{4,8}-[A-Z]\/PR$/.test(data.cref ?? "")) {
     context.addIssue({ code: "custom", path: ["cref"], message: "Informe um CREF do Paraná, como 012345-G/PR." });
+  }
+
+  if (data.role === "personal" && !isValidCpfInput(data.cpf ?? "")) {
+    context.addIssue({ code: "custom", path: ["cpf"], message: "Informe um CPF válido." });
   }
 });
 
@@ -119,6 +127,7 @@ export async function signUpAction(_state: AuthState, formData: FormData): Promi
     password: formData.get("password"),
     passwordConfirm: formData.get("passwordConfirm"),
     role: formData.get("role"),
+    cpf: formData.get("cpf") || undefined,
     cref: formData.get("cref") || undefined,
     next: formData.get("next") || undefined,
   });
@@ -137,13 +146,23 @@ export async function signUpAction(_state: AuthState, formData: FormData): Promi
   let crefValidationToken: string | undefined;
   if (parsed.data.role === "personal") {
     const cref = parsed.data.cref ?? "";
-    const { data: existingCref, error: crefLookupError } = await admin
-      .from("personais")
-      .select("id")
-      .eq("cref", cref)
-      .maybeSingle();
-    if (crefLookupError) return { message: "Não foi possível validar os dados agora. Tente novamente." };
+    let cpfFingerprint: string;
+    try {
+      cpfFingerprint = createCpfFingerprint(normalizeCpf(parsed.data.cpf ?? ""));
+    } catch {
+      return { message: "Não foi possível proteger o CPF agora. Nenhuma conta foi criada." };
+    }
+
+    const [
+      { data: existingCref, error: crefLookupError },
+      { data: existingCpf, error: cpfLookupError },
+    ] = await Promise.all([
+      admin.from("personais").select("id").eq("cref", cref).maybeSingle(),
+      admin.from("identidades_personais").select("personal_id").eq("cpf_fingerprint", cpfFingerprint).maybeSingle(),
+    ]);
+    if (crefLookupError || cpfLookupError) return { message: "Não foi possível validar os dados agora. Tente novamente." };
     if (existingCref) return { errors: { cref: ["Este CREF já está vinculado a outra conta."] } };
+    if (existingCpf) return { errors: { cpf: ["Este CPF já está vinculado a uma conta profissional."] } };
 
     const crefValidation = await validateCref9Registration(cref, parsed.data.nome);
     if (!crefValidation.ok) {
@@ -173,6 +192,7 @@ export async function signUpAction(_state: AuthState, formData: FormData): Promi
       nome_oficial: crefValidation.record.name,
       categoria: crefValidation.record.category,
       situacao: "ATIVO",
+      cpf_fingerprint: cpfFingerprint,
       expira_em: new Date(now + 10 * 60 * 1000).toISOString(),
     });
     if (ticketError) return { message: "Não foi possível concluir a validação profissional agora. Nenhuma conta foi criada." };

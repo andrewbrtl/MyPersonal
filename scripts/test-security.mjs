@@ -17,6 +17,7 @@ import {
   withSiteNotice,
 } from "../lib/input-validation.ts";
 import { detectSupportedImage, isSafeImageDimensions, readImageDimensions } from "../lib/image-validation.ts";
+import { formatCpfInput, isValidCpf, isValidCpfInput, normalizeCpf } from "../lib/cpf.ts";
 import {
   extractWebFormHiddenFields,
   hasCref9NoResultsMarker,
@@ -67,6 +68,15 @@ assert.equal(isValidSchedule("Segunda\u0007"), false);
 assert.equal(normalizeSearchInput("  musculação   centro "), "musculação centro");
 assert.equal(normalizeSearchInput("<script>"), "");
 assert.equal(normalizeSearchInput("a".repeat(INPUT_LIMITS.search + 1)), "");
+
+assert.equal(normalizeCpf("529.982.247-25"), "52998224725");
+assert.equal(formatCpfInput("52998224725"), "529.982.247-25");
+assert.equal(isValidCpf("529.982.247-25"), true);
+assert.equal(isValidCpfInput("529.982.247-25"), true);
+assert.equal(isValidCpfInput("52998224725"), true);
+assert.equal(isValidCpf("111.111.111-11"), false);
+assert.equal(isValidCpf("529.982.247-24"), false);
+assert.equal(isValidCpfInput("abc52998224725"), false);
 
 assert.deepEqual(parseCref9Registration(" 010870-g/pr "), {
   number: "010870",
@@ -133,6 +143,16 @@ for (const required of [
   "grant select, insert, delete on table public.validacoes_cref9 to service_role",
 ]) {
   assert.equal(crefGateMigration.includes(required), true, `Bloqueio de cadastro profissional ausente: ${required}`);
+}
+
+const cpfMigration = await readFile(path.join(root, "supabase/migrations/0009_unique_personal_cpf.sql"), "utf8");
+for (const required of [
+  "identidades_personais",
+  "cpf_fingerprint text not null unique",
+  "revoke all on table public.identidades_personais from public, anon, authenticated",
+  "insert into public.identidades_personais",
+]) {
+  assert.equal(cpfMigration.includes(required), true, `Proteção de CPF ausente: ${required}`);
 }
 
 console.log(JSON.stringify({

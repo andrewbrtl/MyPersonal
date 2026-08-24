@@ -150,6 +150,7 @@ async function createTestUser(role, phone, personalCref) {
 
 async function createValidationTicket(email, name, personalCref) {
   const token = crypto.randomUUID();
+  const cpfFingerprint = createTestFingerprint();
   validationTickets.push(token);
   const { error } = await admin.from("validacoes_cref9").insert({
     token,
@@ -159,10 +160,15 @@ async function createValidationTicket(email, name, personalCref) {
     nome_oficial: name.toUpperCase(),
     categoria: "LICENCIADO/BACHAREL",
     situacao: "ATIVO",
+    cpf_fingerprint: cpfFingerprint,
     expira_em: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
   });
   if (error) throw error;
   return token;
+}
+
+function createTestFingerprint() {
+  return `${crypto.randomUUID().replaceAll("-", "")}${crypto.randomUUID().replaceAll("-", "")}`;
 }
 
 async function authenticatedClient(email) {

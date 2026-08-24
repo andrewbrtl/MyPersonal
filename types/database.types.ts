@@ -307,9 +307,36 @@ export type Database = {
         }
         Relationships: []
       }
+      identidades_personais: {
+        Row: {
+          cpf_fingerprint: string
+          criado_em: string
+          personal_id: string
+        }
+        Insert: {
+          cpf_fingerprint: string
+          criado_em?: string
+          personal_id: string
+        }
+        Update: {
+          cpf_fingerprint?: string
+          criado_em?: string
+          personal_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "identidades_personais_personal_id_fkey"
+            columns: ["personal_id"]
+            isOneToOne: true
+            referencedRelation: "personais"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       validacoes_cref9: {
         Row: {
           categoria: string
+          cpf_fingerprint: string
           criado_em: string
           cref: string
           email: string
@@ -321,6 +348,7 @@ export type Database = {
         }
         Insert: {
           categoria: string
+          cpf_fingerprint: string
           criado_em?: string
           cref: string
           email: string
@@ -332,6 +360,7 @@ export type Database = {
         }
         Update: {
           categoria?: string
+          cpf_fingerprint?: string
           criado_em?: string
           cref?: string
           email?: string

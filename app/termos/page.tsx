@@ -16,7 +16,7 @@ export default function TermsPage() {
           <h2>Sobre a plataforma</h2>
           <p>A plataforma aproxima alunos e profissionais do esporte em Guarapuava. Ela não presta o serviço de treinamento e não participa da negociação, do pagamento ou da execução do acompanhamento.</p>
           <h2>Contas e informações</h2>
-          <p>Cada pessoa é responsável por manter seus dados corretos e proteger sua senha. Profissionais devem informar um CREF9/PR próprio, ativo e compatível com seu nome no cadastro público, além de somente divulgar qualificações, preços, contatos e serviços verdadeiros. A consulta do registro não substitui a confirmação da identidade da pessoa.</p>
+          <p>Cada pessoa é responsável por manter seus dados corretos e proteger sua senha. Profissionais devem informar um CPF único e um CREF9/PR próprio, ativo e compatível com seu nome no cadastro público, além de somente divulgar qualificações, preços, contatos e serviços verdadeiros. A consulta do registro não substitui a confirmação da identidade da pessoa.</p>
           <h2>Contratação e segurança</h2>
           <p>Antes de contratar, confirme identidade, registro profissional, valores, horários e condições diretamente com o profissional. A plataforma pode suspender perfis com informações falsas, uso abusivo ou risco aos demais usuários.</p>
           <h2>Uso aceitável</h2>

@@ -10,6 +10,7 @@ import {
   AtSign,
   Eye,
   EyeOff,
+  Fingerprint,
   IdCard,
   LockKeyhole,
   Mail,
@@ -23,6 +24,7 @@ import {
   type AuthState,
 } from "@/app/login/actions";
 import { passwordRules } from "@/lib/password-rules";
+import { CPF_FORMATTED_MAX_LENGTH, formatCpfInput } from "@/lib/cpf";
 import { INPUT_LIMITS } from "@/lib/input-validation";
 import { useActionNotice } from "@/components/site-notices";
 
@@ -43,6 +45,7 @@ export function AuthForm({ mode, next, role, switchHref }: AuthFormProps) {
   const [selectedRole, setSelectedRole] = useState(role);
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [cpf, setCpf] = useState("");
   const professionalFieldsRef = useRef<HTMLDivElement>(null);
   const isSignup = mode === "signup";
   useActionNotice(state, {
@@ -256,6 +259,28 @@ export function AuthForm({ mode, next, role, switchHref }: AuthFormProps) {
 
         {isSignup && selectedRole === "personal" && (
           <div ref={professionalFieldsRef} className="rounded-[2px] border border-orange/25 bg-orange/6 p-4 sm:p-5">
+            <label className="mb-4 block">
+              <span className="field-label text-orange-dark">CPF obrigatório</span>
+              <span className="relative block">
+                <Fingerprint className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-orange-dark/55" size={18} />
+                <input
+                  className="field bg-white pl-12"
+                  name="cpf"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  maxLength={CPF_FORMATTED_MAX_LENGTH}
+                  value={cpf}
+                  onChange={(event) => setCpf(formatCpfInput(event.target.value))}
+                  placeholder="000.000.000-00"
+                  pattern="(?:[0-9]{11}|[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2})"
+                  title="Digite os 11 números do CPF"
+                  aria-invalid={Boolean(state.errors?.cpf)}
+                  required
+                />
+              </span>
+              <span className="mt-2 block text-xs leading-5 text-forest/50">Usado somente para impedir contas profissionais duplicadas. O número não aparece no perfil e não é salvo em texto puro.</span>
+              <FieldError messages={state.errors?.cpf} />
+            </label>
             <label>
               <span className="field-label text-orange-dark">CREF obrigatório</span>
               <span className="relative block">
