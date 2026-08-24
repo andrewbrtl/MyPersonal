@@ -12,6 +12,7 @@ if (!url || !publishableKey || !secretKey) throw new Error("Credenciais do Supab
 const admin = createClient(url, secretKey, { auth: { persistSession: false, autoRefreshToken: false } });
 const anonymous = createClient(url, publishableKey, { auth: { persistSession: false, autoRefreshToken: false } });
 const createdUserIds = [];
+const validationTickets = [];
 const password = "TesteSeguro!2026";
 const stamp = `${Date.now()}`;
 const cref = `${stamp.slice(-6)}-G/PR`;
@@ -123,24 +124,45 @@ try {
   }));
 } finally {
   await Promise.all(createdUserIds.map((id) => admin.auth.admin.deleteUser(id)));
+  if (validationTickets.length) await admin.from("validacoes_cref9").delete().in("token", validationTickets);
 }
 
 async function createTestUser(role, phone, personalCref) {
   const email = `codex.security.${role}.${stamp}@gmail.com`;
+  const name = `Teste ${role}`;
+  const validationToken = personalCref ? await createValidationTicket(email, name, personalCref) : undefined;
   const { data, error } = await admin.auth.admin.createUser({
     email,
     password,
     email_confirm: true,
     user_metadata: {
-      nome: `Teste ${role}`,
+      nome: name,
       role,
       telefone: phone,
       ...(personalCref ? { cref: personalCref } : {}),
+      ...(validationToken ? { cref_validation_token: validationToken } : {}),
     },
   });
   if (error || !data.user) throw error ?? new Error(`Não foi possível criar ${role}.`);
   createdUserIds.push(data.user.id);
   return { id: data.user.id, email };
+}
+
+async function createValidationTicket(email, name, personalCref) {
+  const token = crypto.randomUUID();
+  validationTickets.push(token);
+  const { error } = await admin.from("validacoes_cref9").insert({
+    token,
+    email,
+    nome_informado: name,
+    cref: personalCref,
+    nome_oficial: name.toUpperCase(),
+    categoria: "LICENCIADO/BACHAREL",
+    situacao: "ATIVO",
+    expira_em: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+  });
+  if (error) throw error;
+  return token;
 }
 
 async function authenticatedClient(email) {
