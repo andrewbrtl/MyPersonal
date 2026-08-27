@@ -104,55 +104,23 @@
   line-height: 1.65;
 }
 
-.heroSearch {
-  display: grid;
-  width: min(100%, 52rem);
-  margin-top: 2.2rem;
-  grid-template-columns: 0.9fr 1.1fr 3.75rem;
-  gap: 1px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.14);
-  overflow: hidden;
-}
-
-.heroSearch label {
-  display: grid;
-  gap: 0.35rem;
-  background: white;
-  padding: 0.78rem 0.95rem 0.72rem;
-}
-
-.heroSearch label > span {
-  color: rgba(23, 22, 22, 0.48);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-}
-
-.heroSearch input,
-.heroSearch select {
-  min-width: 0;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: var(--ink);
-  font-size: 0.9rem;
-}
-
-.heroSearch button {
-  display: grid;
-  border: 0;
+.heroAction {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 3.5rem;
+  margin-top: 2rem;
+  align-items: center;
+  gap: 2.5rem;
   background: var(--accent);
+  padding: 0 1.25rem;
   color: var(--ink);
-  cursor: pointer;
-  place-items: center;
-  transition: background 180ms ease, transform 180ms ease;
+  font-size: 0.78rem;
+  font-weight: 750;
+  transition: background 180ms ease, gap 180ms ease;
 }
 
-.heroSearch button:hover { background: white; }
-.heroSearch button:active { transform: scale(0.97); }
-.heroSearch button:focus-visible { outline: 3px solid white; outline-offset: -4px; }
+.heroAction:hover { gap: 3rem; background: white; }
+.heroAction:focus-visible { outline: 3px solid white; outline-offset: 3px; }
 
 .professionalsSection,
 .professionalCta {
@@ -261,8 +229,6 @@
   .heroCopy h1 { font-size: clamp(3.3rem, 14vw, 5.4rem); }
   .heroImage { object-position: 64% center; }
   .heroImageShade { background: linear-gradient(90deg, rgba(14, 17, 19, 0.91), rgba(14, 17, 19, 0.48)), linear-gradient(0deg, rgba(14, 17, 19, 0.72), transparent 50%); }
-  .heroSearch { grid-template-columns: 1fr 3.6rem; }
-  .heroSearch label:first-child { grid-column: 1 / -1; }
   .locationTag { display: none; }
   .sectionHeading { align-items: flex-start; flex-direction: column; }
   .professionalCta { align-items: flex-start; flex-direction: column; }

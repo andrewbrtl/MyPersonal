@@ -1,12 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, MapPin, Search } from "lucide-react";
+import { ArrowRight, MapPin } from "lucide-react";
 
 import { ProfessionalCard } from "@/components/professional-card";
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
 import { getCurrentProfile } from "@/lib/auth";
-import { modalities } from "@/lib/demo-data";
-import { INPUT_LIMITS } from "@/lib/input-validation";
 import { getPublicProfessionals } from "@/lib/professionals";
 import heroImage from "@/public/images/gym-interior-hero-v2.webp";
 
@@ -44,20 +42,9 @@ export default async function Home() {
               Pesquise por modalidade, bairro ou nome. Veja o perfil e fale diretamente com o profissional.
             </p>
 
-            <form action="/buscar" className={styles.heroSearch} data-motion-intro>
-              <label>
-                <span>Modalidade</span>
-                <select name="modalidade" defaultValue="">
-                  <option value="">Todas</option>
-                  {modalities.map(([name]) => <option key={name} value={name}>{name}</option>)}
-                </select>
-              </label>
-              <label>
-                <span>Nome ou especialidade</span>
-                <input name="q" maxLength={INPUT_LIMITS.search} placeholder="Ex.: musculação" />
-              </label>
-              <button type="submit" aria-label="Buscar profissionais"><Search size={20} /></button>
-            </form>
+            <Link href="/buscar" className={styles.heroAction} data-motion-intro>
+              Procurar profissionais <ArrowRight size={18} />
+            </Link>
 
           </div>
         </section>
