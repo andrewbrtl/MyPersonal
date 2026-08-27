@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, MapPin, Star } from "lucide-react";
+import { ArrowRight, BadgeCheck, BriefcaseBusiness, MapPin, Star } from "lucide-react";
 
 import { FavoriteButton } from "@/components/favorite-button";
 import type { Professional } from "@/lib/professionals";
 
 export function ProfessionalCard({ professional, saved = false, returnTo = "/buscar", canFavorite = true }: { professional: Professional; saved?: boolean; returnTo?: string; canFavorite?: boolean }) {
   return (
-    <article className="group grid min-w-0 overflow-hidden rounded-lg border border-forest/15 bg-white text-forest transition duration-200 hover:border-forest/35 md:grid-cols-[220px_minmax(0,1fr)]">
+    <article className="group grid min-w-0 overflow-hidden border border-forest/20 bg-white text-forest transition duration-200 hover:border-forest/50 md:grid-cols-[220px_minmax(0,1fr)]">
       <div
         className="relative grid min-h-56 place-items-center overflow-hidden bg-[#2b2829] text-cream md:min-h-full"
         style={professional.avatarUrl ? { backgroundImage: `linear-gradient(to top, rgb(33 31 32 / .78), transparent 68%), url(${professional.avatarUrl})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
@@ -14,7 +14,7 @@ export function ProfessionalCard({ professional, saved = false, returnTo = "/bus
         aria-label={professional.avatarUrl ? `Foto de ${professional.nome}` : undefined}
       >
         {!professional.avatarUrl && <span className="text-5xl font-bold text-orange">{professional.iniciais}</span>}
-        <span className="absolute bottom-4 left-4 rounded-full bg-forest/80 px-3 py-1.5 text-[0.65rem] font-semibold text-white/80 backdrop-blur-sm">
+        <span className="absolute bottom-4 left-4 border-l-2 border-orange bg-forest/80 px-3 py-1.5 text-[0.65rem] font-semibold text-white/80 backdrop-blur-sm">
           {professional.bairro}
         </span>
       </div>
@@ -23,9 +23,13 @@ export function ProfessionalCard({ professional, saved = false, returnTo = "/bus
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="break-words text-2xl font-bold tracking-[-0.025em]">{professional.nome}</h2>
-              {professional.verificado && <span className="inline-flex min-h-6 items-center gap-1 rounded-full border border-forest/15 bg-cream px-2.5 text-[0.6rem] font-bold text-forest/65"><BadgeCheck size={13} className="text-orange-dark" /> CREF informado</span>}
+              {professional.verificado && <span className="inline-flex min-h-6 items-center gap-1 border border-forest/20 bg-cream px-2.5 text-[0.6rem] font-bold text-forest/65"><BadgeCheck size={13} className="text-orange-dark" /> CREF informado</span>}
             </div>
-            <p className="mt-1 text-xs font-bold text-orange-dark">{professional.especialidade}</p>
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {professional.modalidades.slice(0, 4).map((modality) => (
+                <span key={modality} className="border border-forest/18 px-2 py-1 text-[0.65rem] font-semibold text-forest/65">{modality}</span>
+              ))}
+            </div>
           </div>
           {canFavorite && <FavoriteButton professionalId={professional.id} professionalName={professional.nome} initialSaved={saved} returnTo={returnTo} />}
         </div>
@@ -33,6 +37,7 @@ export function ProfessionalCard({ professional, saved = false, returnTo = "/bus
         <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[0.7rem] font-semibold text-forest/50">
           <span className="inline-flex items-center gap-1.5"><MapPin size={14} />{professional.bairro}</span>
           <span>{professional.atendimento}</span>
+          <span className="inline-flex items-center gap-1.5"><BriefcaseBusiness size={14} />{professional.experiencia}</span>
           <span className="inline-flex items-center gap-1.5"><Star size={14} className={professional.avaliacoes ? "fill-orange text-orange-dark" : "text-forest/25"} />{professional.avaliacoes ? `${professional.nota.toFixed(1)} (${professional.avaliacoes})` : "Novo"}</span>
         </div>
         <div className="mt-6 flex items-end justify-between gap-4 border-t border-forest/12 pt-5">

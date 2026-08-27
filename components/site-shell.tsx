@@ -52,32 +52,15 @@ export async function SiteHeader({ compact = false, overlay = false }: { compact
 export function SiteFooter() {
   return (
     <footer className="site-footer">
-      <div className="mx-auto grid max-w-[90rem] gap-10 px-5 py-14 sm:px-8 md:grid-cols-[1.3fr_1fr_1fr] lg:px-12 lg:py-20">
-        <div>
-          <BrandPlaceholder inverted />
-          <p className="mt-6 max-w-sm text-sm leading-7 text-cream/48">
-            Encontre profissionais de esporte que atendem em Guarapuava.
-          </p>
-        </div>
-        <div>
-          <p className="eyebrow text-orange-light">Explorar</p>
-          <div className="mt-5 grid gap-4 text-xs font-semibold uppercase tracking-[0.08em] text-cream/55">
-            <Link href="/buscar" className="hover:text-white">Profissionais</Link>
-            <Link href="/#modalidades" className="hover:text-white">Modalidades</Link>
-            <Link href="/#como-funciona" className="hover:text-white">Informações dos perfis</Link>
-          </div>
-        </div>
-        <div>
-          <p className="eyebrow text-orange-light">Informações</p>
-          <div className="mt-5 grid gap-4 text-xs font-semibold uppercase tracking-[0.08em] text-cream/55">
-            <Link href="/termos" className="hover:text-white">Termos de uso</Link>
-            <Link href="/privacidade" className="hover:text-white">Privacidade</Link>
-            <Link href="/login?modo=criar&tipo=personal&next=%2Fcadastro" className="hover:text-white">Criar perfil profissional</Link>
-          </div>
-        </div>
-      </div>
-      <div className="border-t border-cream/10 px-5 py-5 text-center text-[0.6rem] uppercase tracking-[0.16em] text-cream/35">
-        © 2026 · Guia local de Guarapuava
+      <div className="mx-auto flex max-w-[90rem] flex-col gap-8 px-5 py-10 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-12">
+        <BrandPlaceholder inverted />
+        <nav aria-label="Navegação do rodapé" className="flex flex-wrap gap-x-6 gap-y-3 text-xs font-semibold text-cream/55">
+          <Link href="/buscar" className="hover:text-white">Profissionais</Link>
+          <Link href="/login?modo=criar&tipo=personal&next=%2Fcadastro" className="hover:text-white">Criar perfil</Link>
+          <Link href="/termos" className="hover:text-white">Termos</Link>
+          <Link href="/privacidade" className="hover:text-white">Privacidade</Link>
+        </nav>
+        <p className="text-[0.65rem] text-cream/35">© 2026 · Guarapuava, PR</p>
       </div>
     </footer>
   );

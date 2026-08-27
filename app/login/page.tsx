@@ -38,7 +38,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   if (profile && mode === "signup") {
     return (
       <main className="grid min-h-screen place-items-center bg-sand px-5 py-12">
-        <div className="w-full max-w-lg rounded-lg border border-forest/15 bg-cream p-6 shadow-[0_24px_80px_rgba(24,52,44,0.12)] sm:p-10">
+        <div className="w-full max-w-lg border border-forest/20 bg-cream p-6 sm:p-10">
           <BrandPlaceholder />
           <div className="mt-10 grid size-12 place-items-center rounded-[2px] bg-forest text-white"><UserRound size={21} /></div>
           <p className="eyebrow mt-7">Sessão ativa</p>

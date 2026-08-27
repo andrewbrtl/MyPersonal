@@ -13,6 +13,7 @@ export type Professional = {
   avatarUrl: string | null;
   especialidade: string;
   modalidades: string[];
+  categorias: string[];
   bairro: string;
   atendimento: string;
   atendimentoValor: "presencial" | "online" | "ambos";
@@ -24,6 +25,7 @@ export type Professional = {
   destaque: string;
   bio: string;
   experiencia: string;
+  anosExperiencia: number | null;
   formacao: string[];
   horarios: string[];
   cref: string;
@@ -48,18 +50,20 @@ export const getPublicProfessionals = cache(async (): Promise<Professional[]> =>
   const ids = personals.map((item) => item.id);
   const [{ data: profiles }, { data: links }] = await Promise.all([
     admin.from("profiles").select("id,nome,avatar_url,telefone").in("id", ids),
-    admin.from("personal_modalidades").select("personal_id,modalidades(nome)").in("personal_id", ids),
+    admin.from("personal_modalidades").select("personal_id,modalidades(nome,categoria)").in("personal_id", ids),
   ]);
 
   return personals.map((personal) => {
     const base = profiles?.find((item) => item.id === personal.id);
-    const modalityNames = (links ?? [])
+    const modalityDetails = (links ?? [])
       .filter((item) => item.personal_id === personal.id)
       .map((item) => {
-        const relation = item.modalidades as unknown as { nome?: string } | null;
-        return relation?.nome;
+        const relation = item.modalidades as unknown as { nome?: string; categoria?: string } | null;
+        return relation;
       })
-      .filter((name): name is string => Boolean(name));
+      .filter((item): item is { nome: string; categoria?: string } => Boolean(item?.nome));
+    const modalityNames = modalityDetails.map((item) => item.nome);
+    const categories = [...new Set(modalityDetails.map((item) => item.categoria).filter((item): item is string => Boolean(item)))];
     const nome = base?.nome ?? "Profissional";
     const iniciais = nome.split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
 
@@ -70,6 +74,7 @@ export const getPublicProfessionals = cache(async (): Promise<Professional[]> =>
       avatarUrl: trustedAvatarUrl(base?.avatar_url, personal.id),
       especialidade: modalityNames.slice(0, 2).join(" e ") || "Treinamento personalizado",
       modalidades: modalityNames,
+      categorias: categories,
       bairro: personal.bairro ?? "Guarapuava",
       atendimento: personal.atendimento === "ambos" ? "Presencial e online" : personal.atendimento === "online" ? "Online" : "Presencial",
       atendimentoValor: personal.atendimento,
@@ -81,6 +86,7 @@ export const getPublicProfessionals = cache(async (): Promise<Professional[]> =>
       destaque: personal.bio?.slice(0, 150) ?? "Conheça o trabalho e converse diretamente com o profissional.",
       bio: personal.bio ?? "",
       experiencia: personal.anos_experiencia === null ? "Experiência não informada" : `${personal.anos_experiencia} ${personal.anos_experiencia === 1 ? "ano" : "anos"} de experiência`,
+      anosExperiencia: personal.anos_experiencia,
       formacao: personal.formacao?.split("\n").map((item) => item.trim()).filter(Boolean) ?? [],
       horarios: personal.horarios ?? [],
       cref: personal.cref ?? "",
