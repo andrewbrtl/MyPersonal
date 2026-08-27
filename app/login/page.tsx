@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowLeft, Check, LogOut, MapPin, ShieldCheck, UserRound } from "lucide-react";
+import { ArrowLeft, LogOut, ShieldCheck, UserRound } from "lucide-react";
 
 import { signOutAndCreateAccountAction } from "@/app/login/actions";
 import { AuthForm } from "@/app/login/auth-form";
@@ -38,11 +38,11 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   if (profile && mode === "signup") {
     return (
       <main className="grid min-h-screen place-items-center bg-sand px-5 py-12">
-        <div className="w-full max-w-lg border border-forest/15 bg-cream p-6 shadow-[0_24px_80px_rgba(24,52,44,0.12)] sm:p-10">
+        <div className="w-full max-w-lg rounded-lg border border-forest/15 bg-cream p-6 shadow-[0_24px_80px_rgba(24,52,44,0.12)] sm:p-10">
           <BrandPlaceholder />
           <div className="mt-10 grid size-12 place-items-center rounded-[2px] bg-forest text-white"><UserRound size={21} /></div>
           <p className="eyebrow mt-7">Sessão ativa</p>
-          <h1 className="font-display mt-3 text-4xl font-medium tracking-[-0.035em] sm:text-5xl">Você já está conectado.</h1>
+          <h1 className="mt-3 text-4xl font-bold tracking-[-0.035em] sm:text-5xl">Você já está conectado.</h1>
           <p className="mt-4 text-sm leading-6 text-forest/55">
             A conta de <strong className="text-forest">{profile.nome}</strong> está ativa neste navegador. Para criar outra conta sem misturar as sessões, saia desta primeiro.
           </p>
@@ -73,14 +73,10 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       <section className={`${styles.visual} relative hidden min-h-screen overflow-hidden bg-forest px-10 py-9 text-cream lg:flex lg:flex-col lg:justify-between xl:px-16 xl:py-12`}>
         <Image src={loginImage} alt="" fill priority sizes="55vw" className={styles.visualImage} data-motion-hero-image />
         <div className={styles.visualShade} aria-hidden="true" />
-        <div className={styles.visualGrid} aria-hidden="true" />
-        <div className="relative flex items-start justify-between gap-8">
-          <BrandPlaceholder inverted />
-          <span className={styles.coordinates}>25°23&apos; S / 51°27&apos; W</span>
-        </div>
+        <div className="relative"><BrandPlaceholder inverted /></div>
 
         <div className={`${styles.copy} py-16`} data-motion-hero-copy>
-          <p className="eyebrow text-orange-light" data-motion-intro><span className="eyebrow-line" data-motion-rule /> Acesso à plataforma</p>
+          <p className="text-xs font-bold uppercase tracking-[0.1em] text-orange" data-motion-intro>Conta</p>
           <h1 className={styles.title} aria-label="Entrar ou criar conta.">
             <span className={styles.titleLine}><span data-motion-title-line>Entrar ou</span></span>
             <span className={styles.titleLine}><span data-motion-title-line>criar conta.</span></span>
@@ -88,16 +84,8 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           <p className="mt-7 max-w-lg text-base leading-7 text-cream/62" data-motion-intro>
             Alunos podem salvar perfis. Profissionais podem publicar e editar informações de atendimento.
           </p>
-          <div className={`${styles.benefits} mt-10 grid max-w-md gap-4 border-t border-cream/15 pt-7 text-sm text-cream/72`} data-motion-list>
-            <Benefit>Favoritos do aluno</Benefit>
-            <Benefit>Cadastro do perfil profissional</Benefit>
-            <Benefit>Autenticação e recuperação de acesso</Benefit>
-          </div>
         </div>
-
-        <div className="relative flex items-center gap-3 text-[0.62rem] uppercase tracking-[0.16em] text-cream/45">
-          <MapPin size={15} className="text-orange-light" /> Feito para Guarapuava, PR
-        </div>
+        <p className="relative text-xs text-cream/50">Guarapuava, PR</p>
       </section>
 
       <section className={`${styles.panel} flex min-h-screen flex-col bg-cream px-5 py-6 sm:px-10 lg:px-14 xl:px-20`}>
@@ -111,8 +99,8 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             <div className="flex size-11 items-center justify-center rounded-[2px] border border-forest/20 bg-sand text-forest">
               <ShieldCheck size={21} />
             </div>
-            <p className="eyebrow mt-6">Acesso seguro</p>
-            <h2 className="font-display mt-3 text-4xl font-medium tracking-[-0.035em] sm:text-5xl">
+            <p className="mt-6 text-xs font-bold uppercase tracking-[0.1em] text-forest/50">Acesso</p>
+            <h2 className="mt-3 text-4xl font-bold tracking-[-0.035em] sm:text-5xl">
               {mode === "signup" ? "Criar conta" : mode === "recovery" ? "Recuperar acesso" : "Entrar"}
             </h2>
             <p className="mt-3 text-sm leading-6 text-forest/55">
@@ -142,8 +130,4 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       </section>
     </main>
   );
-}
-
-function Benefit({ children }: { children: React.ReactNode }) {
-  return <span className="flex items-center gap-3"><span className={styles.benefitMark}><Check size={12} strokeWidth={2.5} /></span>{children}</span>;
 }

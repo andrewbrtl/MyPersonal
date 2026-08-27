@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-cream: #eee9dd;
-  --color-sand: #d9d1c1;
-  --color-forest: #0b0d0e;
-  --color-orange: #ad8552;
-  --color-orange-dark: #7e5d35;
-  --color-orange-light: #d8b680;
+  --color-cream: #f2efe7;
+  --color-sand: #e5e0d6;
+  --color-forest: #211f20;
+  --color-orange: #e5eb52;
+  --color-orange-dark: #646a08;
+  --color-orange-light: #f1f58f;
 }
 
 .site-notice-rail {
@@ -131,32 +131,25 @@
   position: relative;
   z-index: 40;
   border-bottom: 1px solid rgb(238 233 222 / 0.13);
-  background: #0b0d0e;
-  color: #eee9dd;
+  background: #211f20;
+  color: #f2efe7;
 }
-.site-header-overlay { position: absolute; inset: 0 0 auto; background: rgb(7 9 10 / 0.28); backdrop-filter: blur(6px); }
-.brand-lockup { display: inline-flex; align-items: center; gap: 0.8rem; color: #0b0d0e; }
-.brand-lockup-inverted { color: #eee9dd; }
-.brand-orbit {
-  position: relative;
+.site-header-overlay { position: absolute; inset: 0 0 auto; background: rgb(33 31 32 / 0.82); }
+.brand-lockup { display: inline-flex; align-items: center; gap: 0.8rem; color: #211f20; }
+.brand-lockup-inverted { color: #f2efe7; }
+.brand-mark {
   display: grid;
-  width: 2.7rem;
-  height: 2.7rem;
+  width: 2.55rem;
+  height: 2.55rem;
   place-items: center;
-  border: 1px solid currentColor;
-  border-radius: 50%;
-  opacity: 0.86;
+  border-radius: 7px;
+  background: #e5eb52;
+  color: #211f20;
 }
-.brand-orbit::before,
-.brand-orbit::after { content: ""; position: absolute; background: currentColor; opacity: 0.35; }
-.brand-orbit::before { width: 3.35rem; height: 1px; }
-.brand-orbit::after { width: 1px; height: 3.35rem; }
-.brand-orbit i { width: 0.56rem; height: 0.56rem; border: 1px solid currentColor; border-radius: 50%; }
-.brand-orbit b { position: absolute; right: 0.1rem; bottom: 0.1rem; width: 0.42rem; height: 0.42rem; border-radius: 50%; background: #ad8552; box-shadow: 0 0 0 3px #0b0d0e; }
 .brand-place { display: none; line-height: 1; }
-.brand-place strong { display: block; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
-.brand-place small { display: block; margin-top: 0.36rem; color: currentColor; font-size: 0.52rem; letter-spacing: 0.12em; opacity: 0.5; text-transform: uppercase; }
-.site-footer { border-top: 1px solid rgb(238 233 221 / 0.13); background: #0b0d0e; color: #eee9dd; }
+.brand-place strong { display: block; font-size: 0.78rem; font-weight: 750; letter-spacing: 0.06em; text-transform: uppercase; }
+.brand-place small { display: block; margin-top: 0.3rem; color: currentColor; font-size: 0.52rem; letter-spacing: 0.04em; opacity: 0.55; }
+.site-footer { border-top: 1px solid rgb(242 239 231 / 0.13); background: #211f20; color: #f2efe7; }
 .site-footer a { transition: color 180ms ease; }
 .site-footer a:hover { color: #d8b680; }
 
@@ -168,15 +161,15 @@
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
-  background: #d9d1c1;
-  color: #0b0d0e;
+  background: #e5e0d6;
+  color: #211f20;
   font-family: "Figtree Variable", "Segoe UI", sans-serif;
   text-rendering: optimizeLegibility;
 }
 button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 button, input, select, textarea { font: inherit; }
 .font-display { font-family: "Newsreader Variable", Georgia, serif; font-optical-sizing: auto; }
-::selection { background: #ad8552; color: #0b0d0e; }
+::selection { background: #e5eb52; color: #211f20; }
 
 @layer base {
   a { color: inherit; text-decoration: none; }
@@ -189,18 +182,18 @@ button, input, select, textarea { font: inherit; }
   .text-hero { @apply text-[3.5rem] leading-[0.95] tracking-[-0.048em] sm:text-[4.8rem] lg:text-[5.75rem]; }
   .eyebrow { @apply flex items-center gap-3 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-forest/55; }
   .eyebrow-line { @apply block h-px w-8 bg-orange; }
-  .nav-link { @apply min-h-11 items-center text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-forest/65 transition hover:text-forest focus-visible:outline-none focus-visible:underline; }
+  .nav-link { @apply min-h-11 items-center text-[0.8rem] font-semibold tracking-[0.02em] text-forest/65 transition hover:text-forest focus-visible:outline-none focus-visible:underline; }
   .nav-link-inverted { @apply text-cream/65 hover:text-cream; }
-  .button-primary { @apply inline-flex min-h-13 items-center justify-between gap-8 rounded-[2px] border border-forest bg-forest px-6 text-xs font-bold uppercase tracking-[0.08em] text-white transition hover:border-[#25292a] hover:bg-[#25292a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:border-forest/30 disabled:bg-forest/30; }
-  .button-accent { @apply inline-flex items-center justify-center gap-2 rounded-[2px] border border-orange bg-orange px-5 text-xs font-bold uppercase tracking-[0.08em] text-forest transition hover:border-forest hover:bg-forest hover:text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forest focus-visible:ring-offset-2; }
-  .button-secondary { @apply inline-flex items-center justify-center gap-2 rounded-[2px] border border-forest/45 bg-transparent text-xs font-bold uppercase tracking-[0.08em] text-forest transition hover:border-forest hover:bg-forest hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2; }
-  .button-quiet { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-[2px] px-4 text-xs font-semibold uppercase tracking-[0.06em] text-forest/65 transition hover:bg-forest/8 hover:text-forest focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange; }
-  .button-light { @apply inline-flex min-h-13 items-center justify-between gap-10 rounded-[2px] bg-cream px-6 text-xs font-bold uppercase tracking-[0.08em] text-forest transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-orange; }
-  .text-link { @apply inline-flex min-h-11 items-center gap-2 rounded-[2px] text-xs font-bold uppercase tracking-[0.07em] underline decoration-forest/25 underline-offset-4 transition hover:text-orange-dark hover:decoration-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange; }
+  .button-primary { @apply inline-flex min-h-13 items-center justify-between gap-8 rounded-md border border-forest bg-forest px-6 text-xs font-bold tracking-[0.03em] text-white transition hover:border-[#353233] hover:bg-[#353233] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:border-forest/30 disabled:bg-forest/30; }
+  .button-accent { @apply inline-flex items-center justify-center gap-2 rounded-md border border-orange bg-orange px-5 text-xs font-bold tracking-[0.03em] text-forest transition hover:border-white hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forest focus-visible:ring-offset-2; }
+  .button-secondary { @apply inline-flex items-center justify-center gap-2 rounded-md border border-forest/45 bg-transparent text-xs font-bold tracking-[0.03em] text-forest transition hover:border-forest hover:bg-forest hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2; }
+  .button-quiet { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-4 text-xs font-semibold tracking-[0.02em] text-forest/65 transition hover:bg-forest/8 hover:text-forest focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange; }
+  .button-light { @apply inline-flex min-h-13 items-center justify-between gap-10 rounded-md bg-cream px-6 text-xs font-bold tracking-[0.03em] text-forest transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-orange; }
+  .text-link { @apply inline-flex min-h-11 items-center gap-2 rounded-md text-xs font-bold tracking-[0.03em] underline decoration-forest/25 underline-offset-4 transition hover:text-orange-dark hover:decoration-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange; }
   .modality-cell { @apply min-h-44 border-b border-r border-forest/15 p-5 transition hover:bg-cream focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange sm:p-6; }
   .status-badge { @apply inline-flex min-h-6 items-center gap-1 rounded-[2px] border border-forest/20 bg-sand px-2 text-[0.58rem] font-bold uppercase tracking-[0.1em] text-forest; }
-  .save-button { @apply grid size-11 shrink-0 place-items-center rounded-[2px] border border-cream/30 bg-transparent text-cream transition hover:border-orange hover:bg-orange hover:text-forest focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2; }
-  .field { @apply min-h-12 w-full rounded-[2px] border border-forest/20 bg-cream px-4 text-sm outline-none transition placeholder:text-forest/35 focus:border-forest focus:ring-2 focus:ring-orange/25; }
+  .save-button { @apply grid size-11 shrink-0 place-items-center rounded-md border border-forest/20 bg-white text-forest transition hover:border-forest hover:bg-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2; }
+  .field { @apply min-h-12 w-full rounded-md border border-forest/20 bg-cream px-4 text-sm outline-none transition placeholder:text-forest/35 focus:border-forest focus:ring-2 focus:ring-orange/35; }
   .field-label { @apply mb-2 block text-xs font-semibold uppercase tracking-[0.1em] text-forest/60; }
   .legal-copy { @apply grid gap-4 text-base leading-7 text-forest/65; }
   .legal-copy h2 { @apply mt-6 text-3xl font-medium text-forest; font-family: "Newsreader Variable", Georgia, serif; }

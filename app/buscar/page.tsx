@@ -62,24 +62,23 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
   }
 
   return (
-    <main>
+    <main className="bg-cream">
       <SiteHeader compact />
-      <section className="relative overflow-hidden border-b border-cream/12 bg-[#111415] text-cream">
-        <div className="pointer-events-none absolute inset-0 opacity-15 [background-image:linear-gradient(rgba(238,233,222,.16)_1px,transparent_1px),linear-gradient(90deg,rgba(238,233,222,.16)_1px,transparent_1px)] [background-size:25%_100%,100%_50%]" aria-hidden="true" />
-        <div className="relative mx-auto max-w-[90rem] px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
-          <p className="eyebrow text-orange-light">Catálogo · Guarapuava</p>
-          <h1 className="font-display mt-4 max-w-5xl text-6xl font-normal leading-[.9] tracking-[-0.05em] sm:text-7xl">Profissionais de esporte<br />em Guarapuava.</h1>
-          <p className="mt-5 text-cream/50">Compare especialidades, valores e locais de atendimento.</p>
+      <section className="border-b border-cream/12 bg-forest text-cream">
+        <div className="mx-auto max-w-[90rem] px-5 py-12 sm:px-8 lg:px-12 lg:py-16">
+          <p className="text-xs font-bold uppercase tracking-[0.1em] text-orange">Catálogo de Guarapuava</p>
+          <h1 className="mt-3 max-w-4xl text-4xl font-bold leading-[1.02] tracking-[-0.04em] sm:text-6xl">Encontre um profissional</h1>
+          <p className="mt-4 text-cream/60">Busque por nome ou especialidade e refine pelos filtros.</p>
           <form className="mt-8 flex max-w-3xl flex-col gap-3 sm:flex-row" action="/buscar">
             <label className="sr-only" htmlFor="search">Especialidade ou nome</label>
-            <input id="search" name="q" maxLength={INPUT_LIMITS.search} defaultValue={rawTerm} className="field flex-1 bg-cream" placeholder="Musculação, corrida ou nome" />
+            <input id="search" name="q" maxLength={INPUT_LIMITS.search} defaultValue={rawTerm} className="field flex-1 bg-white" placeholder="Musculação, corrida ou nome" />
             <button className="button-accent min-h-12 sm:min-w-36" type="submit"><Search size={18} /> Buscar <ArrowRight size={17} /></button>
           </form>
         </div>
       </section>
 
       <section className="mx-auto grid max-w-[90rem] gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[260px_1fr] lg:px-12 lg:py-16">
-        <aside className="h-fit border border-forest/20 bg-cream p-5 lg:sticky lg:top-5">
+        <aside className="h-fit rounded-lg border border-forest/15 bg-white p-5 lg:sticky lg:top-5">
           <div className="flex items-center justify-between border-b border-forest/15 pb-4">
             <h2 className="font-semibold">Filtros</h2>
             <a href="/buscar" className="inline-flex items-center gap-1 text-xs underline underline-offset-4"><X size={13} /> Limpar</a>
@@ -132,8 +131,8 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
           {filtered.length ? (
             <div data-motion-list className="mt-6 grid gap-5">{filtered.map((item) => <ProfessionalCard key={item.id} professional={item} saved={favoriteIds.has(item.id)} returnTo="/buscar" canFavorite={profile?.role !== "personal"} />)}</div>
           ) : (
-            <div className="mt-6 border border-forest/15 bg-cream p-10 text-center">
-              <h2 className="font-display text-3xl">Nenhum perfil encontrado</h2>
+            <div className="mt-6 rounded-lg border border-forest/15 bg-white p-10 text-center">
+              <h2 className="text-2xl font-bold">Nenhum perfil encontrado</h2>
               <p className="mt-3 text-sm text-forest/55">Tente buscar por outra modalidade ou remova os filtros.</p>
             </div>
           )}

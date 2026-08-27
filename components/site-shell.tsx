@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LogIn, UserPlus } from "lucide-react";
+import { Dumbbell, LogIn, UserPlus } from "lucide-react";
 
 import { AccountMenu } from "@/components/account-menu";
 import { getCurrentProfile } from "@/lib/auth";
@@ -11,10 +11,10 @@ export function BrandPlaceholder({ inverted = false }: { inverted?: boolean }) {
       aria-label="Página inicial"
       className={`brand-lockup outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-4 ${inverted ? "brand-lockup-inverted focus-visible:ring-offset-forest" : "focus-visible:ring-offset-cream"}`}
     >
-      <span className="brand-orbit" aria-hidden="true"><i /><b /></span>
+      <span className="brand-mark" aria-hidden="true"><Dumbbell size={19} strokeWidth={2.2} /></span>
       <span className="brand-place">
         <strong>Guarapuava</strong>
-        <small>Paraná · Brasil</small>
+        <small>Profissionais de esporte</small>
       </span>
     </Link>
   );
@@ -28,8 +28,8 @@ export async function SiteHeader({ compact = false, overlay = false }: { compact
       <div className="mx-auto flex max-w-[96rem] items-center justify-between px-5 py-4 sm:px-8 lg:px-12">
         <BrandPlaceholder inverted />
         <nav aria-label="Navegação principal" className="flex items-center gap-2 sm:gap-6">
-          <Link href="/buscar" className="nav-link nav-link-inverted hidden md:inline-flex">Profissionais</Link>
-          {!compact && <Link href="/#como-funciona" className="nav-link nav-link-inverted hidden lg:inline-flex">Como funciona</Link>}
+          <Link href="/buscar" className="nav-link nav-link-inverted hidden md:inline-flex">Buscar</Link>
+          {!compact && <Link href="/#modalidades" className="nav-link nav-link-inverted hidden lg:inline-flex">Modalidades</Link>}
           {profile ? (
             <>
               <Link href={profile.role === "personal" ? "/painel" : "/favoritos"} className="nav-link nav-link-inverted hidden sm:inline-flex">
@@ -40,7 +40,7 @@ export async function SiteHeader({ compact = false, overlay = false }: { compact
           ) : (
             <>
               <Link href="/login" className="nav-link nav-link-inverted hidden gap-2 sm:inline-flex"><LogIn size={15} /> Entrar</Link>
-              <Link href="/login?modo=criar&tipo=personal&next=%2Fcadastro" className="button-accent min-h-11 px-4 sm:px-5"><UserPlus size={16} /> Criar perfil</Link>
+              <Link href="/login?modo=criar&tipo=personal&next=%2Fcadastro" className="button-accent min-h-11 px-4 sm:px-5"><UserPlus size={16} /> Cadastrar perfil</Link>
             </>
           )}
         </nav>
@@ -56,7 +56,7 @@ export function SiteFooter() {
         <div>
           <BrandPlaceholder inverted />
           <p className="mt-6 max-w-sm text-sm leading-7 text-cream/48">
-            Catálogo local de profissionais de esporte, modalidades, valores e canais de contato.
+            Encontre profissionais de esporte que atendem em Guarapuava.
           </p>
         </div>
         <div>
@@ -64,7 +64,7 @@ export function SiteFooter() {
           <div className="mt-5 grid gap-4 text-xs font-semibold uppercase tracking-[0.08em] text-cream/55">
             <Link href="/buscar" className="hover:text-white">Profissionais</Link>
             <Link href="/#modalidades" className="hover:text-white">Modalidades</Link>
-            <Link href="/#como-funciona" className="hover:text-white">Como funciona</Link>
+            <Link href="/#como-funciona" className="hover:text-white">Informações dos perfis</Link>
           </div>
         </div>
         <div>
@@ -77,7 +77,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-cream/10 px-5 py-5 text-center text-[0.6rem] uppercase tracking-[0.16em] text-cream/35">
-        © 2026 · Feito em Guarapuava, Paraná
+        © 2026 · Guia local de Guarapuava
       </div>
     </footer>
   );
