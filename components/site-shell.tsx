@@ -29,7 +29,7 @@ export async function SiteHeader({ compact = false, overlay = false }: { compact
         <BrandPlaceholder inverted />
         <nav aria-label="Navegação principal" className="flex items-center gap-2 sm:gap-6">
           <Link href="/buscar" className="nav-link nav-link-inverted hidden md:inline-flex">Buscar</Link>
-          {!compact && <Link href="/#modalidades" className="nav-link nav-link-inverted hidden lg:inline-flex">Modalidades</Link>}
+          {!compact && <Link href="/buscar" className="nav-link nav-link-inverted hidden lg:inline-flex">Modalidades</Link>}
           {profile ? (
             <>
               <Link href={profile.role === "personal" ? "/painel" : "/favoritos"} className="nav-link nav-link-inverted hidden sm:inline-flex">

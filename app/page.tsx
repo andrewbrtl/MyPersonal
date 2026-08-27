@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, MapPin } from "lucide-react";
+import { ArrowRight, MapPin, Search } from "lucide-react";
 
 import { ProfessionalCard } from "@/components/professional-card";
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
 import { getCurrentProfile } from "@/lib/auth";
 import { modalities } from "@/lib/demo-data";
+import { INPUT_LIMITS } from "@/lib/input-validation";
 import { getPublicProfessionals } from "@/lib/professionals";
 import heroImage from "@/public/images/gym-interior-hero-v2.webp";
 
@@ -43,32 +44,24 @@ export default async function Home() {
               Pesquise por modalidade, bairro ou nome. Veja o perfil e fale diretamente com o profissional.
             </p>
 
-            <Link href="/buscar" className={styles.heroAction} data-motion-intro>
-              Buscar profissionais <ArrowRight size={18} />
-            </Link>
+            <form action="/buscar" className={styles.heroSearch} data-motion-intro>
+              <label>
+                <span>Modalidade</span>
+                <select name="modalidade" defaultValue="">
+                  <option value="">Todas</option>
+                  {modalities.map(([name]) => <option key={name} value={name}>{name}</option>)}
+                </select>
+              </label>
+              <label>
+                <span>Nome ou especialidade</span>
+                <input name="q" maxLength={INPUT_LIMITS.search} placeholder="Ex.: musculação" />
+              </label>
+              <button type="submit" aria-label="Buscar profissionais"><Search size={20} /></button>
+            </form>
 
           </div>
         </section>
       </div>
-
-      <section id="modalidades" className={styles.modalitiesSection}>
-        <div className={styles.sectionHeading} data-motion-heading>
-          <div>
-            <p className={styles.sectionLabel}>Modalidades</p>
-            <h2>O que você procura?</h2>
-          </div>
-          <Link href="/buscar" className={styles.inlineLink}>Ver todos os profissionais <ArrowRight size={17} /></Link>
-        </div>
-
-        <div className={styles.modalityGrid} data-motion-list>
-          {modalities.map(([name, detail]) => (
-            <Link key={name} href={`/buscar?modalidade=${encodeURIComponent(name)}`}>
-              <div><h3>{name}</h3><p>{detail}</p></div>
-              <ArrowRight size={19} />
-            </Link>
-          ))}
-        </div>
-      </section>
 
       <section className={styles.professionalsSection}>
         <div className={styles.sectionHeading} data-motion-heading>
