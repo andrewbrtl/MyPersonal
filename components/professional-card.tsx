@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, BriefcaseBusiness, MapPin, Star } from "lucide-react";
+import { ArrowRight, BadgeCheck, BriefcaseBusiness, Building2, MapPin, Star } from "lucide-react";
 
 import { FavoriteButton } from "@/components/favorite-button";
 import type { Professional } from "@/lib/professionals";
@@ -38,6 +38,7 @@ export function ProfessionalCard({ professional, saved = false, returnTo = "/bus
           <span className="inline-flex items-center gap-1.5"><MapPin size={14} />{professional.bairro}</span>
           <span>{professional.atendimento}</span>
           <span className="inline-flex items-center gap-1.5"><BriefcaseBusiness size={14} />{professional.experiencia}</span>
+          {professional.academias.length > 0 && <span className="inline-flex items-center gap-1.5"><Building2 size={14} />{professional.academias[0].nome}{professional.academias.length > 1 ? ` +${professional.academias.length - 1}` : ""}</span>}
           <span className="inline-flex items-center gap-1.5"><Star size={14} className={professional.avaliacoes ? "fill-orange text-orange-dark" : "text-forest/25"} />{professional.avaliacoes ? `${professional.nota.toFixed(1)} (${professional.avaliacoes})` : "Novo"}</span>
         </div>
         <div className="mt-6 flex items-end justify-between gap-4 border-t border-forest/12 pt-5">

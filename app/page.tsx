@@ -6,9 +6,20 @@ import { ProfessionalCard } from "@/components/professional-card";
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
 import { getCurrentProfile } from "@/lib/auth";
 import { getPublicProfessionals } from "@/lib/professionals";
+import boxingImage from "@/public/images/modality-boxing-pexels.jpg";
+import runningImage from "@/public/images/modality-running-pexels.jpg";
+import strengthImage from "@/public/images/gym-dumbbell-rack-v9.webp";
+import functionalImage from "@/public/images/gym-login-interior-v3.webp";
 import heroImage from "@/public/images/gym-interior-hero-v2.webp";
 
 import styles from "./home.module.css";
+
+const primarySpecialties = [
+  { name: "Musculação", detail: "Academia", image: strengthImage, position: "center" },
+  { name: "Corrida", detail: "Rua e pista", image: runningImage, position: "center 62%" },
+  { name: "Lutas", detail: "Boxe, muay thai e jiu-jitsu", image: boxingImage, position: "center" },
+  { name: "Funcional", detail: "Condicionamento", image: functionalImage, position: "center" },
+] as const;
 
 export default async function Home() {
   const [professionals, profile] = await Promise.all([getPublicProfessionals(), getCurrentProfile()]);
@@ -49,6 +60,27 @@ export default async function Home() {
           </div>
         </section>
       </div>
+
+      <section className={styles.specialtiesSection}>
+        <div className={styles.specialtiesHeading} data-motion-heading>
+          <div>
+            <p className={styles.sectionLabel}>Busca rápida</p>
+            <h2>Modalidades</h2>
+          </div>
+          <Link href="/buscar" className={styles.inlineLink}>Ver todas <ArrowRight size={17} /></Link>
+        </div>
+        <div className={styles.specialtiesGrid} data-motion-list>
+          {primarySpecialties.map((specialty, index) => (
+            <Link key={specialty.name} href={`/buscar?modalidade=${encodeURIComponent(specialty.name)}`} className={styles.specialtyCard}>
+              <Image src={specialty.image} alt={`Treino de ${specialty.name.toLowerCase()}`} fill sizes="(max-width: 760px) 100vw, 50vw" style={{ objectPosition: specialty.position }} />
+              <span className={styles.specialtyShade} aria-hidden="true" />
+              <span className={styles.specialtyNumber}>{String(index + 1).padStart(2, "0")}</span>
+              <span className={styles.specialtyCopy}><small>{specialty.detail}</small><strong>{specialty.name}</strong></span>
+              <ArrowRight className={styles.specialtyArrow} size={20} />
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <section className={styles.professionalsSection}>
         <div className={styles.sectionHeading} data-motion-heading>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { LogOut, ShieldCheck } from "lucide-react";
 
 import { signOutAction } from "@/app/login/actions";
+import { GymLocationsManager } from "@/app/cadastro/gym-locations-manager";
 import { ProfileForm } from "@/app/cadastro/profile-form";
 import { BrandPlaceholder } from "@/components/site-shell";
 import { requireRole } from "@/lib/auth";
@@ -14,10 +15,11 @@ export const metadata: Metadata = { title: "Perfil profissional" };
 export default async function RegistrationPage() {
   const profile = await requireRole("personal", "/cadastro");
   const supabase = await createClient();
-  const [{ data: professional }, { data: modalities }, { data: selectedModalities }] = await Promise.all([
+  const [{ data: professional }, { data: modalities }, { data: selectedModalities }, { data: gyms }] = await Promise.all([
     supabase.from("personais").select("cref,bairro,bio,formacao,anos_experiencia,preco_mensal_base,atendimento,horarios,whatsapp,instagram_url,facebook_url,tiktok_url,youtube_url,website_url").eq("id", profile.id).single(),
     supabase.from("modalidades").select("id,nome").eq("ativo", true).order("nome"),
     supabase.from("personal_modalidades").select("modalidade_id").eq("personal_id", profile.id),
+    supabase.from("academias_personais").select("id,nome,endereco,bairro,maps_url").eq("personal_id", profile.id).order("criado_em"),
   ]);
 
   return (
@@ -51,6 +53,7 @@ export default async function RegistrationPage() {
             website: professional?.website_url ?? "",
           }}
         />
+        <GymLocationsManager gyms={gyms ?? []} />
       </div>
     </main>
   );

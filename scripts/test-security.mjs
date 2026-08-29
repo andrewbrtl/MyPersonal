@@ -8,6 +8,8 @@ import {
   NEW_PASSWORD_LIMITS,
   isSafeMultilineText,
   isValidNeighborhood,
+  isValidBusinessName,
+  isValidStreetAddress,
   isValidPersonName,
   isValidSchedule,
   normalizeSearchInput,
@@ -16,6 +18,7 @@ import {
   safeInternalPath,
   withSiteNotice,
 } from "../lib/input-validation.ts";
+import { isGoogleMapsUrl } from "../lib/gym-location.ts";
 import { detectSupportedImage, isSafeImageDimensions, readImageDimensions } from "../lib/image-validation.ts";
 import { formatCpfInput, isValidCpf, isValidCpfInput, normalizeCpf } from "../lib/cpf.ts";
 import {
@@ -45,6 +48,14 @@ assert.equal(isValidPersonName("' OR 1=1 --"), false);
 assert.equal(isValidPersonName("<script>alert(1)</script>"), false);
 assert.equal(isValidNeighborhood("Jardim das Américas"), true);
 assert.equal(isValidNeighborhood("Centro\u0000"), false);
+assert.equal(isValidBusinessName("Academia Força & Movimento"), true);
+assert.equal(isValidBusinessName("<script>alert(1)</script>"), false);
+assert.equal(isValidStreetAddress("Rua XV de Novembro, 123"), true);
+assert.equal(isValidStreetAddress("Rua Central\u0000"), false);
+assert.equal(isGoogleMapsUrl("https://maps.app.goo.gl/abc123"), true);
+assert.equal(isGoogleMapsUrl("https://www.google.com/maps/place/Guarapuava"), true);
+assert.equal(isGoogleMapsUrl("https://evil.example/maps"), false);
+assert.equal(isGoogleMapsUrl("javascript:alert(1)"), false);
 assert.equal(isSafeMultilineText("Texto legítimo com 'aspas' e pontuação."), true);
 assert.equal(isSafeMultilineText("<img src=x onerror=alert(1)>"), false);
 
@@ -153,6 +164,18 @@ for (const required of [
   "insert into public.identidades_personais",
 ]) {
   assert.equal(cpfMigration.includes(required), true, `Proteção de CPF ausente: ${required}`);
+}
+
+const gymsMigration = await readFile(path.join(root, "supabase/migrations/0011_personal_gym_locations.sql"), "utf8");
+for (const required of [
+  "academias_personais",
+  "limitar_academias_por_personal",
+  ") >= 20",
+  "enable row level security",
+  "pr.role = 'personal'::public.user_role",
+  "academias_personais_local_unico_idx",
+]) {
+  assert.equal(gymsMigration.includes(required), true, `Proteção de academias ausente: ${required}`);
 }
 
 console.log(JSON.stringify({

@@ -24,7 +24,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
   const availableModalities = modalityRows ?? [];
   const modalityNames = availableModalities.map((item) => item.nome);
   const categoryNames = [...new Set(availableModalities.map((item) => item.categoria))];
-  const neighborhoods = [...new Set(professionals.map((item) => item.bairro).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+  const neighborhoods = [...new Set(professionals.flatMap((item) => [item.bairro, ...item.academias.map((gym) => gym.bairro)]).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
 
   const term = normalizeSearchInput(params.q);
   const modality = findAllowedValue(normalizeSearchInput(params.modalidade), modalityNames);
@@ -44,13 +44,16 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
       item.modalidades.join(" "),
       item.categorias.join(" "),
       item.bairro,
+      item.academias.map((gym) => `${gym.nome} ${gym.endereco} ${gym.bairro}`).join(" "),
       item.bio,
       item.formacao.join(" "),
     ].join(" "));
     const matchesTerm = tokens.every((token) => searchableText.includes(token));
     const matchesModality = !modality || item.modalidades.some((value) => normalize(value) === normalize(modality));
     const matchesCategory = !category || item.categorias.some((value) => normalize(value) === normalize(category));
-    const matchesNeighborhood = !neighborhood || normalize(item.bairro) === normalize(neighborhood);
+    const matchesNeighborhood = !neighborhood
+      || normalize(item.bairro) === normalize(neighborhood)
+      || item.academias.some((gym) => normalize(gym.bairro) === normalize(neighborhood));
     const matchesAttendance = !attendance
       || item.atendimentoValor === attendance
       || (item.atendimentoValor === "ambos" && attendance !== "ambos");
@@ -215,6 +218,7 @@ function relevanceScore(professional: Professional, tokens: string[], normalized
   const modalities = normalize(professional.modalidades.join(" "));
   const categories = normalize(professional.categorias.join(" "));
   const neighborhood = normalize(professional.bairro);
+  const gyms = normalize(professional.academias.map((gym) => `${gym.nome} ${gym.endereco} ${gym.bairro}`).join(" "));
   const bio = normalize(professional.bio);
   let score = name === normalizedTerm ? 120 : name.includes(normalizedTerm) ? 70 : 0;
   for (const token of tokens) {
@@ -222,6 +226,7 @@ function relevanceScore(professional: Professional, tokens: string[], normalized
     if (modalities.includes(token)) score += 18;
     if (categories.includes(token)) score += 10;
     if (neighborhood.includes(token)) score += 8;
+    if (gyms.includes(token)) score += 12;
     if (bio.includes(token)) score += 2;
   }
   return score;

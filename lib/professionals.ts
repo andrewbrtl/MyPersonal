@@ -3,6 +3,7 @@ import "server-only";
 import { cache } from "react";
 
 import { isSocialUrl, isWebsiteUrl } from "@/lib/contact";
+import { isGoogleMapsUrl } from "@/lib/gym-location";
 import { isUuid } from "@/lib/input-validation";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -36,6 +37,15 @@ export type Professional = {
   tiktokUrl: string;
   youtubeUrl: string;
   websiteUrl: string;
+  academias: GymLocation[];
+};
+
+export type GymLocation = {
+  id: string;
+  nome: string;
+  endereco: string;
+  bairro: string;
+  mapsUrl: string;
 };
 
 export const getPublicProfessionals = cache(async (): Promise<Professional[]> => {
@@ -48,9 +58,10 @@ export const getPublicProfessionals = cache(async (): Promise<Professional[]> =>
 
   if (error || !personals?.length) return [];
   const ids = personals.map((item) => item.id);
-  const [{ data: profiles }, { data: links }] = await Promise.all([
+  const [{ data: profiles }, { data: links }, { data: gyms }] = await Promise.all([
     admin.from("profiles").select("id,nome,avatar_url,telefone").in("id", ids),
     admin.from("personal_modalidades").select("personal_id,modalidades(nome,categoria)").in("personal_id", ids),
+    admin.from("academias_personais").select("id,personal_id,nome,endereco,bairro,maps_url").in("personal_id", ids).order("criado_em"),
   ]);
 
   return personals.map((personal) => {
@@ -97,6 +108,15 @@ export const getPublicProfessionals = cache(async (): Promise<Professional[]> =>
       tiktokUrl: personal.tiktok_url && isSocialUrl(personal.tiktok_url, "tiktok") ? personal.tiktok_url : "",
       youtubeUrl: personal.youtube_url && isSocialUrl(personal.youtube_url, "youtube") ? personal.youtube_url : "",
       websiteUrl: personal.website_url && isWebsiteUrl(personal.website_url) ? personal.website_url : "",
+      academias: (gyms ?? [])
+        .filter((gym) => gym.personal_id === personal.id)
+        .map((gym) => ({
+          id: gym.id,
+          nome: gym.nome,
+          endereco: gym.endereco,
+          bairro: gym.bairro,
+          mapsUrl: gym.maps_url && isGoogleMapsUrl(gym.maps_url) ? gym.maps_url : "",
+        })),
     };
   });
 });

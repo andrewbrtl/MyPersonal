@@ -21,6 +21,9 @@ export const INPUT_LIMITS = {
   modalities: 20,
   price: 100000,
   experienceYears: 80,
+  gymName: 120,
+  address: 180,
+  mapsUrl: 500,
 } as const;
 
 const unsafeControls = /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/u;
@@ -60,6 +63,18 @@ export function isValidNeighborhood(value: string) {
   const normalized = normalizeSingleLineText(value);
   return isSafeSingleLineText(normalized)
     && /^[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} .,'’()/-]*$/u.test(normalized);
+}
+
+export function isValidBusinessName(value: string) {
+  const normalized = normalizeSingleLineText(value);
+  return isSafeSingleLineText(normalized)
+    && /^[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} &+.,'’()/-]*$/u.test(normalized);
+}
+
+export function isValidStreetAddress(value: string) {
+  const normalized = normalizeSingleLineText(value);
+  return isSafeSingleLineText(normalized)
+    && /^[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} .,'’()/#ºª-]*$/u.test(normalized);
 }
 
 export function isUuid(value: string) {

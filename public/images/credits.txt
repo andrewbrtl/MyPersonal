@@ -14,3 +14,13 @@ gym-dumbbell-rack-v9.webp
 Foto original: Jason Grant
 Fonte: https://unsplash.com/photos/m4Jqyv5VwqY
 Licença: Unsplash License
+
+modality-running-pexels.jpg
+Foto original: Franklin Santillan A.
+Fonte: https://www.pexels.com/photo/runner-preparing-for-race-on-outdoor-track-31381386/
+Licença: Pexels License
+
+modality-boxing-pexels.jpg
+Foto original: Cao Vi Ton
+Fonte: https://www.pexels.com/photo/men-training-box-at-the-gym-17279422/
+Licença: Pexels License

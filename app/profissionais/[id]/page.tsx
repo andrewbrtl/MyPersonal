@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, AtSign, BadgeCheck, Camera, Globe2, MapPin, MessageCircle, Phone, Star, UsersRound, Video } from "lucide-react";
+import { ArrowLeft, AtSign, BadgeCheck, Building2, Camera, ExternalLink, Globe2, MapPin, MessageCircle, Phone, Star, UsersRound, Video } from "lucide-react";
 import { notFound } from "next/navigation";
 
 import { FavoriteButton } from "@/components/favorite-button";
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
 import { getCurrentProfile } from "@/lib/auth";
 import { formatPhone } from "@/lib/contact";
+import { googleMapsSearchUrl } from "@/lib/gym-location";
 import { getPublicProfessional } from "@/lib/professionals";
 import { createClient } from "@/lib/supabase/server";
 
@@ -65,6 +66,7 @@ export default async function ProfessionalPage({ params }: PageProps<"/profissio
           <ProfileSection number="02" title="Modalidades"><div className="flex flex-wrap gap-2">{professional.modalidades.map((item) => <span className="status-badge min-h-8 px-3" key={item}>{item}</span>)}</div></ProfileSection>
           <ProfileSection number="03" title="Formação"><ul className="grid gap-3">{professional.formacao.map((item) => <li className="border-b border-forest/10 pb-3" key={item}>{item}</li>)}</ul><p className="mt-4 text-sm font-semibold text-forest">CREF {professional.cref}</p></ProfileSection>
           <ProfileSection number="04" title="Horários">{professional.horarios.length ? <ul className="grid gap-3">{professional.horarios.map((item) => <li className="flex gap-3 border-b border-forest/10 pb-3" key={item}><span className="text-orange">—</span>{item}</li>)}</ul> : <p>Disponibilidade sob consulta.</p>}</ProfileSection>
+          {professional.academias.length > 0 && <ProfileSection number="05" title="Academias"><div className="grid gap-3 sm:grid-cols-2">{professional.academias.map((gym) => <a key={gym.id} href={gym.mapsUrl || googleMapsSearchUrl(gym.nome, gym.endereco, gym.bairro)} target="_blank" rel="noopener noreferrer nofollow" className="group border border-forest/15 p-4 transition hover:border-forest/45"><span className="flex items-center justify-between gap-3 font-semibold"><span className="inline-flex items-center gap-2"><Building2 size={17} className="text-orange-dark" />{gym.nome}</span><ExternalLink size={14} /></span><span className="mt-2 block text-sm text-forest/55">{gym.endereco} · {gym.bairro}</span></a>)}</div></ProfileSection>}
         </div>
         <aside id="contato" className="h-fit border border-forest/15 bg-sand p-6 lg:sticky lg:top-5">
           <p className="eyebrow">Valores</p>

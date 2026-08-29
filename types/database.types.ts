@@ -39,6 +39,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      academias_personais: {
+        Row: {
+          atualizado_em: string
+          bairro: string
+          cidade: string
+          criado_em: string
+          endereco: string
+          estado: string
+          id: string
+          maps_url: string | null
+          nome: string
+          personal_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          bairro: string
+          cidade?: string
+          criado_em?: string
+          endereco: string
+          estado?: string
+          id?: string
+          maps_url?: string | null
+          nome: string
+          personal_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          bairro?: string
+          cidade?: string
+          criado_em?: string
+          endereco?: string
+          estado?: string
+          id?: string
+          maps_url?: string | null
+          nome?: string
+          personal_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academias_personais_personal_id_fkey"
+            columns: ["personal_id"]
+            isOneToOne: false
+            referencedRelation: "personais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "academias_personais_personal_id_fkey"
+            columns: ["personal_id"]
+            isOneToOne: false
+            referencedRelation: "resumo_personais"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       asaas_webhook_eventos: {
         Row: {
           id: string
