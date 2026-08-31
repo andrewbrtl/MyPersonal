@@ -27,6 +27,7 @@ import {
   parseSchedule,
 } from "@/lib/input-validation";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sanitizeAvatarImage } from "@/lib/sanitize-image";
 
 export type ProfileState = {
   success?: boolean;
@@ -180,10 +181,17 @@ export async function saveProfessionalProfile(_state: ProfileState, formData: Fo
   let uploadedStoragePath: string | null = null;
 
   if (avatarFile && avatarBytes && avatarImage) {
-    uploadedStoragePath = `${profile.id}/avatar-${crypto.randomUUID()}.${avatarImage.extension}`;
+    let sanitizedAvatar: Awaited<ReturnType<typeof sanitizeAvatarImage>>;
+    try {
+      sanitizedAvatar = await sanitizeAvatarImage(avatarBytes);
+    } catch {
+      return { errors: { avatar: ["Não foi possível processar esta imagem com segurança. Escolha outra foto."] } };
+    }
+
+    uploadedStoragePath = `${profile.id}/avatar-${crypto.randomUUID()}.${sanitizedAvatar.extension}`;
     const { error: uploadError } = await admin.storage
       .from("profile-images")
-      .upload(uploadedStoragePath, Buffer.from(avatarBytes), { contentType: avatarImage.mime, upsert: false });
+      .upload(uploadedStoragePath, sanitizedAvatar.bytes, { contentType: sanitizedAvatar.mime, upsert: false });
 
     if (uploadError) return { message: "Não foi possível enviar a imagem. Tente novamente." };
     avatarUrl = admin.storage.from("profile-images").getPublicUrl(uploadedStoragePath).data.publicUrl;

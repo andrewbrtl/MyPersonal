@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { isValidBrazilianPhone, normalizeBrazilianPhone, toWhatsAppNumber } from "@/lib/contact";
+import { consumeRequestLimit } from "@/lib/rate-limit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -18,6 +19,19 @@ export async function POST(request: Request, context: RouteContext<"/contato/[id
   const channel = url.searchParams.get("canal");
   if (!idSchema.safeParse(id).success || (channel !== "whatsapp" && channel !== "telefone")) {
     return new Response("Contato inválido.", { status: 400 });
+  }
+
+  const allowed = await consumeRequestLimit({
+    operation: "contato",
+    limit: 30,
+    windowSeconds: 10 * 60,
+    requestHeaders: request.headers,
+  });
+  if (!allowed) {
+    return new Response("Muitas tentativas. Aguarde alguns minutos.", {
+      status: 429,
+      headers: { "Retry-After": "600" },
+    });
   }
 
   const admin = createAdminClient();
@@ -44,12 +58,14 @@ export async function POST(request: Request, context: RouteContext<"/contato/[id
     if (viewerProfile?.role === "aluno") studentId = user.id;
   }
 
-  await admin.from("contatos").insert({
-    personal_id: id,
-    aluno_id: studentId,
-    canal: channel,
-    origem: "perfil_publico",
-  });
+  if (studentId) {
+    await admin.from("contatos").insert({
+      personal_id: id,
+      aluno_id: studentId,
+      canal: channel,
+      origem: "perfil_publico",
+    });
+  }
 
   if (channel === "whatsapp") {
     const message = encodeURIComponent("Olá! Encontrei seu perfil profissional e gostaria de saber mais sobre o acompanhamento.");

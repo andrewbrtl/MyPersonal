@@ -15,19 +15,21 @@ export const getCurrentProfile = cache(async () => {
 
   if (!user) return null;
 
-  const { data: profile } = await supabase
+  const { data: profile, error } = await supabase
     .from("profiles")
     .select("id, nome, role, avatar_url, telefone")
     .eq("id", user.id)
     .maybeSingle();
 
+  if (error || !profile) return null;
+
   return {
     id: user.id,
     email: user.email ?? "",
-    nome: profile?.nome ?? user.user_metadata.nome ?? user.email?.split("@")[0] ?? "Usuário",
-    role: profile?.role ?? (user.user_metadata.role === "personal" ? "personal" : "aluno"),
-    avatarUrl: profile?.avatar_url ?? null,
-    telefone: profile?.telefone ?? "",
+    nome: profile.nome,
+    role: profile.role,
+    avatarUrl: profile.avatar_url,
+    telefone: profile.telefone ?? "",
   };
 });
 

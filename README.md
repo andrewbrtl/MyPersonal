@@ -32,7 +32,19 @@ npm run dev
 npm run dev
 npm run lint
 npm run build
+npm run security:repo
+npm run test:security
 ```
+
+## Segurança para repositório público
+
+- Segredos ficam somente em `.env.local` e nas variáveis protegidas do Vercel; nunca no Git.
+- `.env.example` contém apenas nomes de variáveis e valores vazios.
+- `npm run security:repo` examina arquivos atuais e todo o histórico Git sem imprimir valores encontrados.
+- O CI verifica segredos, dependências, validações, lint e build em cada pull request.
+- Chaves com privilégio (`SUPABASE_SECRET_KEY`, `CPF_HASH_SECRET` e `RATE_LIMIT_SECRET`) nunca podem receber o prefixo `NEXT_PUBLIC_`.
+
+Se uma chave real for adicionada a um commit, removê-la do arquivo não basta: revogue/rotacione a chave e limpe o histórico antes de tornar o repositório público.
 
 ## Documentação
 

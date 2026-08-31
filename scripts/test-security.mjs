@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import sharp from "sharp";
 
 import {
   INPUT_LIMITS,
@@ -128,11 +129,28 @@ assert.equal(isSafeImageDimensions({ width: 1024, height: 768 }), true);
 assert.equal(isSafeImageDimensions({ width: 10000, height: 10000 }), false);
 assert.equal(detectSupportedImage(new TextEncoder().encode("<svg><script>alert(1)</script></svg>")), null);
 
+const publicImages = await listImageFiles(path.join(root, "public"));
+for (const imagePath of publicImages) {
+  const metadata = await sharp(imagePath).metadata();
+  assert.equal(Boolean(metadata.exif || metadata.xmp || metadata.iptc), false, `Metadados incorporados encontrados em ${path.relative(root, imagePath)}`);
+}
+
 const sourceFiles = (await Promise.all(["app", "components", "lib"].map((directory) => listSourceFiles(path.join(root, directory))))).flat();
 const source = (await Promise.all(sourceFiles.map((file) => readFile(file, "utf8")))).join("\n");
 for (const forbidden of ["dangerouslySetInnerHTML", "new Function(", ".not(\"modalidade_id\"", "eval("]) {
   assert.equal(source.includes(forbidden), false, `Padrão perigoso encontrado: ${forbidden}`);
 }
+
+const authSource = await readFile(path.join(root, "lib/auth.ts"), "utf8");
+assert.equal(authSource.includes("user.user_metadata.role"), false, "O papel da conta não pode vir de metadado editável pelo usuário.");
+assert.equal(authSource.includes("if (error || !profile) return null"), true, "Perfil ausente deve falhar de forma segura.");
+
+const proxySource = await readFile(path.join(root, "proxy.ts"), "utf8");
+assert.equal(proxySource.includes("'strict-dynamic'"), true, "CSP estrita com nonce ausente.");
+assert.equal(/script-src[^\n]+unsafe-inline/.test(proxySource), false, "Scripts inline inseguros foram liberados na CSP.");
+
+const avatarActionSource = await readFile(path.join(root, "app/cadastro/actions.ts"), "utf8");
+assert.equal(avatarActionSource.includes("sanitizeAvatarImage"), true, "Uploads de avatar precisam remover metadados e conteúdo residual.");
 
 const migration = await readFile(path.join(root, "supabase/migrations/0007_input_security_hardening.sql"), "utf8");
 for (const required of [
@@ -178,11 +196,23 @@ for (const required of [
   assert.equal(gymsMigration.includes(required), true, `Proteção de academias ausente: ${required}`);
 }
 
+const publicSecurityMigration = await readFile(path.join(root, "supabase/migrations/0012_public_repository_security.sql"), "utf8");
+for (const required of [
+  "limites_operacoes",
+  "consumir_limite_operacao",
+  "security definer",
+  "revoke all on table public.limites_operacoes from public, anon, authenticated",
+  "revoke execute on function public.buscar_personais",
+]) {
+  assert.equal(publicSecurityMigration.includes(required), true, `Proteção pública ausente: ${required}`);
+}
+
 console.log(JSON.stringify({
   validacoes: "ok",
   numeros: "ok",
   redirecionamentos: "ok",
-  imagens: "assinatura e dimensões verificadas",
+  imagens: "assinatura, dimensões e sanitização verificadas",
+  imagensPublicasSemMetadados: publicImages.length,
   fontesAuditadas: sourceFiles.length,
   banco: "constraints, RLS e operação atômica presentes",
 }));
@@ -194,6 +224,16 @@ async function listSourceFiles(directory) {
     const fullPath = path.join(directory, entry.name);
     if (entry.isDirectory()) result.push(...await listSourceFiles(fullPath));
     else if (/\.(?:ts|tsx|js|mjs|sql)$/.test(entry.name)) result.push(fullPath);
+  }
+  return result;
+}
+
+async function listImageFiles(directory) {
+  const result = [];
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    const fullPath = path.join(directory, entry.name);
+    if (entry.isDirectory()) result.push(...await listImageFiles(fullPath));
+    else if (/\.(?:png|jpe?g|webp)$/i.test(entry.name)) result.push(fullPath);
   }
   return result;
 }

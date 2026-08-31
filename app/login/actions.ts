@@ -16,6 +16,7 @@ import {
 } from "@/lib/input-validation";
 import { emailSchema, resolveLoginEmail, validateLoginIdentifier } from "@/lib/login-identifier";
 import { strongPasswordSchema } from "@/lib/password-validation";
+import { consumeRequestLimit } from "@/lib/rate-limit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -98,6 +99,9 @@ export async function loginAction(_state: AuthState, formData: FormData): Promis
 
   if (!parsed.success) return { errors: parsed.error.flatten().fieldErrors };
 
+  const allowed = await consumeRequestLimit({ operation: "login", limit: 10, windowSeconds: 5 * 60 });
+  if (!allowed) return { message: "Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente." };
+
   const email = await resolveLoginEmail(parsed.data.identificador);
   if (!email) return { message: "Email, telefone ou senha inválidos. Confira os dados e tente novamente." };
 
@@ -133,6 +137,9 @@ export async function signUpAction(_state: AuthState, formData: FormData): Promi
   });
 
   if (!parsed.success) return { errors: parsed.error.flatten().fieldErrors };
+
+  const allowed = await consumeRequestLimit({ operation: "cadastro", limit: 6, windowSeconds: 60 * 60 });
+  if (!allowed) return { message: "Muitas tentativas de cadastro. Aguarde um pouco e tente novamente." };
 
   const admin = createAdminClient();
   const { data: existingPhone, error: phoneLookupError } = await admin
@@ -245,6 +252,11 @@ export async function signUpAction(_state: AuthState, formData: FormData): Promi
 export async function requestPasswordResetAction(_state: AuthState, formData: FormData): Promise<AuthState> {
   const parsed = recoverySchema.safeParse({ identificador: formData.get("identificador") });
   if (!parsed.success) return { errors: parsed.error.flatten().fieldErrors };
+
+  const allowed = await consumeRequestLimit({ operation: "recuperacao", limit: 5, windowSeconds: 60 * 60 });
+  if (!allowed) {
+    return { success: true, message: "Se encontramos essa conta, o envio será liberado novamente após o intervalo de segurança." };
+  }
 
   const email = await resolveLoginEmail(parsed.data.identificador);
   if (email) {

@@ -387,6 +387,27 @@ export type Database = {
           },
         ]
       }
+      limites_operacoes: {
+        Row: {
+          chave_hash: string
+          janela_inicio: string
+          operacao: string
+          quantidade: number
+        }
+        Insert: {
+          chave_hash: string
+          janela_inicio?: string
+          operacao: string
+          quantidade?: number
+        }
+        Update: {
+          chave_hash?: string
+          janela_inicio?: string
+          operacao?: string
+          quantidade?: number
+        }
+        Relationships: []
+      }
       validacoes_cref9: {
         Row: {
           categoria: string
@@ -948,6 +969,15 @@ export type Database = {
             }
             Returns: string
           }
+      consumir_limite_operacao: {
+        Args: {
+          p_chave_hash: string
+          p_janela_segundos: number
+          p_limite: number
+          p_operacao: string
+        }
+        Returns: boolean
+      }
       buscar_personais: {
         Args: {
           atendimento_filtro?: Database["public"]["Enums"]["modalidade_local"]
