@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowLeft, LogOut, ShieldCheck, UserRound } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, LogOut, UserRound } from "lucide-react";
 
 import { signOutAndCreateAccountAction } from "@/app/login/actions";
 import { AuthForm } from "@/app/login/auth-form";
@@ -69,23 +69,14 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
     : `/login?modo=criar&tipo=${role}${nextQuery}`;
 
   return (
-    <main className="grid min-h-screen bg-cream lg:grid-cols-[minmax(0,1.08fr)_minmax(460px,0.92fr)]">
-      <section className={`${styles.visual} relative hidden min-h-screen overflow-hidden bg-forest px-10 py-9 text-cream lg:flex lg:flex-col lg:justify-between xl:px-16 xl:py-12`}>
-        <Image src={loginImage} alt="" fill priority sizes="55vw" className={styles.visualImage} data-motion-hero-image />
-        <div className={styles.visualShade} aria-hidden="true" />
-        <div className="relative"><BrandPlaceholder inverted /></div>
-
-        <div className={`${styles.copy} py-16`} data-motion-hero-copy>
-          <p className="text-xs font-bold uppercase tracking-[0.1em] text-orange" data-motion-intro>Conta</p>
-          <h1 className={styles.title} aria-label="Entrar ou criar conta.">
-            <span className={styles.titleLine}><span data-motion-title-line>Entrar ou</span></span>
-            <span className={styles.titleLine}><span data-motion-title-line>criar conta.</span></span>
-          </h1>
-          <p className="mt-7 max-w-lg text-base leading-7 text-cream/62" data-motion-intro>
-            Alunos podem salvar perfis. Profissionais podem publicar e editar informações de atendimento.
-          </p>
+    <main className={styles.layout}>
+      <section className={styles.visual} aria-label="Guia de profissionais de Guarapuava">
+        <BrandPlaceholder />
+        <div className={styles.photo}>
+          <Image src={loginImage} alt="Interior de uma academia" fill preload sizes="45vw" className={styles.visualImage} data-motion-hero-image />
+          <div className={styles.photoCaption}><span>Guarapuava.<small>Paraná, Brasil</small></span><ArrowUpRight size={26} aria-hidden="true" /></div>
         </div>
-        <p className="relative text-xs text-cream/50">Guarapuava, PR</p>
+        <p className={styles.visualNote}>Profissionais da cidade. Contato direto.</p>
       </section>
 
       <section className={`${styles.panel} flex min-h-screen flex-col bg-cream px-5 py-6 sm:px-10 lg:px-14 xl:px-20`}>
@@ -96,13 +87,10 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
         <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-12">
           <div className={`${styles.formIntro} mb-8`} data-motion-form-intro>
-            <div className="flex size-11 items-center justify-center rounded-[2px] border border-forest/20 bg-sand text-forest">
-              <ShieldCheck size={21} />
-            </div>
-            <p className="mt-6 text-xs font-bold uppercase tracking-[0.1em] text-forest/50">Acesso</p>
-            <h2 className="mt-3 text-4xl font-bold tracking-[-0.035em] sm:text-5xl">
+            <p className="text-xs font-medium text-orange-dark">Sua conta</p>
+            <h1 className="mt-3 text-4xl font-medium tracking-[-0.05em] sm:text-5xl">
               {mode === "signup" ? "Criar conta" : mode === "recovery" ? "Recuperar acesso" : "Entrar"}
-            </h2>
+            </h1>
             <p className="mt-3 text-sm leading-6 text-forest/55">
               {mode === "signup"
                 ? "Informe os dados de acesso. O perfil profissional é preenchido na etapa seguinte."

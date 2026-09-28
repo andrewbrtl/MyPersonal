@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Dumbbell, LogIn, UserPlus } from "lucide-react";
+import { ArrowUpRight, Menu } from "lucide-react";
 
 import { AccountMenu } from "@/components/account-menu";
 import { getCurrentProfile } from "@/lib/auth";
@@ -11,10 +11,10 @@ export function BrandPlaceholder({ inverted = false }: { inverted?: boolean }) {
       aria-label="Página inicial"
       className={`brand-lockup outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-4 ${inverted ? "brand-lockup-inverted focus-visible:ring-offset-forest" : "focus-visible:ring-offset-cream"}`}
     >
-      <span className="brand-mark" aria-hidden="true"><Dumbbell size={19} strokeWidth={2.2} /></span>
+      <span className="brand-mark" aria-hidden="true"><i /><i /><i /></span>
       <span className="brand-place">
         <strong>Guarapuava</strong>
-        <small>Profissionais de esporte</small>
+        <small>Guia de personal trainers</small>
       </span>
     </Link>
   );
@@ -25,24 +25,37 @@ export async function SiteHeader({ compact = false, overlay = false }: { compact
 
   return (
     <header className={`site-header ${overlay ? "site-header-overlay" : ""}`}>
-      <div className="mx-auto flex max-w-[96rem] items-center justify-between px-5 py-4 sm:px-8 lg:px-12">
-        <BrandPlaceholder inverted />
-        <nav aria-label="Navegação principal" className="flex items-center gap-2 sm:gap-6">
-          <Link href="/buscar" className="nav-link nav-link-inverted hidden md:inline-flex">Buscar</Link>
-          {!compact && <Link href="/buscar" className="nav-link nav-link-inverted hidden lg:inline-flex">Modalidades</Link>}
+      <div className="header-inner">
+        <BrandPlaceholder inverted={overlay} />
+        <nav aria-label="Navegação principal" className="header-navigation">
+          <Link href="/buscar" className="nav-link desktop-nav-link">Encontrar um personal</Link>
+          {!compact && <Link href="/#modalidades" className="nav-link desktop-nav-link">Modalidades</Link>}
           {profile ? (
             <>
-              <Link href={profile.role === "personal" ? "/painel" : "/favoritos"} className="nav-link nav-link-inverted hidden sm:inline-flex">
+              <Link href={profile.role === "personal" ? "/painel" : "/favoritos"} className="nav-link desktop-nav-link">
                 {profile.role === "personal" ? "Meu painel" : "Meus salvos"}
               </Link>
-              <AccountMenu profile={profile} inverted />
+              <AccountMenu profile={profile} inverted={overlay} />
             </>
           ) : (
             <>
-              <Link href="/login" className="nav-link nav-link-inverted hidden gap-2 sm:inline-flex"><LogIn size={15} /> Entrar</Link>
-              <Link href="/login?modo=criar&tipo=personal&next=%2Fcadastro" className="button-accent min-h-11 px-4 sm:px-5"><UserPlus size={16} /> Cadastrar perfil</Link>
+              <Link href="/login" className="nav-link header-login">Entrar</Link>
+              <Link href="/login?modo=criar&tipo=personal&next=%2Fcadastro" className="header-cta">Sou personal <ArrowUpRight size={16} /></Link>
             </>
           )}
+          <details className="mobile-navigation">
+            <summary aria-label="Abrir navegação"><Menu size={21} /></summary>
+            <div className="mobile-navigation-panel">
+              <Link href="/buscar">Encontrar um personal <ArrowUpRight size={16} /></Link>
+              <Link href="/#modalidades">Modalidades <ArrowUpRight size={16} /></Link>
+              {profile ? (
+                <>
+                  <Link href={profile.role === "personal" ? "/painel" : "/favoritos"}>{profile.role === "personal" ? "Meu painel" : "Meus salvos"} <ArrowUpRight size={16} /></Link>
+                  <Link href="/conta">Minha conta <ArrowUpRight size={16} /></Link>
+                </>
+              ) : <Link href="/login?modo=criar&tipo=personal&next=%2Fcadastro">Sou personal <ArrowUpRight size={16} /></Link>}
+            </div>
+          </details>
         </nav>
       </div>
     </header>
@@ -52,15 +65,15 @@ export async function SiteHeader({ compact = false, overlay = false }: { compact
 export function SiteFooter() {
   return (
     <footer className="site-footer">
-      <div className="mx-auto flex max-w-[90rem] flex-col gap-8 px-5 py-10 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-12">
-        <BrandPlaceholder inverted />
-        <nav aria-label="Navegação do rodapé" className="flex flex-wrap gap-x-6 gap-y-3 text-xs font-semibold text-cream/55">
-          <Link href="/buscar" className="hover:text-white">Profissionais</Link>
-          <Link href="/login?modo=criar&tipo=personal&next=%2Fcadastro" className="hover:text-white">Criar perfil</Link>
-          <Link href="/termos" className="hover:text-white">Termos</Link>
-          <Link href="/privacidade" className="hover:text-white">Privacidade</Link>
+      <div className="footer-inner">
+        <BrandPlaceholder />
+        <nav aria-label="Navegação do rodapé">
+          <Link href="/buscar">Profissionais</Link>
+          <Link href="/login?modo=criar&tipo=personal&next=%2Fcadastro">Criar perfil</Link>
+          <Link href="/termos">Termos</Link>
+          <Link href="/privacidade">Privacidade</Link>
         </nav>
-        <p className="text-[0.65rem] text-cream/35">© 2026 · Guarapuava, PR</p>
+        <p>© {new Date().getFullYear()} · Guarapuava, PR</p>
       </div>
     </footer>
   );

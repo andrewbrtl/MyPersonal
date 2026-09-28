@@ -1,0 +1,26 @@
+.card { container-type: inline-size; min-width: 0; border: 1px solid #d1dbd8; background: #fff; transition: border-color .2s; }
+.card:hover { border-color: #7b9aa4; }
+.layout { display: grid; grid-template-columns: 150px minmax(0, 1fr); padding: .85rem; gap: 1.4rem; }
+.photo { min-height: 13rem; display: grid; place-items: center; background-color: #dce8e9; background-size: cover; background-position: center; color: #426d7a; }
+.photo > span { font-size: 2.5rem; font-weight: 450; letter-spacing: -.06em; }
+.body { min-width: 0; padding: .3rem .45rem .2rem 0; }
+.heading { display: flex; align-items: start; justify-content: space-between; gap: 1rem; }
+.heading h3 { font-size: 1.2rem; font-weight: 600; letter-spacing: -.035em; line-height: 1.25; overflow-wrap: anywhere; }
+.heading h3 a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.credential { display: inline-flex; align-items: center; gap: .25rem; margin-top: .35rem; font-size: .6rem; color: #57747e; }
+.modalities { margin-top: .65rem; font-size: .75rem; font-weight: 550; color: #436c79; }
+.bio { margin-top: .65rem; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow-wrap: anywhere; font-size: .78rem; color: #637277; line-height: 1.6; }
+.details { display: flex; flex-wrap: wrap; gap: .5rem 1rem; margin-top: 1rem; color: #627277; font-size: .68rem; }
+.details > span, .gym { display: inline-flex; align-items: center; gap: .3rem; }
+.details svg, .gym svg { flex-shrink: 0; }
+.gym { margin-top: .5rem; font-size: .68rem; color: #627277; overflow-wrap: anywhere; }
+.footer { display: flex; align-items: end; justify-content: space-between; gap: .75rem; border-top: 1px solid #e2e7e3; margin-top: 1rem; padding-top: .85rem; }
+.footer small { display: block; font-size: .6rem; color: #627277; margin-bottom: .15rem; }
+.footer strong { font-size: 1.05rem; font-weight: 600; }
+.footer p > span { color: #627277; font-size: .65rem; }
+.footer > a { min-height: 2.75rem; display: inline-flex; align-items: center; gap: .55rem; font-size: .75rem; font-weight: 550; }
+.footer > a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.card a:focus-visible { outline: 2px solid #426d7a; outline-offset: 3px; }
+@container (max-width: 540px) { .layout { grid-template-columns: 90px minmax(0, 1fr); gap: .8rem; } .photo { min-height: 7rem; align-self: start; aspect-ratio: 3 / 4; } .body { padding-right: 0; } .heading { gap: .5rem; } .heading h3 { font-size: 1.05rem; } .footer { align-items: start; flex-wrap: wrap; } }
+@container (max-width: 340px) { .layout { grid-template-columns: 1fr; } .photo { min-height: 0; height: 10rem; aspect-ratio: auto; } }
+@media (prefers-reduced-motion: reduce) { .card { transition: none; } }

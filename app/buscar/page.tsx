@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft, Search, SlidersHorizontal, X } from "lucide-react";
 
 import { ProfessionalCard } from "@/components/professional-card";
+import { SearchFilters } from "@/components/search-filters";
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
 import { getCurrentProfile } from "@/lib/auth";
 import { INPUT_LIMITS, normalizeSearchInput, parseIntegerInput, parseMoneyInput } from "@/lib/input-validation";
 import { getPublicProfessionals, type Professional } from "@/lib/professionals";
 import { createClient } from "@/lib/supabase/server";
+import styles from "./search.module.css";
 
 export const metadata: Metadata = { title: "Buscar profissionais" };
 
@@ -93,26 +96,27 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
   return (
     <main className="bg-cream">
       <SiteHeader compact />
-      <section className="border-b border-cream/12 bg-forest text-cream">
-        <div className="mx-auto max-w-[90rem] px-5 py-10 sm:px-8 lg:px-12 lg:py-14">
-          <p className="text-xs font-bold uppercase tracking-[0.1em] text-orange">Guarapuava</p>
-          <h1 className="mt-3 text-4xl font-bold tracking-[-0.04em] sm:text-6xl">Buscar profissionais</h1>
-          <form className="mt-7 grid max-w-4xl grid-cols-[1fr_3.5rem] border border-white/20 sm:grid-cols-[1fr_10rem]" action="/buscar">
+      <section className={styles.intro}>
+          <div className={styles.introTop}><Link href="/"><ArrowLeft size={14} /> Início</Link><span>Guarapuava, PR · Presencial e online</span></div>
+          <h1>Encontre seu personal.</h1>
+          <p>Busque por nome, treino, academia ou bairro.</p>
+          <form className={styles.searchForm} action="/buscar">
+            {Array.from(returnParams.entries()).filter(([key]) => key !== "q").map(([key, value]) => <input key={key} type="hidden" name={key} value={value} />)}
             <label className="sr-only" htmlFor="search">Nome, modalidade ou bairro</label>
-            <input id="search" name="q" maxLength={INPUT_LIMITS.search} defaultValue={term} className="min-h-14 min-w-0 bg-white px-4 text-sm text-forest outline-none placeholder:text-forest/40" placeholder="Nome, modalidade, objetivo ou bairro" />
-            <button className="flex min-h-14 items-center justify-center gap-2 bg-orange px-4 text-xs font-bold text-forest transition hover:bg-white" type="submit"><Search size={18} /> <span className="hidden sm:inline">Buscar</span></button>
+            <input id="search" name="q" maxLength={INPUT_LIMITS.search} defaultValue={term} placeholder="Nome, modalidade, academia ou bairro" />
+            <button type="submit" aria-label="Buscar profissionais"><Search size={18} /> <span>Buscar</span></button>
           </form>
-        </div>
       </section>
 
-      <section className="mx-auto grid max-w-[90rem] gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[290px_1fr] lg:px-12 lg:py-14">
-        <aside className="h-fit border border-forest/20 bg-white lg:sticky lg:top-5">
+      <section className={styles.layout}>
+        <SearchFilters activeCount={activeFilterCount}>
           <div className="flex items-center justify-between border-b border-forest/20 px-5 py-4">
             <h2 className="font-semibold">Filtros {activeFilterCount ? `(${activeFilterCount})` : ""}</h2>
             {activeFilterCount > 0 && <a href="/buscar" className="inline-flex items-center gap-1 text-xs underline underline-offset-4"><X size={13} /> Limpar</a>}
           </div>
           <form action="/buscar" className="grid gap-5 p-5">
             {term && <input type="hidden" name="q" value={term} />}
+            {order !== "relevancia" && <input type="hidden" name="ordem" value={order} />}
             <label>
               <span className="field-label">Tipo de treino</span>
               <select className="field" name="categoria" defaultValue={category}>
@@ -161,7 +165,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
             </div>
             <button className="button-secondary min-h-12 px-4" type="submit"><SlidersHorizontal size={17} /> Aplicar</button>
           </form>
-        </aside>
+        </SearchFilters>
 
         <div>
           <div className="flex flex-col gap-3 border-b border-forest/20 pb-5 sm:flex-row sm:items-end sm:justify-between">
@@ -191,9 +195,11 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
               {filtered.map((item) => <ProfessionalCard key={item.id} professional={item} saved={favoriteIds.has(item.id)} returnTo={returnTo} canFavorite={profile?.role !== "personal"} />)}
             </div>
           ) : (
-            <div className="mt-6 border border-forest/20 bg-white p-10 text-center">
-              <h2 className="text-xl font-bold">Nenhum perfil encontrado</h2>
-              <a href="/buscar" className="mt-4 inline-flex text-sm font-semibold underline underline-offset-4">Limpar busca</a>
+            <div className={styles.empty}>
+              <Search size={28} strokeWidth={1.4} />
+              <h2>{activeFilterCount ? "Nenhum perfil com esses filtros." : "Ainda não há perfis publicados."}</h2>
+              <p>{activeFilterCount ? "Tente outra modalidade ou retire um filtro para ampliar a busca." : "Os profissionais aparecerão aqui assim que publicarem seus perfis."}</p>
+              {activeFilterCount > 0 && <Link href="/buscar">Limpar busca</Link>}
             </div>
           )}
         </div>

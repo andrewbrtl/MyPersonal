@@ -25,20 +25,20 @@ export function PageMotion() {
       if (heroImage) {
         gsap.fromTo(
           heroImage,
-          { scale: 1.075, autoAlpha: 0.64 },
-          { scale: 1, autoAlpha: 1, duration: 1.8, ease: "power3.out", clearProps: "opacity,visibility,transform" },
+          { scale: 1.035, autoAlpha: 0.8 },
+          { scale: 1, autoAlpha: 1, duration: 0.9, ease: "power3.out", clearProps: "opacity,visibility,transform" },
         );
       }
 
       if (titleLines.length) {
         gsap.fromTo(
           titleLines,
-          { yPercent: 112, rotate: 1.4 },
+          { yPercent: 103, rotate: 0 },
           {
             yPercent: 0,
             rotate: 0,
-            duration: 1.05,
-            stagger: 0.11,
+            duration: 0.7,
+            stagger: 0.08,
             ease: "power4.out",
             clearProps: "transform",
           },
@@ -52,8 +52,8 @@ export function PageMotion() {
           {
             autoAlpha: 1,
             y: 0,
-            duration: 0.8,
-            delay: titleLines.length ? 0.34 : 0,
+            duration: 0.55,
+            delay: titleLines.length ? 0.18 : 0,
             stagger: 0.08,
             ease: "power3.out",
             clearProps: "opacity,visibility,transform",
